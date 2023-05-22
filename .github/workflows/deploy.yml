@@ -2,7 +2,7 @@
 name: Build and Deploy Spring Boot to AWS EC2
 on:
   push:
-    branches: [main]
+    branches: [master]
 jobs:
   build:
     runs-on: ubuntu-22.04
