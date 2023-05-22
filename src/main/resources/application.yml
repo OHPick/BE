@@ -2,9 +2,12 @@ spring:
   profiles:
     include: secret
   jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
         show_sql: true
-        hbm2ddl:
-          auto: create
+#        hbm2ddl:
+#          auto: create
