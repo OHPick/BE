@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
     @GetMapping("/test")
     public String signup() {
-        return "this is a testing 2";
+        return "CI/CD TESTING DONE!";
     }
 }
