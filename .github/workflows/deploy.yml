@@ -1,0 +1,27 @@
+#Deploy code to AWS EC2 server using GitAction
+name: Build and Deploy Spring Boot to AWS EC2
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Setup Java JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: 'adopt-openj9'
+          
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+        
+      - name: Build with Gradle
+        run: |
+          ./gradlew build
+          ./gradlew bootJar
+        shell: bash
