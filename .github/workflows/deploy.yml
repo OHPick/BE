@@ -20,6 +20,11 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
         
+      - name : Set YML
+        run : |
+          echo "${{secrets.APPLICATION_SECRET_KEY}}" | base64 --decode > src/main/resources/application-secret.yml
+          find src
+          
       - name: Build with Gradle
         run: |
           ./gradlew build
