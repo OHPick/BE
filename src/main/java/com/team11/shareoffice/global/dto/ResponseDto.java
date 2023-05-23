@@ -33,4 +33,7 @@ public class ResponseDto <T> {
         return ResponseDto.set(StatusCode.BAD_REQUEST, message, data);
     }
 
+    public static <T> ResponseDto<T> setSuccess(String message) {
+        return ResponseDto.set(StatusCode.OK, message, null);
+    }
 }

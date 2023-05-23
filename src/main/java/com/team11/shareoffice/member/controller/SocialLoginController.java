@@ -1,10 +1,12 @@
 package com.team11.shareoffice.member.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.member.dto.UserInfoDto;
-import com.team11.shareoffice.member.service.KakaoUserService;
+import com.team11.shareoffice.member.service.KakaoService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class SocialLoginController {
-    private final KakaoUserService kakaoUserService;
+    private final KakaoService kakaoService;
 
     // 카카오 로그인
-    @GetMapping("/api/kakao/callback")
-    public ResponseEntity<ResponseMessage> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        return kakaoUserService.kakaoLogin(code, response);
+    @GetMapping("/kakao/callback")
+    public ResponseDto<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        return kakaoService.kakaoLogin(code, response);
     }
 }
