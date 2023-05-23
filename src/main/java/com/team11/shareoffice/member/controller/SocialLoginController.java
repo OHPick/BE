@@ -17,7 +17,7 @@ public class SocialLoginController {
     private final KakaoService kakaoService;
 
     // 카카오 로그인
-    @GetMapping("/kakao/callback")
+    @GetMapping("/oauth/kakao")
     public ResponseDto<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         return kakaoService.kakaoLogin(code, response);
     }

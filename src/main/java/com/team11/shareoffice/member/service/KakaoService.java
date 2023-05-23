@@ -38,7 +38,7 @@ public class KakaoService {
         String nickname = registerOrUpdateKakaoUser(userInfo);
 
         String jwtToken = jwtUtil.createKakaoToken(nickname, userInfo.getKakaoId());
-        response.addHeader(JwtUtil.ACCESS_TOKEN, jwtToken);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtToken);
 
         return ResponseDto.setSuccess("로그인에 성공했습니다");
 
@@ -53,8 +53,8 @@ public class KakaoService {
 
         String url = UriComponentsBuilder.fromHttpUrl("https://kauth.kakao.com/oauth/token")
                 .queryParam("grant_type", "authorization_code")
-                .queryParam("client_id", "hIDvbu5u1afjMOo5vFp9tlq7Zaekoh4k")
-                .queryParam("redirect_uri", "http://15.164.49.40/oauth/kakao")
+                .queryParam("client_id", "a2e918a8313b1ec2a828afcfa8e8991b")
+                .queryParam("redirect_uri", "http://localhost:8080/oauth/kakao")
                 .queryParam("code", code)
                 .toUriString();
 
@@ -91,24 +91,27 @@ public class KakaoService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(response.getBody());
         Long id = jsonNode.get("id").asLong();
-        String nickname = jsonNode.get("nickname").asText();
-        String email = jsonNode.get("email").asText();
+        String nickname =jsonNode.get("kakao_account").get("email").asText();
+        String email = jsonNode.get("properties").get("nickname").asText();
 
         log.info("카카오 사용자 정보: " + id);
         return new UserInfoDto(id,nickname,email);
     }
 
-    private String registerOrUpdateKakaoUser(UserInfoDto kakaoUserInfo) {
-        Member member = memberRepository.findByKakaoId(kakaoUserInfo.getKakaoId()).orElse(null);
+    private String registerOrUpdateKakaoUser(UserInfoDto userInfo) {
+        Member member = memberRepository.findByKakaoId(userInfo.getKakaoId()).orElse(null);
         String nickname = "";
+
         if (member == null) {
             nickname = UUID.randomUUID().toString().substring(0, 8);
-            memberRepository.save(new Member(kakaoUserInfo.getKakaoId(), nickname, "https://s3-village-image.s3.ap-northeast-2.amazonaws.com/profile1.png"));
+
+            member = new Member(userInfo.getKakaoId(), nickname, "https://s3-village-image.s3.ap-northeast-2.amazonaws.com/profile1.png");
+            memberRepository.save(member);
+
         } else {
             nickname = member.getNickname();
         }
         return nickname;
     }
-
 
 }
