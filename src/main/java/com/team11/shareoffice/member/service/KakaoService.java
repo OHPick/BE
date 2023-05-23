@@ -3,6 +3,7 @@ package com.team11.shareoffice.member.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.jwt.JwtUtil;
 import com.team11.shareoffice.member.dto.UserInfoDto;
 import com.team11.shareoffice.member.entity.Member;
@@ -12,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -21,24 +21,30 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class KakaoUserService {
+public class KakaoService {
 
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
 
-    @Transactional
-    public ResponseEntity<ResponseMessage> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
-        String accessToken = requestAccessToken(code);
+    public ResponseDto<?> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+
+        // 1. "인가 코드"로 "액세스 토큰" 요청
+        String accessToken = getToken(code);
+        // 2. 토큰으로 카카오 API 호출 : "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
         UserInfoDto userInfo = fetchKakaoUserInfo(accessToken);
+        // 3. 필요 시에 회원 가입
+        //Member kakaoMember = registerKakaoUserIfNeeded(userInfo);
+
         String nickname = registerOrUpdateKakaoUser(userInfo);
 
         String jwtToken = jwtUtil.createKakaoToken(nickname, userInfo.getKakaoId());
         response.addHeader(JwtUtil.ACCESS_TOKEN, jwtToken);
 
-        return ResponseMessage.SuccessResponse("로그인 성공되었습니다.", "");
+        return ResponseDto.setSuccess("로그인에 성공했습니다");
+
     }
 
-    private String requestAccessToken(String code) throws JsonProcessingException {
+    private String getToken(String code) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -64,6 +70,7 @@ public class KakaoUserService {
         return jsonNode.get("access_token").asText();
     }
 
+    /////////////
     private UserInfoDto fetchKakaoUserInfo(String accessToken) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -96,19 +103,12 @@ public class KakaoUserService {
         String nickname = "";
         if (member == null) {
             nickname = UUID.randomUUID().toString().substring(0, 8);
-            memberRepository.save(new Member(kakaoUserInfo.getKakaoId(), nickname, "https://s3-village-image.s3.ap-northeast-2.amazonaws.com/profile1.png", UserRoleEnum.USER));
+            memberRepository.save(new Member(kakaoUserInfo.getKakaoId(), nickname, "https://s3-village-image.s3.ap-northeast-2.amazonaws.com/profile1.png"));
         } else {
             nickname = member.getNickname();
         }
         return nickname;
     }
 
-    @Transactional
-    public ResponseEntity<ResponseMessage> testLogin(String nickname, HttpServletResponse response) {
-        Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        String jwtToken = jwtUtil.createKakaoToken(nickname, member.getKakaoId());
-        response.addHeader(JwtUtil.ACCESS_TOKEN, jwtToken);
 
-        return ResponseMessage.SuccessResponse("로그인 성공되었습니다.", member.getNickname());
-    }
 }
