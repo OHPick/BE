@@ -17,13 +17,18 @@ public class Member {
     private String email;
 
     @Column(nullable = false, unique = true)
-    private String username;
+    private String nickname;
 
     @Column(nullable = false)
     private String password;
 
-
     private Long kakaoId;
+
+    public Member(Long kakaoId, String nickname, String email) {
+        this.kakaoId = kakaoId;
+        this.nickname = nickname;
+        this.email = email;
+    }
 
 
 }
