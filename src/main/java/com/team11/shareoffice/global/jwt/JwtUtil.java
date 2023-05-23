@@ -69,6 +69,20 @@ public class JwtUtil {
                         .compact();
     }
 
+    // 카카오토큰 생성
+    public String createKakaoToken(String nickname,Long kakaoId) {
+        Date date = new Date();
+
+        return BEARER_PREFIX +
+                Jwts.builder()
+                        .setSubject(kakaoId.toString())
+                        .claim(ACCESS_TOKEN, nickname)
+                        .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME))
+                        .setIssuedAt(date)
+                        .signWith(key, signatureAlgorithm)
+                        .compact();
+    }
+
     // 토큰 검증
     public boolean validateToken(String token) {
         try {

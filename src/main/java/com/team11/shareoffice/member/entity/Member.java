@@ -26,7 +26,7 @@ public class Member implements UserDetails{
     private String email;
 
     @Column(nullable = false, unique = true)
-    private String username;
+    private String nickname;
 
     @Column(nullable = false)
     private String password;
@@ -34,10 +34,16 @@ public class Member implements UserDetails{
     @Column
     private Long kakaoId;
 
+    public Member(Long kakaoId, String nickname, String email) {
+        this.kakaoId = kakaoId;
+        this.nickname = nickname;
+        this.email = email;
+    }
+
     public Member(String email, String password, String username){
         this.email = email;
         this.password = password;
-        this.username = username;
+        this.nickname = nickname;
     }
 
     @Override
