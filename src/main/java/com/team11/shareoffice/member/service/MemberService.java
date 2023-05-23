@@ -26,7 +26,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     // 회원가입
-    public ResponseDto<String> signup(SignupRequestDto signupRequestDto){
+    public ResponseDto<?> signup(SignupRequestDto signupRequestDto){
         String email = signupRequestDto.getEmail();
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
         String nickname = signupRequestDto.getNickname();
@@ -56,7 +56,7 @@ public class MemberService {
     }
 
     // 로그인
-    public ResponseDto<String> login(LoginRequestDto loginRequestDto, HttpServletResponse response){
+    public ResponseDto<?> login(LoginRequestDto loginRequestDto, HttpServletResponse response){
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
 
