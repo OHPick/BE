@@ -32,7 +32,7 @@ public class MemberService {
     public ResponseEntity<MessageDto> signup(SignupRequestDto signupRequestDto){
         String email = signupRequestDto.getEmail();
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
-        String username = signupRequestDto.getUsername();
+        String nickname = signupRequestDto.getNickname();
 
         // 이메일 중복 검사
         Optional<Member> foundByEmail = memberRepository.findByEmail(email);
@@ -41,7 +41,7 @@ public class MemberService {
         }
 
         // 닉네임 중복 검사
-        Optional<Member> foundByUsername = memberRepository.findByUsername(username);
+        Optional<Member> foundByUsername = memberRepository.findByNickname(nickname);
         if (foundByUsername.isPresent()){
             throw new CustomException(ErrorMessage.ENROLLED_NICKNAME);
         }
@@ -50,7 +50,7 @@ public class MemberService {
         Member member = Member.builder()
                 .email(email)
                 .password(password)
-                .username(username).build();
+                .nickname(nickname).build();
 
         memberRepository.save(member);
 

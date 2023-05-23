@@ -25,6 +25,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 
+import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.ACCESS_TOKEN;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -77,7 +79,7 @@ public class JwtUtil {
                 Jwts.builder()
                         .setSubject(kakaoId.toString())
                         .claim(ACCESS_TOKEN, nickname)
-                        .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME))
+                        .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)
                         .compact();

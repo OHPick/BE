@@ -40,7 +40,7 @@ public class Member implements UserDetails{
         this.email = email;
     }
 
-    public Member(String email, String password, String username){
+    public Member(String email, String password, String nickname){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
