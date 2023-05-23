@@ -18,4 +18,7 @@ public class SignupRequestDto {
     @Size(min = 4, max = 15, message = "비밀번호는 8 이상, 15 이하만 가능합니다.")
     @NotBlank
     private String password;
+
+    @NotBlank
+    private String passwordCheck;
 }

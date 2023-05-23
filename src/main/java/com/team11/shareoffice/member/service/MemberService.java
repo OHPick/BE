@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -31,6 +32,11 @@ public class MemberService {
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
         String nickname = signupRequestDto.getNickname();
 
+        // 비밀번호와 확인 비밀번호 일치 확인
+        if(!Objects.equals(signupRequestDto.getPassword(), signupRequestDto.getPasswordCheck())){
+            return ResponseDto.setBadRequest("비밀번호가 서로 일치하지 않습니다.");
+        }
+
         // 이메일 중복 검사
         Optional<Member> foundByEmail = memberRepository.findByEmail(email);
         if (foundByEmail.isPresent()){
@@ -41,7 +47,6 @@ public class MemberService {
         Optional<Member> foundByUsername = memberRepository.findByNickname(nickname);
         if (foundByUsername.isPresent()){
             return ResponseDto.setBadRequest("중복된 닉네임입니다.");
-
         }
 
         // 유저 등록
@@ -53,6 +58,7 @@ public class MemberService {
         memberRepository.save(member);
 
         return ResponseDto.setSuccess("회원가입에 성공했습니다.");
+
     }
 
     // 로그인
