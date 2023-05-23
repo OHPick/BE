@@ -2,7 +2,6 @@ package com.team11.shareoffice.member.controller;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.member.dto.LoginRequestDto;
-import com.team11.shareoffice.member.dto.MessageDto;
 import com.team11.shareoffice.member.dto.SignupRequestDto;
 import com.team11.shareoffice.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,9 +10,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
