@@ -31,6 +31,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 
+    //NoProviderFoundException 나오길래 추가
+    implementation 'org.hibernate.validator:hibernate-validator:7.0.1.Final'
+
+    //Swagger
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
+
 
     //Spring Security
     testImplementation 'org.springframework.security:spring-security-test'
