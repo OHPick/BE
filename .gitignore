@@ -4,8 +4,8 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-src/main/resources/application-secret.yml
-src/main/resources/application-s3.yml
+#src/main/resources/application-secret.yml
+#src/main/resources/application-s3.yml
 
 ### STS ###
 .apt_generated
@@ -37,7 +37,7 @@ out/
 
 ### VS Code ###
 .vscode/
-#
-#### properties ###
-#src/main/resources/application-secret.yml
-#src/main/resources/application-s3.yml
+
+### properties ###
+src/main/resources/application-secret.yml
+src/main/resources/application-s3.yml
