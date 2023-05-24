@@ -6,20 +6,24 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
+
     private final JwtUtil jwtUtil;
 //    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
@@ -29,11 +33,18 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    public UserDetailsService userDetailsService() {
+        return new InMemoryUserDetailsManager();
+    }
+
+    @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         // h2-console 사용 및 resources 접근 허용 설정
         return web -> web.ignoring()
-                //h2 콘솔
+                ////h2 콘솔
 //                .requestMatchers(PathRequest.toH2Console())
+                //스웨거
+                .requestMatchers("/swagger*/**", "/v3/api-docs/**")
                 //static 파일들
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
@@ -46,24 +57,44 @@ public class WebSecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeHttpRequests()
-                //회원가입, 로그인페이지, 메인 페이지
+                //회원가입, 로그인페이지, 메인 페이지. 스웨거
+//                .requestMatchers("/swagger*/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/members/**").permitAll()
+                .requestMatchers("/api/email/**").permitAll()
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         // 이 설정을 해주지 않으면 밑의 cors가 적용되지 않는다
-        http.cors();
+//        http.cors();
 
         //로그아웃 기능
-        http.logout()
-                .logoutUrl("/members/logout")
-                .logoutSuccessUrl("/posts")
-                .deleteCookies(JwtUtil.ACCESS_TOKEN, JwtUtil.REFRESH_TOKEN);
+//        http.logout()
+//                .logoutUrl("/members/logout")
+//                .logoutSuccessUrl("/posts")
+//                .deleteCookies(JwtUtil.ACCESS_TOKEN, JwtUtil.REFRESH_TOKEN);
 //
         // 401 Error 처리, Authorization 즉, 인증과정에서 실패할 시 처리
 //        http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);
 
         return http.build();
     }
+
+    //나중에 cors 다룰때 참고
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration config = new CorsConfiguration();
+//
+//        config.addAllowedOrigin("http://localhost:3000");
+//        config.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
+//        config.addAllowedMethod("*");
+//        config.addAllowedHeader("*");
+//        config.setAllowCredentials(true);
+//        config.validateAllowCredentials();
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", config);
+//
+//        return source;
+//    }
 }
