@@ -27,7 +27,7 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String content;
     // 주소
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String location;
     // 임대료
     @Column(nullable = false)
@@ -50,5 +50,4 @@ public class Post extends Timestamped {
         this.content = requestDto.getContent();
         this.location = requestDto.getLocation();
     }
-
 }

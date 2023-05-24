@@ -3,39 +3,37 @@ package com.team11.shareoffice.global.security;
 
 import com.team11.shareoffice.member.entity.Member;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class UserDetailsImpl implements UserDetails {
     private final Member member;
-    private final String username;
+    private final String nickname;
 
-    public UserDetailsImpl(Member member, String username) {
+    public UserDetailsImpl(Member member, String nickname) {
         this.member = member;
-        this.username = username;
-    }
-
-    public Member getMember() {
-        return member;
+        this.nickname = nickname;
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        String authority = "ROLE_USER";
-
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(simpleGrantedAuthority);
-
-        return authorities;
-    }
+    public Collection<? extends GrantedAuthority> getAuthorities() {return null;}
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        String authority = "ROLE_USER";
+//
+//        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
+//        Collection<GrantedAuthority> authorities = new ArrayList<>();
+//        authorities.add(simpleGrantedAuthority);
+//
+//        return authorities;
+//    }
+    public Member getMember() {
+    return member;
+}
 
     @Override
     public String getUsername() {
-        return this.username;
+        return this.member.getNickname();
     }
 
     @Override

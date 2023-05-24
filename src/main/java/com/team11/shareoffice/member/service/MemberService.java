@@ -40,13 +40,13 @@ public class MemberService {
         // 이메일 중복 검사
         Optional<Member> foundByEmail = memberRepository.findByEmail(email);
         if (foundByEmail.isPresent()){
-            return ResponseDto.setBadRequest("중복된 이메일입니다.");
+            return ResponseDto.setBadRequest("이미 등록된 이메일 입니다.");
         }
 
         // 닉네임 중복 검사
         Optional<Member> foundByUsername = memberRepository.findByNickname(nickname);
         if (foundByUsername.isPresent()){
-            return ResponseDto.setBadRequest("중복된 닉네임입니다.");
+            return ResponseDto.setBadRequest("이미 등록된 닉네임 입니다.");
         }
 
         // 유저 등록
