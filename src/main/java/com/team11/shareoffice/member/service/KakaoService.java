@@ -91,8 +91,8 @@ public class KakaoService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(response.getBody());
         Long id = jsonNode.get("id").asLong();
-        String nickname =jsonNode.get("kakao_account").get("email").asText();
-        String email = jsonNode.get("properties").get("nickname").asText();
+        String email =jsonNode.get("kakao_account").get("email").asText();
+        String nickname = jsonNode.get("properties").get("nickname").asText();
 
         log.info("카카오 사용자 정보: " + id);
         return new UserInfoDto(id,nickname,email);
@@ -105,7 +105,7 @@ public class KakaoService {
         if (member == null) {
             nickname = UUID.randomUUID().toString().substring(0, 8);
 
-            member = new Member(userInfo.getKakaoId(), nickname, "https://s3-village-image.s3.ap-northeast-2.amazonaws.com/profile1.png");
+            member = new Member(userInfo.getKakaoId(), nickname, "https://shareofficebucket-2.s3.ap-northeast-2.amazonaws.com/33.jpg");
             memberRepository.save(member);
 
         } else {
