@@ -1,0 +1,11 @@
+cloud:
+  aws:
+    s3:
+      bucket: shareofficebucket-2
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      access-key: AKIAXIIFYK22N6XMGJ6R
+      secret-key: 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
