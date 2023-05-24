@@ -112,10 +112,9 @@ public class JwtUtil {
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
-//    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<Member> userOptional = memberRepository.findByEmail(email);
-        Member member = userOptional.orElseThrow(() -> new UsernameNotFoundException("등록되지 않은 이메일입니다."));
+        Member member = userOptional.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
         return member;
     }
 }
