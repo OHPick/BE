@@ -6,10 +6,12 @@ import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity(name = "posts")
 @Getter
+@Setter
 @NoArgsConstructor
 public class Post extends Timestamped {
     @Id
@@ -36,6 +38,10 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     @ColumnDefault("0")
     private int likeCount;
+
+    @Column(columnDefinition = "LONGTEXT")
+    @Lob
+    private String postImage;
 
     public Post (PostRequestDto requestDto, Member member){
         this.title = requestDto.getTitle();

@@ -30,15 +30,21 @@ public class Member{
     @Column
     private Long kakaoId;
 
-    public Member(Long kakaoId, String nickname,String email) {
-        this.kakaoId = kakaoId;
-        this.nickname = nickname;
+    public Member(String email, Long kakaoId, String password, String nickname){
         this.email = email;
+        this.kakaoId = kakaoId;
+        this.password = password;
+        this.nickname = nickname;
     }
 
     public Member(String email, String password, String nickname){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+    }
+
+    public Member kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
     }
 }

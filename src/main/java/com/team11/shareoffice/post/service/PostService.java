@@ -1,6 +1,7 @@
 package com.team11.shareoffice.post.service;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
+import com.team11.shareoffice.image.service.ImageService;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.dto.PostRequestDto;
 import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
@@ -10,6 +11,9 @@ import com.team11.shareoffice.post.validator.PostValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @Transactional
@@ -18,9 +22,18 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostValidator postValidator;
+    private final ImageService imageService;
 
-    public ResponseDto<Long> createPost(PostRequestDto postRequestDto, Member member) {
+    public ResponseDto<Long> createPost(PostRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
+        // 이미지 존재 확인
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+
+        String imageUrl = imageService.uploadFile(image);
+
         Post post = new Post(postRequestDto, member);
+        post.setPostImage(imageUrl);
         postRepository.save(post);
         return ResponseDto.setSuccess(null);
     }
