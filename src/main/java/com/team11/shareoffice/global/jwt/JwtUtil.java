@@ -1,5 +1,6 @@
 package com.team11.shareoffice.global.jwt;
 
+import com.team11.shareoffice.global.security.UserDetailsServiceImpl;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
 import io.jsonwebtoken.*;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -21,7 +21,6 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Optional;
 
 import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.ACCESS_TOKEN;
 
@@ -30,6 +29,7 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 @RequiredArgsConstructor
 public class JwtUtil {
 
+    private final UserDetailsServiceImpl userDetailsService;
     private final MemberRepository memberRepository;
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
@@ -108,16 +108,16 @@ public class JwtUtil {
     // 인증 객체 생성
     @Transactional(readOnly = true)
     public Authentication createAuthentication(String email) {
-        UserDetails userDetails = loadUserByUsername(email);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
 //    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Member> userOptional = memberRepository.findByEmail(email);
-        Member member = userOptional.orElseThrow(() -> new UsernameNotFoundException("등록되지 않은 이메일입니다."));
-        return member;
-    }
+//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//        Optional<Member> userOptional = memberRepository.findByEmail(email);
+//        Member member = userOptional.orElseThrow(() -> new UsernameNotFoundException("등록되지 않은 이메일입니다."));
+//        return member;
+//    }
 }
 
 //    private static final String BEARER_PREFIX = "Bearer ";

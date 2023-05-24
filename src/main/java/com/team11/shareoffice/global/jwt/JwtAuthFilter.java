@@ -23,18 +23,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-
         String token = jwtUtil.resolveToken(request);
 
-        if(token != null) {
-            if(!jwtUtil.validateToken(token)){
+        if (token != null) {
+            if (!jwtUtil.validateToken(token)) {
                 jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
                 return;
             }
             Claims info = jwtUtil.getUserInfoFromToken(token);
             setAuthentication(info.getSubject());
         }
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
+    }
 //        String accessToken = jwtUtil.resolveToken(request, JwtUtil.ACCESS_TOKEN);
 //        String refreshToken = jwtUtil.resolveToken(request, JwtUtil.REFRESH_TOKEN);
 //        if (accessToken != null) {
@@ -65,7 +65,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 //            }
 //        }
 //        filterChain.doFilter(request, response);
-    }
 
 
     public void setAuthentication(String email) {
