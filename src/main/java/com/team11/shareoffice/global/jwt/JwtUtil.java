@@ -1,6 +1,5 @@
 package com.team11.shareoffice.global.jwt;
 
-import com.team11.shareoffice.global.security.UserDetailsServiceImpl;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
 import io.jsonwebtoken.*;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -21,6 +21,8 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+
+import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.ACCESS_TOKEN;
 
 @Slf4j
 @Component
@@ -110,6 +112,12 @@ public class JwtUtil {
     public Authentication createAuthentication(String email) {
         UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(email);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+
+     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<Member> userOptional = memberRepository.findByEmail(email);
+        Member member = userOptional.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        return member;
     }
 }
 
