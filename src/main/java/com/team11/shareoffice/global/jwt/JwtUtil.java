@@ -1,7 +1,5 @@
 package com.team11.shareoffice.global.jwt;
 
-import com.team11.shareoffice.global.exception.CustomException;
-import com.team11.shareoffice.global.exception.ErrorMessage;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
 import io.jsonwebtoken.*;
@@ -117,7 +115,7 @@ public class JwtUtil {
 //    @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<Member> userOptional = memberRepository.findByEmail(email);
-        Member member = userOptional.orElseThrow(() -> new CustomException(ErrorMessage.UNENROLLED_EMAIL));
+        Member member = userOptional.orElseThrow(() -> new UsernameNotFoundException("등록되지 않은 이메일입니다."));
         return member;
     }
 }

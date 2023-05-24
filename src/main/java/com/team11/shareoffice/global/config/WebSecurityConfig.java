@@ -43,6 +43,8 @@ public class WebSecurityConfig {
         return web -> web.ignoring()
                 ////h2 콘솔
 //                .requestMatchers(PathRequest.toH2Console())
+                //스웨거
+                .requestMatchers("/swagger*/**", "/v3/api-docs/**")
                 //static 파일들
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
@@ -56,7 +58,7 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests()
                 //회원가입, 로그인페이지, 메인 페이지. 스웨거
-                .requestMatchers("/swagger*/**", "/v3/api-docs/**").permitAll()
+//                .requestMatchers("/swagger*/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/members/**").permitAll()
                 .requestMatchers("/api/email/**").permitAll()
                 .anyRequest().authenticated()
