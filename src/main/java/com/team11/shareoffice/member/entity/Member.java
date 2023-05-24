@@ -34,13 +34,10 @@ public class Member implements UserDetails{
     @Column
     private Long kakaoId;
 
-    @Column
-    private String profile;
-
-    public Member(Long kakaoId, String nickname,String profile) {
+    public Member(Long kakaoId, String nickname,String email) {
         this.kakaoId = kakaoId;
         this.nickname = nickname;
-        this.profile = profile;
+        this.email = email;
     }
 
     public Member(String email, String password, String nickname){

@@ -103,9 +103,8 @@ public class KakaoService {
         String nickname = "";
 
         if (member == null) {
-            nickname = UUID.randomUUID().toString().substring(0, 8);
 
-            member = new Member(userInfo.getKakaoId(), nickname, "https://shareofficebucket-2.s3.ap-northeast-2.amazonaws.com/33.jpg");
+            member = new Member(userInfo.getKakaoId(), userInfo.getNickname(), userInfo.getEmail());
             memberRepository.save(member);
 
         } else {
