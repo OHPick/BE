@@ -11,18 +11,25 @@ import com.team11.shareoffice.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class KakaoService {
-
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
+
+    @Value("${kakao.client.secret}")
+    private String clientSecret;
 
     public ResponseDto<?> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
 
@@ -31,12 +38,12 @@ public class KakaoService {
         // 2. 토큰으로 카카오 API 호출 : "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
         UserInfoDto userInfo = fetchKakaoUserInfo(accessToken);
         // 3. 필요 시에 회원 가입
-        //Member kakaoMember = registerKakaoUserIfNeeded(userInfo);
+        Member kakaoUser = registerKakaoUserIfNeeded(userInfo);
+        // 4. jWT 토큰 반환
+        String jwtToken = jwtUtil.createKakaoToken(kakaoUser.getEmail(), userInfo.getKakaoId());
 
-        String nickname = registerOrUpdateKakaoUser(userInfo);
 
-        String jwtToken = jwtUtil.createKakaoToken(nickname, userInfo.getKakaoId());
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtToken);
+        response.addHeader(JwtUtil.ACCESS_TOKEN, jwtToken);
 
         return ResponseDto.setSuccess("로그인에 성공했습니다");
 
@@ -53,6 +60,7 @@ public class KakaoService {
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("client_id", "a2e918a8313b1ec2a828afcfa8e8991b")
                 .queryParam("redirect_uri", "http://localhost:8080/oauth/kakao")
+                .queryParam("Client_Secret", clientSecret)
                 .queryParam("code", code)
                 .toUriString();
 
@@ -96,19 +104,33 @@ public class KakaoService {
         return new UserInfoDto(id,nickname,email);
     }
 
-    private String registerOrUpdateKakaoUser(UserInfoDto userInfo) {
-        Member member = memberRepository.findByKakaoId(userInfo.getKakaoId()).orElse(null);
-        String nickname = "";
+    //////////////////////////////////////////////////////////////
+    private Member registerKakaoUserIfNeeded(UserInfoDto userInfo) {
+        // DB에 중복된 kakaoId 있는지 확인
+        Member kakaomember = memberRepository.findByKakaoId(userInfo.getKakaoId()).orElse(null);
 
-        if (member == null) {
+        if (kakaomember == null) {
+            // 카카오 사용자 email 동일한 email 가진 회원이 있는지 확인
+            String kakaoEmail = userInfo.getEmail();
+            Member sameEmailUser = memberRepository.findByEmail(kakaoEmail).orElse(null);
+            if (sameEmailUser != null) {
+                kakaomember = sameEmailUser;
+                // 기존 회원정보에 카카오 Id 추가
+                kakaomember = kakaomember.kakaoIdUpdate(userInfo.getKakaoId());
+            } else {
+                // 신규 회원가입
+                // password: random UUID
+                String password = UUID.randomUUID().toString();
+                String encodedPassword = passwordEncoder.encode(password);
 
-            member = new Member(userInfo.getKakaoId(), userInfo.getNickname(), userInfo.getEmail());
-            memberRepository.save(member);
+                kakaomember = new Member(userInfo.getEmail(), userInfo.getKakaoId(), encodedPassword, userInfo.getNickname());
+            }
 
-        } else {
-            nickname = member.getNickname();
+            memberRepository.save(kakaomember);
+
         }
-        return nickname;
+
+        return kakaomember;
     }
 
 }

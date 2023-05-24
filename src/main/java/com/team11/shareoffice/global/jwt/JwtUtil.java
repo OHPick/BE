@@ -70,13 +70,13 @@ public class JwtUtil {
     }
 
     // 카카오토큰 생성
-    public String createKakaoToken(String nickname,Long kakaoId) {
+    public String createKakaoToken(String userEmail, Long kakaoId) {
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(kakaoId.toString())
-                        .claim(ACCESS_TOKEN, nickname)
+                        .claim(ACCESS_TOKEN, userEmail)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)
