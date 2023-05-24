@@ -17,8 +17,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostValidator postValidator;
 
-
-
     public ResponseDto<Long> createPost(PostRequestDto postRequestDto, Member member) {
         Post post = new Post(postRequestDto, member);
         postRepository.save(post);
@@ -31,7 +29,6 @@ public class PostService {
         post.updatePost(postRequestDto);
         return ResponseDto.setSuccess(null);
     }
-
 
     public ResponseDto<Long> deletePost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
