@@ -22,16 +22,16 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
-import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.ACCESS_TOKEN;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
 
-    private final UserDetailsServiceImpl userDetailsService;
     private final MemberRepository memberRepository;
 
+    private final UserDetailsServiceImpl userDetailsService;
+
+    public static final String ACCESS_TOKEN = "Access_Token";
     public static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
     private static final long TOKEN_TIME = 60 * 60 * 1000L;
@@ -111,13 +111,6 @@ public class JwtUtil {
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
-
-//    @Override
-//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-//        Optional<Member> userOptional = memberRepository.findByEmail(email);
-//        Member member = userOptional.orElseThrow(() -> new UsernameNotFoundException("등록되지 않은 이메일입니다."));
-//        return member;
-//    }
 }
 
 //    private static final String BEARER_PREFIX = "Bearer ";
