@@ -3,7 +3,7 @@ package com.team11.shareoffice.member.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.Data;
 
 @Data
 public class SignupRequestDto {
