@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PostService {
 
@@ -26,12 +27,10 @@ public class PostService {
         return ResponseDto.setSuccess(null);
     }
 
-    @Transactional
     public ResponseDto<Long> updatePost(Long id, PostUpdateRequestDto postRequestDto, Member member) {
         Post post = postValidator.validateIsExistPost(id);
         postValidator.validatePostAuthor(post, member);
         post.updatePost(postRequestDto);
-        postRepository.save(post);
         return ResponseDto.setSuccess(null);
     }
 
