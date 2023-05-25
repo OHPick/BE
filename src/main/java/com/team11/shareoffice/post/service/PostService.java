@@ -38,16 +38,30 @@ public class PostService {
         return ResponseDto.setSuccess(null);
     }
 
-    public ResponseDto<Long> updatePost(Long id, PostUpdateRequestDto postRequestDto, Member member) {
+    public ResponseDto<Long> updatePost(Long id, PostUpdateRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
+        //게시글 존재 확인.
         Post post = postValidator.validateIsExistPost(id);
+        //게시글 작성자가 맞는지 확인.
         postValidator.validatePostAuthor(post, member);
+        // 제목,내용,위치 수정.
         post.updatePost(postRequestDto);
+
+        if (!image.isEmpty()) {
+            //기존에 있던 이미지 파일 s3에서 삭제
+            imageService.delete(post.getPostImage());
+            //새로 등록한 사진 s3에 업로드
+            String uploadFilename = imageService.uploadFile(image);
+            //업로드 된 사진으로 수정
+            post.setPostImage(uploadFilename);
+        }
+
         return ResponseDto.setSuccess(null);
     }
 
     public ResponseDto<Long> deletePost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
         postValidator.validatePostAuthor(post, member);
+        imageService.delete(post.getPostImage()); // 버켓의 이미지파일도 삭제
         postRepository.delete(post);
         return ResponseDto.setSuccess(null);
     }
