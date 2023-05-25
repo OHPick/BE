@@ -2,7 +2,9 @@ package com.team11.shareoffice.email.entity;
 
 
 import com.team11.shareoffice.email.dto.EmailRequestDto;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

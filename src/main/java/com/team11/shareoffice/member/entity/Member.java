@@ -5,17 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
 
 @Entity(name = "members")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Member implements UserDetails{
+public class Member{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,13 +30,11 @@ public class Member implements UserDetails{
     @Column
     private Long kakaoId;
 
-    @Column
-    private String profile;
-
-    public Member(Long kakaoId, String nickname,String profile) {
+    public Member(String email, Long kakaoId, String password, String nickname){
+        this.email = email;
         this.kakaoId = kakaoId;
+        this.password = password;
         this.nickname = nickname;
-        this.profile = profile;
     }
 
     public Member(String email, String password, String nickname){
@@ -49,33 +43,8 @@ public class Member implements UserDetails{
         this.nickname = nickname;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
-    public String getUsername() {
-        return null;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return false;
+    public Member kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
     }
 }
