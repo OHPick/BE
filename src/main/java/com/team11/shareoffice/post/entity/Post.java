@@ -56,4 +56,8 @@ public class Post extends Timestamped {
         this.content = requestDto.getContent();
         this.location = requestDto.getLocation();
     }
+
+    public void updateLike(Boolean likeOrDislike) {
+        this.likeCount = Boolean.TRUE.equals(likeOrDislike) ? this.likeCount + 1 : this.likeCount - 1;
+    }
 }
