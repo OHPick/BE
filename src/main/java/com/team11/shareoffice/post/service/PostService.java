@@ -1,7 +1,6 @@
 package com.team11.shareoffice.post.service;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
-import com.team11.shareoffice.image.service.ImageService;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.dto.PostRequestDto;
 import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
