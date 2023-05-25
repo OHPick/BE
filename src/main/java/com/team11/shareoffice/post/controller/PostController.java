@@ -28,8 +28,11 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseDto<Long> updatePost(@PathVariable Long id, @RequestBody PostUpdateRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.updatePost(id, postRequestDto, userDetails.getMember());
+    public ResponseDto<Long> updatePost(@PathVariable Long id,
+                                        @RequestPart(value = "postRequestDto", required = false) PostUpdateRequestDto postRequestDto,
+                                        @RequestPart(value = "imageFile", required = false) MultipartFile image,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
+        return postService.updatePost(id, postRequestDto, image, userDetails.getMember());
     }
 
     @DeleteMapping("/{id}")
