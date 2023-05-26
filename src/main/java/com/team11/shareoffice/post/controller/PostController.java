@@ -3,7 +3,9 @@ package com.team11.shareoffice.post.controller;
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.post.dto.PostRequestDto;
+import com.team11.shareoffice.post.dto.PostResponseDto;
 import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
+import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,5 +41,17 @@ public class PostController {
     @DeleteMapping("/{id}")
     public ResponseDto<Long> deletePost(@PathVariable Long id,@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.deletePost(id, userDetails.getMember());
+    }
+
+    //나의 게시글들 조회하기
+    @GetMapping("/myPosts")
+    public ResponseDto<List<PostResponseDto>> getMyPosts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.getMyPosts(userDetails.getMember());
+    }
+
+    //좋아요한 게시글들 조회하기
+    @GetMapping("/myPosts/likes")
+    public ResponseDto<List<PostResponseDto>> getMyLikes(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.getMyLikes(userDetails.getMember());
     }
 }
