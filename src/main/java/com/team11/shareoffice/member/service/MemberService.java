@@ -1,5 +1,7 @@
 package com.team11.shareoffice.member.service;
 
+import com.team11.shareoffice.email.entity.Email;
+import com.team11.shareoffice.email.repository.EmailRepository;
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.exception.CustomException;
 import com.team11.shareoffice.global.jwt.JwtUtil;
@@ -31,6 +33,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final EmailRepository emailRepository;
 
     // 회원가입
     public ResponseDto<?> signup(SignupRequestDto signupRequestDto){
@@ -55,14 +58,19 @@ public class MemberService {
             throw new CustomException(ErrorCode.EXIST_NICKNAME);
         }
 
+        //인증된 이메일인지 검사
+        Email validEmail =  emailRepository.findById(email).orElseThrow(() -> new CustomException(ErrorCode.WRONG_EMAIL));
+        if(!validEmail.isChecked()){
+            throw new CustomException(ErrorCode.WRONG_EMAIL);
+        }
         // 유저 등록
         Member member = Member.builder()
-                .email(email)
+                .email(validEmail.getEmail())
                 .password(password)
                 .nickname(nickname).build();
 
         memberRepository.save(member);
-
+        emailRepository.deleteById(email);
         return ResponseDto.setSuccess("회원가입에 성공했습니다.");
 
     }

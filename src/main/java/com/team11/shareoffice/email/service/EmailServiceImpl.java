@@ -98,9 +98,9 @@ public class EmailServiceImpl implements EmailService {
             e.printStackTrace();
             throw new IllegalArgumentException();
         }
-        Email.updateCode(email,code);
+        email.updateCode(code);
         emailRepository.save(email);
-        return ResponseDto.setSuccess(null);
+        return ResponseDto.setSuccess(code);
     }
 
 
@@ -110,9 +110,9 @@ public class EmailServiceImpl implements EmailService {
      */
     @Override
     public ResponseDto<?> codeCheck(CodeRequestDto requestDto)throws Exception {
-        Email email = emailValidator.validateEmail(requestDto.getEmail());
-        emailRepository.deleteById(email.getEmail());
+        Email email = emailValidator.validateIsExistEmail(requestDto.getEmail());
         emailValidator.validateCode(email,requestDto.getCode());
+        email.updateChecked(true);
         return ResponseDto.setSuccess(null);
     }
 }
