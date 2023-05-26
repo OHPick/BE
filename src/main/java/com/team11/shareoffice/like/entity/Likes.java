@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 public class Likes {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,5 +38,4 @@ public class Likes {
     public void setLikeStatus() {
         this.likeStatus = !(this.likeStatus);
     }
-
 }
