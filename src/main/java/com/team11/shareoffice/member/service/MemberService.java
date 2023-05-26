@@ -1,10 +1,12 @@
 package com.team11.shareoffice.member.service;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
+import com.team11.shareoffice.global.exception.CustomException;
 import com.team11.shareoffice.global.jwt.JwtUtil;
 import com.team11.shareoffice.global.jwt.dto.TokenDto;
 import com.team11.shareoffice.global.jwt.entity.RefreshToken;
 import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
+import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.member.dto.LoginRequestDto;
 import com.team11.shareoffice.member.dto.SignupRequestDto;
 import com.team11.shareoffice.member.entity.Member;
@@ -38,19 +40,19 @@ public class MemberService {
 
         // 비밀번호와 확인 비밀번호 일치 확인
         if(!Objects.equals(signupRequestDto.getPassword(), signupRequestDto.getPasswordCheck())){
-            return ResponseDto.setBadRequest("비밀번호가 서로 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.NOT_SAME_PASSWORD);
         }
 
         // 이메일 중복 검사
         Optional<Member> foundByEmail = memberRepository.findByEmail(email);
         if (foundByEmail.isPresent()){
-            return ResponseDto.setBadRequest("이미 등록된 이메일 입니다.");
+            throw new CustomException(ErrorCode.EXIST_EMAIL);
         }
 
         // 닉네임 중복 검사
         Optional<Member> foundByUsername = memberRepository.findByNickname(nickname);
         if (foundByUsername.isPresent()){
-            return ResponseDto.setBadRequest("이미 등록된 닉네임 입니다.");
+            throw new CustomException(ErrorCode.EXIST_NICKNAME);
         }
 
         // 유저 등록
@@ -73,12 +75,12 @@ public class MemberService {
         // 이메일 검사
         Member member = memberRepository.findByEmail(email).orElse(null);
         if (member == null){
-            return ResponseDto.setBadRequest("등록되지 않은 이메일입니다.");
+            throw new CustomException(ErrorCode.NOT_EXIST_EMAIL);
         }
 
         // 패스워드 검사
         if (!passwordEncoder.matches(password, member.getPassword())){
-            return ResponseDto.setBadRequest("비밀번호를 확인해주세요.");
+            throw new CustomException(ErrorCode.WRONG_PASSWORD);
         }
 
         //Token 생성
