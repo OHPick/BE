@@ -5,5 +5,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface PostRepositoryCustom {
-    Page<MainPageResponseDto> search(String keyword, String sorting, String district, Pageable pageable);
+    Page<MainPageResponseDto> search(String keyword, String district, String sorting, Pageable pageable);
 }

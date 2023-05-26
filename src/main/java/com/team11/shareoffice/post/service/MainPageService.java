@@ -13,7 +13,7 @@ public class MainPageService {
 
     @Autowired
     private PostRepository postRepository;
-    public Page<MainPageResponseDto> findPosts(String keyword, String sorting, String district, Pageable pageable) {
-        return postRepository.search(keyword,sorting, district, pageable);
+    public Page<MainPageResponseDto> findPosts(String keyword, String district, String sorting, Pageable pageable) {
+        return postRepository.search(keyword, district, sorting, pageable);
     }
 }

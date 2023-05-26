@@ -22,29 +22,37 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
 
     private final JPAQueryFactory queryFactory;
 
-
-
     public PostRepositoryImpl(JPAQueryFactory queryFactory) {
         super(Post.class);
         this.queryFactory = queryFactory;
     }
 
     @Override
-    public Page<MainPageResponseDto> search(String keyword, String sorting, String district, Pageable pageable) {
+    public Page<MainPageResponseDto> search(String keyword, String district, String sorting, Pageable pageable) {
         QPost post = QPost.post;
         BooleanBuilder builder = new BooleanBuilder();
 
+        boolean otherFilterings = false;
+
         if (!StringUtils.isEmpty(keyword)) {
+            otherFilterings = true;
             builder.and(post.title.contains(keyword)
                     .or(post.content.contains(keyword))
                     .or(post.location.contains(keyword)));
         }
 
+
         if (!StringUtils.isEmpty(district)) {
+            otherFilterings = true;
             builder.and(post.location.contains(district));
         }
 
-        OrderSpecifier<?> sortOrder = getSortOrder(sorting, post);
+        OrderSpecifier<?> sortOrder;
+        if (otherFilterings) {
+            sortOrder = post.createdAt.desc();
+        } else {
+            sortOrder = getSortOrder(sorting, post);
+        }
 
         QueryResults<Post> results = queryFactory
                 .selectFrom(post)
@@ -55,23 +63,26 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
                 .fetchResults();
 
         List<MainPageResponseDto> dtos = results.getResults().stream()
-                .map(MainPageResponseDto::new) // Post를 MainPageResponseDto로 변환
+                .map(MainPageResponseDto::new)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(dtos, pageable, results.getTotal());
     }
 
     private OrderSpecifier<?> getSortOrder(String sorting, QPost post) {
-        switch (sorting) {
-            case "최근 게시물 순":
-                return post.createdAt.desc();
-            case "높은 가격 순":
-                return post.price.desc();
-            case "낮은 가격 순":
-                return post.price.asc();
-            default:
-                return post.likeCount.desc().nullsLast();
+        if (sorting != null) {
+            switch (sorting) {
+                case "최근 게시물 순":
+                    return post.createdAt.desc();
+                case "높은 가격 순":
+                    return post.price.desc();
+                case "낮은 가격 순":
+                    return post.price.asc();
+                default:
+                    return post.likeCount.desc().nullsLast();
+            }
+        } else {
+            return post.likeCount.desc().nullsLast();
         }
-
     }
 }
