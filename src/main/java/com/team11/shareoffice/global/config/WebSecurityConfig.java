@@ -62,6 +62,7 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests()
                 //회원가입, 로그인페이지, 메인 페이지.
                 .requestMatchers("/api/members/**").permitAll()
+                .requestMatchers("/oauth/kakao").permitAll()
                 .requestMatchers("/api/email/**").permitAll()
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
