@@ -1,6 +1,8 @@
 package com.team11.shareoffice.post.service;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
+import com.team11.shareoffice.like.repository.LikeRepository;
+import com.team11.shareoffice.like.service.LikeService;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.dto.PostRequestDto;
 import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
@@ -22,6 +24,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostValidator postValidator;
     private final ImageService imageService;
+    private final LikeRepository likeRepository;
 
     public ResponseDto<Long> createPost(PostRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
         // 이미지 존재 확인
@@ -60,6 +63,7 @@ public class PostService {
     public ResponseDto<Long> deletePost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
         postValidator.validatePostAuthor(post, member);
+        likeRepository.deleteLikesByPost(post);
         imageService.delete(post.getPostImage()); // 버켓의 이미지파일도 삭제
         postRepository.delete(post);
         return ResponseDto.setSuccess(null);

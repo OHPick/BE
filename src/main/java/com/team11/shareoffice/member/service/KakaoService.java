@@ -75,7 +75,7 @@ public class KakaoService {
         String url = UriComponentsBuilder.fromHttpUrl("https://kauth.kakao.com/oauth/token")
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("client_id", "a2e918a8313b1ec2a828afcfa8e8991b")
-                .queryParam("redirect_uri", "http://localhost:8080/oauth/kakao")
+                .queryParam("redirect_uri", "http://localhost:3000/oauth/kakao")
                 .queryParam("Client_Secret", clientSecret)
                 .queryParam("code", code)
                 .toUriString();
