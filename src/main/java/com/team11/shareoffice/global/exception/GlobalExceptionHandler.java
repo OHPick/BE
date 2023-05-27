@@ -14,4 +14,11 @@ public class GlobalExceptionHandler {
         ResponseDto<Object> objectResponseDto = ResponseDto.setBadRequest(e.getMessage(),e.getErrorCode());
         return new ResponseEntity<>(objectResponseDto, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ResponseDto> handleRuntimeException(Exception e) {
+
+        ResponseDto<Object> objectResponseDto = ResponseDto.setBadRequest(e.getMessage(),"Error");
+        return new ResponseEntity<>(objectResponseDto, HttpStatus.BAD_REQUEST);
+    }
 }
