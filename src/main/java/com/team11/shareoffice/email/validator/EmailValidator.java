@@ -16,7 +16,7 @@ public class EmailValidator {
     private final EmailRepository emailRepository;
 
     //이메일이 DB에 존재 여부 확인
-    public Email validateEmail(String email) {
+    public Email validateIsExistEmail(String email) {
         return emailRepository.findById(email).orElseThrow(() -> new CustomException(ErrorCode.WRONG_EMAIL));
     }
 
