@@ -14,8 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class PostRepositoryImpl extends QuerydslRepositorySupport implements PostRepositoryCustom {
@@ -47,42 +47,52 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
             builder.and(post.location.contains(district));
         }
 
-        OrderSpecifier<?> sortOrder;
-        if (otherFilterings) {
-            sortOrder = post.createdAt.desc();
-        } else {
-            sortOrder = getSortOrder(sorting, post);
-        }
+        List<OrderSpecifier<?>> sortOrder = getSortOrder(sorting, keyword, district, post);
 
         QueryResults<Post> results = queryFactory
                 .selectFrom(post)
                 .where(builder)
-                .orderBy(sortOrder)
+                .orderBy(sortOrder.toArray(new OrderSpecifier[0]))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
 
-        List<MainPageResponseDto> dtos = results.getResults().stream()
-                .map(MainPageResponseDto::new)
-                .collect(Collectors.toList());
-
+        List<Post> resultsList = results.getResults();
+        List<MainPageResponseDto> dtos = new ArrayList<>();
+        for (Post posts : resultsList) {
+            dtos.add(new MainPageResponseDto(posts));
+        }
         return new PageImpl<>(dtos, pageable, results.getTotal());
     }
 
-    private OrderSpecifier<?> getSortOrder(String sorting, QPost post) {
+    private List<OrderSpecifier<?>> getSortOrder(String sorting, String keyword, String district, QPost post) {
+        List<OrderSpecifier<?>> orders = new ArrayList<>();
+
         if (sorting != null) {
             switch (sorting) {
                 case "최근 게시물 순":
-                    return post.createdAt.desc();
+                    orders.add(post.createdAt.desc());
+                    break;
                 case "높은 가격 순":
-                    return post.price.desc();
+                    orders.add(post.price.desc());
+                    orders.add(post.createdAt.desc());
+                    break;
                 case "낮은 가격 순":
-                    return post.price.asc();
+                    orders.add(post.price.asc());
+                    orders.add(post.createdAt.desc());
+                    break;
                 default:
-                    return post.likeCount.desc().nullsLast();
+                    orders.add(post.likeCount.desc().nullsLast());
+                    orders.add(post.createdAt.desc());
             }
         } else {
-            return post.likeCount.desc().nullsLast();
+            if (StringUtils.isEmpty(keyword) && StringUtils.isEmpty(district)) {
+                orders.add(post.likeCount.desc().nullsLast());
+            }
+            orders.add(post.createdAt.desc());
         }
+
+        return orders;
     }
+
 }
