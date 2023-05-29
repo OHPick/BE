@@ -43,6 +43,9 @@ public class Post extends Timestamped {
     @Lob
     private String postImage;
 
+    @Column
+    private boolean isDelete;
+
     public Post (PostRequestDto requestDto, Member member){
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();

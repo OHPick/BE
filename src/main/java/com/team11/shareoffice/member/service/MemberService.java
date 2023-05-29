@@ -1,6 +1,5 @@
 package com.team11.shareoffice.member.service;
 
-import com.team11.shareoffice.email.entity.Email;
 import com.team11.shareoffice.email.repository.EmailRepository;
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.exception.CustomException;
@@ -8,15 +7,16 @@ import com.team11.shareoffice.global.jwt.JwtUtil;
 import com.team11.shareoffice.global.jwt.dto.TokenDto;
 import com.team11.shareoffice.global.jwt.entity.RefreshToken;
 import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
+import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.global.util.ErrorCode;
-import com.team11.shareoffice.member.dto.LoginRequestDto;
+import com.team11.shareoffice.member.dto.MemberRequestDto;
 import com.team11.shareoffice.member.dto.ProfileDto;
-import com.team11.shareoffice.member.dto.SignupRequestDto;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
+import com.team11.shareoffice.member.validator.MemberValidator;
+import com.team11.shareoffice.post.entity.Post;
+import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.post.service.ImageService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.util.List;
 import java.util.Optional;
 
 import static com.team11.shareoffice.global.dto.ResponseDto.setSuccess;
@@ -34,6 +34,7 @@ import static com.team11.shareoffice.global.dto.ResponseDto.setSuccess;
 @RequiredArgsConstructor
 @Service
 @Transactional
+@Builder
 public class MemberService {
 
     private final JwtUtil jwtUtil;
@@ -41,49 +42,45 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final EmailRepository emailRepository;
+    private final PostRepository postRepository;
+    private final MemberValidator memberValidator;
     private final ImageService imageService;
 
 
     // 회원가입
-    public ResponseDto<?> signup(SignupRequestDto signupRequestDto){
-        String email = signupRequestDto.getEmail();
-        String password = passwordEncoder.encode(signupRequestDto.getPassword());
-        String nickname = signupRequestDto.getNickname();
+    public ResponseDto<?> signup(MemberRequestDto requestDto){
+        String email = requestDto.getEmail();
+        String password = passwordEncoder.encode(requestDto.getPassword());
+        String nickname = requestDto.getNickname();
 
-        // 비밀번호와 확인 비밀번호 일치 확인
-        if(!Objects.equals(signupRequestDto.getPassword(), signupRequestDto.getPasswordCheck())){
-            throw new CustomException(ErrorCode.NOT_SAME_PASSWORD);
-        }
+        // 비밀번호와 확인 비밀번호 일치 여부 판별
+        memberValidator.validatePasswordCheck(requestDto);
 
         // 이메일 중복 검사
-        Optional<Member> foundByEmail = memberRepository.findByEmail(email);
-        if (foundByEmail.isPresent()){
-            throw new CustomException(ErrorCode.EXIST_EMAIL);
-        }
+        memberValidator.validateEmailOverlapped(email);
 
         // 닉네임 중복 검사
-        Optional<Member> foundByUsername = memberRepository.findByNickname(nickname);
-        if (foundByUsername.isPresent()){
-            throw new CustomException(ErrorCode.EXIST_NICKNAME);
-        }
+        memberValidator.validateNicknameOverlapped(nickname);
 
-        //인증된 이메일인지 검사
-        Email validEmail =  emailRepository.findById(email).orElseThrow(() -> new CustomException(ErrorCode.WRONG_EMAIL));
-        if(!validEmail.isChecked()){
-            throw new CustomException(ErrorCode.WRONG_EMAIL);
-        }
+//        인증된 이메일인지 검사
+//        Email validEmail =  emailRepository.findById(email).orElseThrow(() -> new CustomException(ErrorCode.WRONG_EMAIL));
+//        if(!validEmail.isChecked()){
+//            throw new CustomException(ErrorCode.WRONG_EMAIL);
+//        }
+        memberValidator.validateEmailAuth(email);
+
+        // 유저 등록
+        Member member = Member.builder()
+                .email(email)
+                .password(password)
+                .nickname(nickname)
+                .isDelete(false)
+                .build();
 
         String basicImage = "https://shareoffice12.s3.ap-northeast-2.amazonaws.com/image.png";
 
-//        // 유저 등록
-//        Member member = Member.builder()
-//                .email(validEmail.getEmail())
-//                .password(password)
-//                .nickname(nickname)
-//                .imageUrl(basicImage)
-//                .build();
 
-        Member member = new Member(email,password,nickname,basicImage);
+//        Member member = new Member(email,password,nickname,basicImage);  //  이 부분
 
         memberRepository.save(member);
         emailRepository.deleteById(email);
@@ -92,23 +89,21 @@ public class MemberService {
     }
 
     // 로그인
-    public ResponseDto<?> login(LoginRequestDto loginRequestDto, HttpServletResponse response){
-        String email = loginRequestDto.getEmail();
-        String password = loginRequestDto.getPassword();
+    public ResponseDto<?> login(MemberRequestDto requestDto, HttpServletResponse response){
+        String email = requestDto.getEmail();
+        String password = requestDto.getPassword();
 
         // 이메일 검사
-        Member member = memberRepository.findByEmail(email).orElse(null);
-        if (member == null){
-            throw new CustomException(ErrorCode.NOT_EXIST_EMAIL);
-        }
+        Member member = memberValidator.validateEmailExist(email);
+
+        //삭제된 계정 여부
+        memberValidator.validateEmailisDeleted(member);
 
         // 패스워드 검사
-        if (!passwordEncoder.matches(password, member.getPassword())){
-            throw new CustomException(ErrorCode.WRONG_PASSWORD);
-        }
+        memberValidator.passwordCheck(password, member);
 
         //Token 생성
-        TokenDto tokenDto = jwtUtil.createAllToken(member.getEmail());
+        TokenDto tokenDto = jwtUtil.createAllToken(email);
 
         //RefreshToken 있는지 확인
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMember(member);
@@ -163,4 +158,30 @@ public class MemberService {
 
         return ResponseDto.setSuccess("프로필 수정 성공",modified);
     }
+
+    //회원탈퇴
+    public ResponseDto<?> signout(UserDetailsImpl userDetails, MemberRequestDto request) {
+        String password = request.getPassword();
+
+        Member member = memberValidator.validateEmailExist(userDetails.getMember().getEmail());
+
+        memberValidator.passwordCheck(password, member);
+
+        memberValidator.validateToken(member);
+
+        member.setDelete(true);
+        memberRepository.save(member);
+
+        List<Post> posts = postRepository.findAllByMemberId(member.getId());
+        if (!posts.isEmpty()) {
+            for (Post p : posts) {
+                p.setDelete(true);
+                postRepository.save(p);
+            }
+        }
+        refreshTokenRepository.deleteByMember(member);
+
+        return ResponseDto.setSuccess("회원탈퇴 성공");
+    }
 }
+

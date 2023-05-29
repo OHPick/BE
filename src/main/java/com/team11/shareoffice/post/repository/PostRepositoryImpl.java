@@ -28,7 +28,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
     }
 
     @Override
-    public Page<MainPageResponseDto> search(String keyword, String district, String sorting, Pageable pageable) {
+    public Page<MainPageResponseDto> FilteringAndPaging(String keyword, String district, String sorting, Pageable pageable) {
         QPost post = QPost.post;
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -91,7 +91,6 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
             }
             orders.add(post.createdAt.desc());
         }
-
         return orders;
     }
 

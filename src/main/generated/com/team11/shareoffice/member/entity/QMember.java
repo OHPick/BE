@@ -25,6 +25,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath imageUrl = createString("imageUrl");
 
+    public final BooleanPath isDelete = createBoolean("isDelete");
+
     public final NumberPath<Long> kakaoId = createNumber("kakaoId", Long.class);
 
     public final StringPath nickname = createString("nickname");
