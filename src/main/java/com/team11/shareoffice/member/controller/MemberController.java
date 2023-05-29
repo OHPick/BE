@@ -14,6 +14,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,9 +43,19 @@ public class MemberController {
 
     // Profile
     @Operation(summary = "프로필 API", description = "프로필")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "로그인 완료")})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "프로필 조회 완료")})
     @GetMapping("/myprofile")
-    public ResponseDto<ProfileDto> login(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseDto<ProfileDto> profile(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return memberService.profile(userDetails.getMember());
+    }
+
+    // Profile 수정
+    @Operation(summary = "프로필 수정 API", description = "프로필 수정")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "프로필 수정 완료")})
+    @PutMapping("/myprofile/modify")
+    public ResponseDto<ProfileDto> profileModify(@RequestPart(value = "profileDto", required = false) ProfileDto profileDto,
+                                         @RequestPart(value = "imageFile", required = false) MultipartFile image,
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return memberService.profileModify(profileDto, image, userDetails.getMember());
     }
 }
