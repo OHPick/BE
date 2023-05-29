@@ -63,15 +63,15 @@ public class MemberService {
             throw new CustomException(ErrorCode.EXIST_NICKNAME);
         }
 
-        //인증된 이메일인지 검사
-//        Email validEmail =  emailRepository.findById(email).orElseThrow(() -> new CustomException(ErrorCode.WRONG_EMAIL));
-//        if(!validEmail.isChecked()){
-//            throw new CustomException(ErrorCode.WRONG_EMAIL);
-//        }
+//        인증된 이메일인지 검사
+        Email validEmail =  emailRepository.findById(email).orElseThrow(() -> new CustomException(ErrorCode.WRONG_EMAIL));
+        if(!validEmail.isChecked()){
+            throw new CustomException(ErrorCode.WRONG_EMAIL);
+        }
         // 유저 등록
         Member member = Member.builder()
-//                .email(validEmail.getEmail())
-                .email(email)
+                .email(validEmail.getEmail())
+//                .email(email)
                 .password(password)
                 .nickname(nickname)
                 .isDelete(false)
