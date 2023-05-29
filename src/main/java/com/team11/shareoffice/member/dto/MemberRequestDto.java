@@ -1,17 +1,15 @@
 package com.team11.shareoffice.member.dto;
 
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class SignupRequestDto {
+public class MemberRequestDto {
 
     @NotBlank
     private String email;
@@ -26,16 +24,16 @@ public class SignupRequestDto {
     @NotBlank
     private String passwordCheck;
 
-    @Getter
-    public static class login {
-        @Email
-        private String email;
-        private String password;
-    }
-
-    @Getter
-    public static class signout {
-        private String password;
-    }
+//    @Getter
+//    public static class login {
+//        private String email;
+//        private String password;
+//    }
+//
+//    @Getter
+//    public static class signout {
+//        private String email;
+//        private String password;
+//    }
 
 }

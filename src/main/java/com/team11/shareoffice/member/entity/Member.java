@@ -2,8 +2,6 @@ package com.team11.shareoffice.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Where;
-import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity(name = "members")
@@ -52,7 +50,6 @@ public class Member{
     }
 
     @Builder
-    public Member(String email, String password, String nickname){
     public Member(String email, String password, String nickname, String imageUrl){
         this.email = email;
         this.password = password;
