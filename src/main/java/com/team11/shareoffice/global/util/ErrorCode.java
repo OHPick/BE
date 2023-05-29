@@ -13,7 +13,9 @@ public enum ErrorCode {
     WRONG_EMAIL_CODE ("WrongEmailCode", "인증 코드가 일치하지 않습니다"),
     WRONG_EMAIL ("WrongEmail", "인증을 요청한 이메일이 아닙니다."),
     NOT_EXIST_EMAIL("NotExistEmail", "등록되지 않은 이메일입니다."),
-    WRONG_PASSWORD("WrongPassword", "비밀번호를 확인해주세요");
+    NOT_FOUND_USER_INFO("NoUserExist",  "유저 정보를 찾을 수 없습니다."),
+    WRONG_PASSWORD("WrongPassword", "비밀번호를 확인해주세요"),
+    INVALID_TOKEN("InvalidToken","토큰이 만료됐거나 유효하지 않습니다.");
 
 
     String errorCode;

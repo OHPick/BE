@@ -10,9 +10,12 @@ import com.team11.shareoffice.global.jwt.entity.RefreshToken;
 import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
 import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.member.dto.LoginRequestDto;
+import com.team11.shareoffice.member.dto.SignOutDto;
 import com.team11.shareoffice.member.dto.SignupRequestDto;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
+import com.team11.shareoffice.post.entity.Post;
+import com.team11.shareoffice.post.repository.PostRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -34,6 +38,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final EmailRepository emailRepository;
+    private final PostRepository postRepository;
 
     // 회원가입
     public ResponseDto<?> signup(SignupRequestDto signupRequestDto){
@@ -59,15 +64,19 @@ public class MemberService {
         }
 
         //인증된 이메일인지 검사
-        Email validEmail =  emailRepository.findById(email).orElseThrow(() -> new CustomException(ErrorCode.WRONG_EMAIL));
-        if(!validEmail.isChecked()){
-            throw new CustomException(ErrorCode.WRONG_EMAIL);
-        }
+//        Email validEmail =  emailRepository.findById(email).orElseThrow(() -> new CustomException(ErrorCode.WRONG_EMAIL));
+//        if(!validEmail.isChecked()){
+//            throw new CustomException(ErrorCode.WRONG_EMAIL);
+//        }
         // 유저 등록
         Member member = Member.builder()
-                .email(validEmail.getEmail())
+//                .email(validEmail.getEmail())
+                .email(email)
                 .password(password)
-                .nickname(nickname).build();
+                .nickname(nickname)
+                .isDelete(false)
+                .build();
+
 
         memberRepository.save(member);
         emailRepository.deleteById(email);
@@ -80,9 +89,14 @@ public class MemberService {
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
 
+
         // 이메일 검사
         Member member = memberRepository.findByEmail(email).orElse(null);
         if (member == null){
+            throw new CustomException(ErrorCode.NOT_EXIST_EMAIL);
+        }
+
+        if (member.getIsDelete()) {
             throw new CustomException(ErrorCode.NOT_EXIST_EMAIL);
         }
 
@@ -109,5 +123,40 @@ public class MemberService {
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
 
         return ResponseDto.setSuccess("로그인 성공");
+    }
+
+//    public ResponseDto<?> logout(Member member) {
+//        Optional<RefreshToken> isMemberLoggedIn = refreshTokenRepository.findByMember(member);
+//        if(isMemberLoggedIn.isEmpty()) {
+//            throw new  CustomException(ErrorCode.NOT_FOUND_USER_INFO);
+//        }
+//        // SecurityContext에서 인증 정보를 삭제
+////        SecurityContextHolder.getContext().setAuthentication(null);
+////        refreshTokenRepository.deleteByMember(member);
+//        return ResponseDto.setSuccess("로그아웃 성공");
+//    }
+
+    public ResponseDto<?> signout(Member member, SignOutDto signOutDto) {
+        String password = signOutDto.getPassword();
+
+        if (!passwordEncoder.matches(password, member.getPassword())){
+            throw new CustomException(ErrorCode.WRONG_PASSWORD);
+        }else if(refreshTokenRepository.findByMember(member).isEmpty()){
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }else{
+            member.setIsDelete(true);
+            memberRepository.save(member);
+
+            List<Post> posts = postRepository.findAllByMemberId(member.getId());
+            if (!posts.isEmpty()) {
+                for (Post p : posts) {
+                    p.setDelete(true);
+                    postRepository.save(p);
+                }
+            }
+            refreshTokenRepository.deleteByMember(member);
+
+            return ResponseDto.setSuccess("회원탈퇴 성공");
+        }
     }
 }
