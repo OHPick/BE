@@ -16,6 +16,10 @@ public enum ErrorCode {
     NOT_FOUND_USER_INFO("NoUserExist",  "유저 정보를 찾을 수 없습니다."),
     WRONG_PASSWORD("WrongPassword", "비밀번호를 확인해주세요"),
     INVALID_TOKEN("InvalidToken","토큰이 만료됐거나 유효하지 않습니다.");
+    WRONG_PASSWORD("WrongPassword", "비밀번호를 확인해주세요"),
+    NOT_EXIST_POST("NotExistPost", "존재하지않는게시글입니다"),
+    INVALID_AUTHOR("InvalidAuthor", "작성자만 할 수 있습니다"),
+    INVALID_MEMBER("InvalidMember", "유효하지 않는 이메일 입니다.");
 
 
     String errorCode;

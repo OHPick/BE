@@ -3,6 +3,8 @@ package com.team11.shareoffice.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity(name = "members")
 @Getter
@@ -39,6 +41,9 @@ public class Member{
 //    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
 //    private List<Likes> likes;
 
+    @ColumnDefault("https://shareoffice12.s3.ap-northeast-2.amazonaws.com/image.png")
+    private String imageUrl;
+
     public Member(String email, Long kakaoId, String password, String nickname){
         this.email = email;
         this.kakaoId = kakaoId;
@@ -48,10 +53,12 @@ public class Member{
 
     @Builder
     public Member(String email, String password, String nickname){
+    public Member(String email, String password, String nickname, String imageUrl){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
 //        this.isDelete = isDelete;
+        this.imageUrl = imageUrl;
     }
 
     public Member kakaoIdUpdate(Long kakaoId) {
@@ -62,4 +69,12 @@ public class Member{
 //        this.isDelete = true;
 //    }
 
+
+    public void updateNickName(String nickName) {
+        this.nickname = nickName;
+    }
+
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
