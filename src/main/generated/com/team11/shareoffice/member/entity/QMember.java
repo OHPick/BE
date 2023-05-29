@@ -23,6 +23,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final StringPath imageUrl = createString("imageUrl");
+
     public final NumberPath<Long> kakaoId = createNumber("kakaoId", Long.class);
 
     public final StringPath nickname = createString("nickname");

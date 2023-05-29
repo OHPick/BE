@@ -10,18 +10,23 @@ import com.team11.shareoffice.global.jwt.entity.RefreshToken;
 import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
 import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.member.dto.LoginRequestDto;
+import com.team11.shareoffice.member.dto.ProfileDto;
 import com.team11.shareoffice.member.dto.SignupRequestDto;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
+import com.team11.shareoffice.post.service.ImageService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Objects;
 import java.util.Optional;
+
+import static com.team11.shareoffice.global.dto.ResponseDto.setSuccess;
 
 @RequiredArgsConstructor
 @Service
@@ -34,6 +39,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final EmailRepository emailRepository;
+    private final ImageService imageService;
 
     // 회원가입
     public ResponseDto<?> signup(SignupRequestDto signupRequestDto){
@@ -63,15 +69,20 @@ public class MemberService {
         if(!validEmail.isChecked()){
             throw new CustomException(ErrorCode.WRONG_EMAIL);
         }
+
+        String basicImage = "https://shareoffice12.s3.ap-northeast-2.amazonaws.com/image.png";
+
         // 유저 등록
         Member member = Member.builder()
                 .email(validEmail.getEmail())
                 .password(password)
-                .nickname(nickname).build();
+                .nickname(nickname)
+                .imageUrl(basicImage)
+                .build();
 
         memberRepository.save(member);
         emailRepository.deleteById(email);
-        return ResponseDto.setSuccess("회원가입에 성공했습니다.");
+        return setSuccess("회원가입에 성공했습니다.");
 
     }
 
@@ -108,6 +119,18 @@ public class MemberService {
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
 
-        return ResponseDto.setSuccess("로그인 성공");
+        return setSuccess("로그인 성공");
     }
+
+    //프로필조회
+    public ResponseDto<ProfileDto> profile(Member member) {
+        String email = member.getEmail();
+        String nickName = member.getNickname();
+        String imageUrl = member.getImageUrl();
+
+        ProfileDto profileDto = new ProfileDto(email,nickName, imageUrl);
+
+        return ResponseDto.setSuccess("프로필 조회성공",profileDto);
+    }
+
 }
