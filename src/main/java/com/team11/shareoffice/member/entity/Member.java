@@ -31,7 +31,7 @@ public class Member{
     private Long kakaoId;
 
     @Column
-    private Boolean isDelete;
+    private boolean isDelete;
 
 //    @OneToMany(mappedBy = "member", orphanRemoval = true)
 //    private List<Post> posts;
