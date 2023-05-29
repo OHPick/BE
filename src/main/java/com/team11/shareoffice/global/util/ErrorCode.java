@@ -13,7 +13,10 @@ public enum ErrorCode {
     WRONG_EMAIL_CODE ("WrongEmailCode", "인증 코드가 일치하지 않습니다"),
     WRONG_EMAIL ("WrongEmail", "인증을 요청한 이메일이 아닙니다."),
     NOT_EXIST_EMAIL("NotExistEmail", "등록되지 않은 이메일입니다."),
-    WRONG_PASSWORD("WrongPassword", "비밀번호를 확인해주세요");
+    WRONG_PASSWORD("WrongPassword", "비밀번호를 확인해주세요"),
+    NOT_EXIST_POST("NotExistPost", "존재하지않는게시글입니다"),
+    INVALID_AUTHOR("InvalidAuthor", "작성자만 할 수 있습니다"),
+    INVALID_MEMBER("InvalidMember", "유효하지 않는 이메일 입니다.");
 
 
     String errorCode;

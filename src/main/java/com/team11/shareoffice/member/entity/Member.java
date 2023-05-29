@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity(name = "members")
 @Getter
@@ -29,6 +30,9 @@ public class Member{
 
     @Column
     private Long kakaoId;
+
+    @ColumnDefault("https://shareoffice12.s3.ap-northeast-2.amazonaws.com/image.png")
+    private String imageUrl;
 
     public Member(String email, Long kakaoId, String password, String nickname){
         this.email = email;
