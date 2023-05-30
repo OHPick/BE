@@ -135,7 +135,7 @@ public class MemberService {
 
     // 프로필 수정
     public ResponseDto<ProfileDto> profileModify(ProfileDto profileDto, MultipartFile image, Member member) throws IOException {
-
+                
         String nickName = profileDto.getNickName();
 
         // 닉네임 중복 검사

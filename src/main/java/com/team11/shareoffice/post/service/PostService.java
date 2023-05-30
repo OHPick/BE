@@ -11,14 +11,15 @@ import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.post.validator.PostValidator;
+import com.team11.shareoffice.reservation.entity.Reservation;
+import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @Transactional
@@ -29,6 +30,7 @@ public class PostService {
     private final PostValidator postValidator;
     private final ImageService imageService;
     private final LikeRepository likeRepository;
+
 
     public ResponseDto<Long> createPost(PostRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
         // 이미지 존재 확인
@@ -73,32 +75,25 @@ public class PostService {
         return ResponseDto.setSuccess(null);
     }
 
-    @Transactional(readOnly = true)
-    public ResponseDto<List<PostResponseDto>> getMyPosts(Member member) {
-        // 내가 쓴 게시글 리스트 찾기.
-        List<Post> posts = postRepository.findAllByMemberOrderByCreatedAt(member);
-
-        List<PostResponseDto> postResponseList = posts.stream()
-                .map(post -> new PostResponseDto(post, isLikedByMember(post, member)))
-                .collect(Collectors.toList());
-
-        return ResponseDto.setSuccess("내 게시글목록 조회성공", postResponseList);
+    // 상세 게시글 조회
+    public ResponseDto<PostResponseDto> getPost(Long id,Member member) {
+        Post post = postValidator.validateIsExistPost(id);
+        PostResponseDto postResponseDto = getPostByUserDetails(member,post);
+        return ResponseDto.setSuccess("상세 게시글 조회 성공", postResponseDto);
     }
 
-    private boolean isLikedByMember(Post post, Member member) {
-        Likes like = likeRepository.findByMemberAndPost(member, post);
-        return like != null;  // like가  null이 아니면 true를  반환.  아니면 false
+    private PostResponseDto getPostByUserDetails(Member member, Post post) {
+        PostResponseDto postResponseDto = new PostResponseDto(post, false);
+
+        if (member != null) {
+            for (Likes likes : likeRepository.findAllByPost(post)) {
+                if (member.getEmail().equals(likes.getMember().getEmail())) {
+                    postResponseDto.setLikeStatus(true);
+                    break;
+                }
+            }
+        }
+        return postResponseDto;
     }
 
-    // 나의 좋아요 목록
-    @Transactional(readOnly = true)
-    public ResponseDto<List<PostResponseDto>> getMyLikes(Member member) {
-        List<Post> postList = likeRepository.findAllByMemberAndLikeStatus(member, true).stream()
-                .map(like -> like.getPost()) // Like 엔티티에서 Post 엔티티로 변환
-                .collect(Collectors.toList());
-        List<PostResponseDto> postResponseList = postList.stream()
-                .map(post -> new PostResponseDto(post, isLikedByMember(post, member)) )
-                .collect(Collectors.toList());
-        return ResponseDto.setSuccess("내 좋아요 목록 조회 성공", postResponseList);
-    }
 }
