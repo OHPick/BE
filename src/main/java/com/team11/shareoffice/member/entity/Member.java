@@ -10,6 +10,7 @@ import org.hibernate.annotations.ColumnDefault;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+//@Where(clause = "is_delete = false")
 public class Member{
 
     @Id
@@ -29,6 +30,15 @@ public class Member{
     @Column
     private Long kakaoId;
 
+    @Column
+    private boolean isDelete;
+
+//    @OneToMany(mappedBy = "member", orphanRemoval = true)
+//    private List<Post> posts;
+//
+//    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+//    private List<Likes> likes;
+
     @ColumnDefault("https://shareoffice12.s3.ap-northeast-2.amazonaws.com/image.png")
     private String imageUrl;
 
@@ -39,10 +49,12 @@ public class Member{
         this.nickname = nickname;
     }
 
+    @Builder
     public Member(String email, String password, String nickname, String imageUrl){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+//        this.isDelete = isDelete;
         this.imageUrl = imageUrl;
     }
 
@@ -50,6 +62,10 @@ public class Member{
         this.kakaoId = kakaoId;
         return this;
     }
+//    public void softDelete() {
+//        this.isDelete = true;
+//    }
+
 
     public void updateNickName(String nickName) {
         this.nickname = nickName;
