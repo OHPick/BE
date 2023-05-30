@@ -38,4 +38,8 @@ public class Likes {
     public void setLikeStatus() {
         this.likeStatus = !(this.likeStatus);
     }
+
+    public boolean isLikeStatus() {
+        return this.likeStatus;
+    }
 }
