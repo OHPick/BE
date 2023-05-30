@@ -85,7 +85,6 @@ public class MemberService {
         memberRepository.save(member);
         emailRepository.deleteById(email);
         return setSuccess("회원가입에 성공했습니다.");
-
     }
 
     // 로그인

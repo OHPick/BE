@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 @RequiredArgsConstructor
@@ -29,14 +31,14 @@ public class MemberValidator {
         if (!Objects.equals(requestDto.getPassword(), requestDto.getPasswordCheck())) {
             throw new CustomException(ErrorCode.NOT_SAME_PASSWORD);
         }
-//        //"비밀번호는 8-15자리, 최소 하나의 영어 대소문자, 숫자, 특수문자(@$!%*?&()_)를 포함해야 합니다."
-//        String passwordPattern = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[~!@#$%^&*()_+{}])[a-zA-Z0-9~!@#$%^&*()_+{}]{8,15}$";
-//        Pattern pattern = Pattern.compile(passwordPattern);
-//        Matcher matcher = pattern.matcher(requestDto.getPassword());
-//
-//        if (!matcher.matches()) {
-//            throw new CustomException(ErrorCode.INVALID_PASSWORD_PATTERN);
-//        }
+        //"비밀번호는 8-15자리, 최소 하나의 영어 대소문자, 숫자, 특수문자(@$!%*?&()_)를 포함해야 합니다."
+        String passwordPattern = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[~!@#$%^&*()_+{}])[a-zA-Z0-9~!@#$%^&*()_+{}]{8,15}$";
+        Pattern pattern = Pattern.compile(passwordPattern);
+        Matcher matcher = pattern.matcher(requestDto.getPassword());
+
+        if (!matcher.matches()) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD_PATTERN);
+        }
     }
 
     //회원가입 - 이메일 중복 검사
