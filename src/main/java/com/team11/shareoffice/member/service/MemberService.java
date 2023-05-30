@@ -125,6 +125,9 @@ public class MemberService {
     //프로필조회
     @Transactional(readOnly = true)
     public ResponseDto<ProfileDto> profile(Member member) {
+
+        memberValidator.validateEmailExist(member.getEmail());
+
         String email = member.getEmail();
         String nickName = member.getNickname();
         String imageUrl = member.getImageUrl();
