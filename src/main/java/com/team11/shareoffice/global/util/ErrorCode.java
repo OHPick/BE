@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
+    //회원가입 / 로그인 부분
     EXIST_EMAIL("ExistEmail", "이미 등록된 이메일 입니다."),
     EXIST_NICKNAME("ExistNickname", "이미 등록된 닉네임 입니다."),
     INVALID_NICKNAME_PATTERN ("InvalidNicknamePattern", "닉네임은 최소 2~10글자여야 합니다."),
@@ -20,6 +21,13 @@ public enum ErrorCode {
     INVALID_AUTHOR("InvalidAuthor", "작성자만 할 수 있습니다"),
     INVALID_MEMBER("InvalidMember", "유효하지 않는 이메일 입니다.");
 
+
+    //게시글 관련
+    NOT_EXIST_POST("NotExistPost", "존재하지 않은 게시글 입니다."),
+
+    //예약관련
+    INVALID_DATE ("InvalidDate", "예약할 수 없는 날짜입니다."),
+    NOT_RESERVED ("NotReserved", "예약 취소는 예약자만 가능 합니다.");
 
     String errorCode;
     String message;
