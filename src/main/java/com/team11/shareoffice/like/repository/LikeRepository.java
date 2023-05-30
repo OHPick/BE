@@ -12,6 +12,8 @@ public interface LikeRepository extends JpaRepository<Likes, Long> {
     Likes findByMemberAndPost(Member member, Post post);
     List<Likes> findAllByMemberAndLikeStatus(Member member, boolean likeStatus);
 
+    Likes findByMemberIdAndPostId(Long memberId, Long postId);
+
     List<Likes> findAllByPost(Post post);
 
     void deleteLikesByPost(Post post);

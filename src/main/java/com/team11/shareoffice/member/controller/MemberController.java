@@ -34,7 +34,7 @@ public class MemberController {
     @Operation(summary = "회원가입 API", description = "회원가입")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "회원 가입 완료")})
     @PostMapping("/signup")
-    public ResponseDto<?> signup(@RequestBody @Valid MemberRequestDto memberRequestDto){
+    public ResponseDto<?> signup(@RequestBody MemberRequestDto memberRequestDto){
         return memberService.signup(memberRequestDto);
     }
 

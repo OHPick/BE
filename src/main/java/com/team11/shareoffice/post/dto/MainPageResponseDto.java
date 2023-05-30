@@ -1,5 +1,6 @@
 package com.team11.shareoffice.post.dto;
 
+import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.post.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,9 +17,10 @@ public class MainPageResponseDto {
     private String content;
     private String location;
     private int price;
-    private int likeCount;
     private String postImage;
     private String memberNickname;
+    private int likeCount;
+    private boolean likeStatus;
 
     public MainPageResponseDto(Post post) {
         this.id = post.getId();
@@ -30,4 +32,21 @@ public class MainPageResponseDto {
         this.postImage = post.getPostImage();
         this.memberNickname = post.getMember().getNickname();
     }
+
+    public MainPageResponseDto(Post post, Likes likes) {
+        this.id = post.getId();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.location = post.getLocation();
+        this.price = post.getPrice();
+        this.likeCount = post.getLikeCount();
+        this.postImage = post.getPostImage();
+        this.memberNickname = post.getMember().getNickname();
+        if (likes != null) {
+            this.likeStatus = likes.isLikeStatus();
+        } else {
+            this.likeStatus = false;
+        }
+    }
+
 }
