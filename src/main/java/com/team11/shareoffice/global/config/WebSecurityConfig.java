@@ -2,10 +2,12 @@ package com.team11.shareoffice.global.config;
 
 import com.team11.shareoffice.global.jwt.JwtAuthFilter;
 import com.team11.shareoffice.global.jwt.JwtUtil;
+import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -64,7 +66,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/members/**").permitAll()
                 .requestMatchers("/oauth/kakao").permitAll()
                 .requestMatchers("/api/email/**").permitAll()
-                .requestMatchers("/api/posts").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/posts/**").permitAll()
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
@@ -72,12 +74,15 @@ public class WebSecurityConfig {
         // 이 설정을 해주지 않으면 밑의 cors가 적용되지 않는다
         http.cors();
 
+
         //로그아웃 기능
-//        http.logout()
-//                .logoutUrl("/members/logout")
-//                .logoutSuccessUrl("/posts")
-//                .deleteCookies(JwtUtil.ACCESS_TOKEN, JwtUtil.REFRESH_TOKEN);
-//
+        http.logout()
+//                .logoutRequestMatcher(new AntPathRequestMatcher("/api/members/logout", "POST"))
+//                .logoutUrl("/api/members/logout")
+                .invalidateHttpSession(true)
+                .deleteCookies(JwtUtil.ACCESS_TOKEN, JwtUtil.REFRESH_TOKEN)
+                .logoutSuccessUrl("/api/members/logout");
+
         // 401 Error 처리, Authorization 즉, 인증과정에서 실패할 시 처리
 //        http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);
 

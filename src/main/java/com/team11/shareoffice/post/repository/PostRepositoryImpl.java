@@ -4,10 +4,14 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.team11.shareoffice.global.security.UserDetailsImpl;
+import com.team11.shareoffice.like.entity.Likes;
+import com.team11.shareoffice.like.repository.LikeRepository;
 import com.team11.shareoffice.post.dto.MainPageResponseDto;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.entity.QPost;
 import io.micrometer.common.util.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,13 +26,16 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
 
     private final JPAQueryFactory queryFactory;
 
+    @Autowired
+    private LikeRepository likeRepository;
+
     public PostRepositoryImpl(JPAQueryFactory queryFactory) {
         super(Post.class);
         this.queryFactory = queryFactory;
     }
 
     @Override
-    public Page<MainPageResponseDto> search(String keyword, String district, String sorting, Pageable pageable) {
+    public Page<MainPageResponseDto> FilteringAndPaging(UserDetailsImpl userDetails, String keyword, String district, String sorting, Pageable pageable) {
         QPost post = QPost.post;
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -60,7 +67,11 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
         List<Post> resultsList = results.getResults();
         List<MainPageResponseDto> dtos = new ArrayList<>();
         for (Post posts : resultsList) {
-            dtos.add(new MainPageResponseDto(posts));
+            Likes likes = null;
+            if (userDetails != null) {
+                likes = likeRepository.findByMemberIdAndPostId(userDetails.getMember().getId(), posts.getId());
+            }
+            dtos.add(new MainPageResponseDto(posts, likes));
         }
         return new PageImpl<>(dtos, pageable, results.getTotal());
     }
@@ -91,7 +102,6 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
             }
             orders.add(post.createdAt.desc());
         }
-
         return orders;
     }
 

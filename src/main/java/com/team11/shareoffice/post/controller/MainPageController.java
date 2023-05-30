@@ -1,11 +1,14 @@
 package com.team11.shareoffice.post.controller;
 
 
+import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.post.dto.MainPageResponseDto;
 import com.team11.shareoffice.post.service.MainPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,10 +23,11 @@ public class MainPageController {
     private final MainPageService mainPageService;
 
     @GetMapping("/api/posts")
-    public Page<MainPageResponseDto> getPosts(@RequestParam(required = false) String keyword,
+    public Page<MainPageResponseDto> getPosts(@AuthenticationPrincipal @Nullable UserDetailsImpl userDetails,
+                                              @RequestParam(required = false) String keyword,
                                               @RequestParam(required = false) String district,
                                               @RequestParam(required = false) String sorting,
                                               Pageable pageable) {
-        return mainPageService.findPosts(keyword, district, sorting, pageable);
+        return mainPageService.findPosts(userDetails, keyword, district, sorting, pageable);
     }
 }
