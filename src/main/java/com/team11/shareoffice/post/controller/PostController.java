@@ -9,7 +9,10 @@ import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,15 +46,24 @@ public class PostController {
         return postService.deletePost(id, userDetails.getMember());
     }
 
-    //나의 게시글들 조회하기
-    @GetMapping("/myPosts")
-    public ResponseDto<List<PostResponseDto>> getMyPosts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.getMyPosts(userDetails.getMember());
+
+    //상세 게시글 조회
+    @GetMapping("/{id}")
+    public ResponseDto<PostResponseDto> GetPost(@PathVariable Long id) {
+        if (isAuthenticated()) {
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return postService.getPost(id, userDetails.getMember());
+        }
+        return postService.getPost(id,null);
     }
 
-    //좋아요한 게시글들 조회하기
-    @GetMapping("/myPosts/likes")
-    public ResponseDto<List<PostResponseDto>> getMyLikes(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.getMyLikes(userDetails.getMember());
+    //로그인 여부 확인
+    private boolean isAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || AnonymousAuthenticationToken.class.
+                isAssignableFrom(authentication.getClass())) {
+            return false;
+        }
+        return authentication.isAuthenticated();
     }
 }

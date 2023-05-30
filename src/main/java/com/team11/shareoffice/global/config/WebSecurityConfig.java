@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -65,7 +66,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/members/**").permitAll()
                 .requestMatchers("/oauth/kakao").permitAll()
                 .requestMatchers("/api/email/**").permitAll()
-                .requestMatchers("/api/posts").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/posts/**").permitAll()
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

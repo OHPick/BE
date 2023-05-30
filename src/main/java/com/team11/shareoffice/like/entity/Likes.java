@@ -24,7 +24,7 @@ public class Likes {
     private Post post;
 
     @Column(nullable = false)
-    private boolean likeStatus;
+    private boolean likeStatus = false;
 
     public Likes(Post post, Member member) {
         this.post = post;
