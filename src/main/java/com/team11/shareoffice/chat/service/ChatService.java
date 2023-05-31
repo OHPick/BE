@@ -35,7 +35,7 @@ public class ChatService {
     //private final MemberService memberService;
 
     @Transactional
-    public ResponseDto<?> enterRoom(Long postId, String nickname) {
+    public ResponseDto<Long> enterRoom(Long postId, String nickname) {
         Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new CustomException(ErrorCode.INVALID_MEMBER));
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
         Member owner = memberRepository.findByNickname(post.getMember().getNickname()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_MEMBER));
@@ -62,12 +62,12 @@ public class ChatService {
         template.convertAndSend("/sub/chat/room/" + message.getRoomId(), responseDto);
     }
 
-//    @Transactional
-//    public ResponseDto deleteRoom(Long roomId) {
-//        ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
-//        chatRoomRepository.deleteAllAboutRoomById(room.getId());
-//        return ResponseMessage.SuccessResponse("채팅방 삭제 성공", "");
-//    }
+    @Transactional
+    public ResponseDto deleteRoom(Long roomId) {
+        ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+        chatRoomRepository.deleteById(room.getId());
+        return ResponseDto.setSuccess("채팅방 삭제 성공");
+    }
 
 }
 

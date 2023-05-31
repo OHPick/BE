@@ -17,7 +17,7 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping("/room/{postId}/{nickname}")
-    public ResponseDto enterRoom(@PathVariable Long postId, @PathVariable String nickname) {
+    public ResponseDto<Long> enterRoom(@PathVariable Long postId, @PathVariable String nickname) {
         return chatService.enterRoom(postId, nickname);
     }
 
@@ -26,13 +26,13 @@ public class ChatController {
 //        return chatService.findMessageHistory(roomId, userDetails.getUser());
 //    }
 
-    @MessageMapping(value = "/message")
+    @MessageMapping("/message")
     public void message(ChatDto message) {
         chatService.saveMessage(message);
     }
 
-//    @DeleteMapping("/room/{roomId}")
-//    public ResponseDto deleteRoom(@PathVariable Long roomId) {
-//        return chatService.deleteRoom(roomId);
-//    }
+    @DeleteMapping("/room/{roomId}")
+    public ResponseDto deleteRoom(@PathVariable Long roomId) {
+        return chatService.deleteRoom(roomId);
+    }
 }
