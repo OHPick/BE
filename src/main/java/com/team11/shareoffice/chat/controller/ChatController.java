@@ -6,33 +6,33 @@ import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/chat")
 @RequiredArgsConstructor
 public class ChatController {
     private final ChatService chatService;
 
-    @PostMapping("/room/{postId}/{nickname}")
-    public ResponseDto<Long> enterRoom(@PathVariable Long postId, @PathVariable String nickname) {
-        return chatService.enterRoom(postId, nickname);
-    }
 
-//    @GetMapping("/room")
+//    @GetMapping("/chat/room")
 //    public ResponseDto findMessageHistory(@RequestParam(value = "roomId", required = false) Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 //        return chatService.findMessageHistory(roomId, userDetails.getUser());
 //    }
 
-    @MessageMapping("/message")
+    @MessageMapping("/chat/message")
     public void message(ChatDto message) {
         chatService.saveMessage(message);
     }
 
-    @DeleteMapping("/room/{roomId}")
-    public ResponseDto deleteRoom(@PathVariable Long roomId) {
-        return chatService.deleteRoom(roomId);
+    @DeleteMapping("/chat/room/{roomId}")
+    public ResponseDto deleteRoom(@PathVariable Long roomId,@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return chatService.deleteRoom(roomId,userDetails.getMember());
     }
 }

@@ -20,14 +20,14 @@ public class ChatMessage {
     private Member sender;
 
     @Column(nullable = false)
-    private String content;
+    private String message;
 
     @ManyToOne
     private ChatRoom room;
 
-    public ChatMessage(Member sender, String content, ChatRoom room) {
+    public ChatMessage(Member sender, String message, ChatRoom room) {
         this.sender = sender;
-        this.content = content;
+        this.message = message;
         this.room = room;
     }
 }

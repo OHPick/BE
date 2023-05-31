@@ -18,8 +18,8 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String roomId;
+//    @Column(nullable = false)
+//    private String roomId;
 
     @ManyToOne
     private Post post;
@@ -31,7 +31,7 @@ public class ChatRoom {
     private Member owner;
 
     public ChatRoom(Post post, Member member, Member owner) {
-        this.roomId = UUID.randomUUID().toString().substring(0, 8);
+//        this.roomId = UUID.randomUUID().toString().substring(0, 8);
         this.post = post;
         this.member = member;
         this.owner = owner;

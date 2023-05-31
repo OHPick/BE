@@ -1,0 +1,34 @@
+package com.team11.shareoffice.chat.controller;
+
+import com.team11.shareoffice.chat.service.ChatService;
+import com.team11.shareoffice.global.dto.ResponseDto;
+import com.team11.shareoffice.global.security.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api")
+public class ChatRoomController {
+
+    private final ChatService chatService;
+
+    @PostMapping("/chat/room/{postId}/{nickname}")
+    public ResponseDto<Long> enterRoom(@PathVariable Long postId, @PathVariable String nickname) {
+        return chatService.enterRoom(postId, nickname);
+    }
+
+
+    @GetMapping("/chat/room")
+    public ResponseDto<List<?>> getAllChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return chatService.getAllChatRooms(userDetails.getMember());
+    }
+
+    @DeleteMapping("/chat/room/{roomId}")
+    public ResponseDto<?> deleteRoom(@PathVariable Long roomId,@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return chatService.deleteRoom(roomId, userDetails.getMember());
+    }
+}
