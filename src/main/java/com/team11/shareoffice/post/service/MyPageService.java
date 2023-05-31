@@ -7,6 +7,7 @@ import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.dto.PostResponseDto;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
+import com.team11.shareoffice.post.validator.PostValidator;
 import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class MyPageService {
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
     private final ReservationRepository reservationRepository;
+    private final PostValidator postValidator;
 
     @Transactional(readOnly = true)
     public ResponseDto<List<PostResponseDto>> getMyPosts(Member member) {
