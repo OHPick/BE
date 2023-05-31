@@ -13,6 +13,6 @@ public class ChatDto {
 
     private Long roomId;
     private String sender;
-    private String content;
+    private String message;
 
 }
