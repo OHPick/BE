@@ -56,13 +56,15 @@ public class ChatService {
 //    }
 
     @Transactional
-    public void saveMessage(ChatDto message) {
+    public void saveMessage(Long id, ChatDto message) {
+        // 메세지 보낸사람
         Member member = memberRepository.findByNickname(message.getSender()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_MEMBER));
-        ChatRoom room = chatRoomRepository.findById(message.getRoomId()).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+        // 메세지를 보낸 방
+        ChatRoom room = chatRoomRepository.findChatRoomById(id).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
         ChatMessage chatMessage = new ChatMessage(member, message.getMessage(), room);
         chatMessageRepository.saveAndFlush(chatMessage);
         ChatResponseDto responseDto = new ChatResponseDto(chatMessage.getRoom().getId(), chatMessage.getSender().getNickname(), chatMessage.getMessage());
-        template.convertAndSend("/sub/chat/room/" + message.getRoomId(), responseDto);
+        template.convertAndSend("/sub/chat/room/" + id, responseDto);
     }
 
     @Transactional
