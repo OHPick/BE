@@ -13,4 +13,5 @@ public class ChatResponseDto {
     private Long roomId; // 방번호
     private String sender; // nickname
     private String message; // 메시지
+    private String createdAt; //생성시간
 }
