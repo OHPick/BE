@@ -43,7 +43,7 @@ public class PostService {
         Post post = new Post(postRequestDto, member);
         post.setPostImage(imageUrl);
         postRepository.save(post);
-        return ResponseDto.setSuccess("게시글 작성 성공");
+        return ResponseDto.setSuccess("게시글 작성 성공",post.getId());
     }
 
     public ResponseDto<?> updatePost(Long id, PostUpdateRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
@@ -78,12 +78,17 @@ public class PostService {
     // 상세 게시글 조회
     public ResponseDto<PostResponseDto> getPost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
+
+        //예약한 사람 정보 가져오기
+
+
         PostResponseDto postResponseDto = getPostByUserDetails(member,post);
         return ResponseDto.setSuccess("상세 게시글 조회 성공", postResponseDto);
     }
 
+
     private PostResponseDto getPostByUserDetails(Member member, Post post) {
-        PostResponseDto postResponseDto = new PostResponseDto(post, false);
+        PostResponseDto postResponseDto = new PostResponseDto(member,post, false);
 
         if (member != null) {
             for (Likes likes : likeRepository.findAllByPost(post)) {

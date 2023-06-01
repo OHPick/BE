@@ -33,7 +33,7 @@ public class MyPageService {
         List<Post> posts = postRepository.findAllByMemberOrderByCreatedAt(member);
 
         List<PostResponseDto> postResponseList = posts.stream()
-                .map(post -> new PostResponseDto(post, isLikedByMember(post, member)))
+                .map(post -> new PostResponseDto(member, post, isLikedByMember(post, member)))
                 .collect(Collectors.toList());
 
         return ResponseDto.setSuccess("내 게시글목록 조회성공", postResponseList);
@@ -46,7 +46,7 @@ public class MyPageService {
                 .map(like -> like.getPost()) // Like 엔티티에서 Post 엔티티로 변환
                 .collect(Collectors.toList());
         List<PostResponseDto> postResponseList = postList.stream()
-                .map(post -> new PostResponseDto(post, isLikedByMember(post, member)) )
+                .map(post -> new PostResponseDto(member, post, isLikedByMember(post, member)) )
                 .collect(Collectors.toList());
         return ResponseDto.setSuccess("내 좋아요 목록 조회 성공", postResponseList);
     }
@@ -56,7 +56,7 @@ public class MyPageService {
     public ResponseDto<List<PostResponseDto>> getMyReserves(Member member) {
         List<Post> reservations = reservationRepository.findAllByMember(member).stream().map(Reservation::getPost).toList();
 
-        List<PostResponseDto> postResponseDtoList = reservations.stream().map(post -> new PostResponseDto(post, isLikedByMember(post, member))).collect(Collectors.toList());
+        List<PostResponseDto> postResponseDtoList = reservations.stream().map(post -> new PostResponseDto(member, post, isLikedByMember(post, member))).collect(Collectors.toList());
 
         return ResponseDto.setSuccess("나의 예약 현황 목록 조회 완료", postResponseDtoList);
     }
