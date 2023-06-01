@@ -26,9 +26,9 @@ public class ChatController {
 //        return chatService.findMessageHistory(roomId, userDetails.getUser());
 //    }
 
-    @MessageMapping("/chat/message/{id}")
-    public void message(@DestinationVariable Long id, ChatDto message) {
-        chatService.saveMessage(id,message);
+    @MessageMapping("/chat/message")
+    public void message(ChatDto message) {
+        chatService.saveMessage(message);
     }
 
     @DeleteMapping("/chat/room/{roomId}")
