@@ -58,13 +58,13 @@ public class Post extends Timestamped {
 
     public Post (PostRequestDto requestDto, Member member){
         this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
+        this.content = requestDto.getContent().replace("\\n", "\n");
         this.location = requestDto.getLocation();
         this.price = requestDto.getPrice();
         this.capacity = requestDto.getCapacity();
-        this.operatingTime = requestDto.getOperatingTime();
-        this.contentDetails = requestDto.getContentDetails();
-        this.amenities = requestDto.getAmenities();
+        this.operatingTime = requestDto.getOperatingTime().replace("\\n", "\n");
+        this.contentDetails = requestDto.getContentDetails().replace("\\n", "\n");
+        this.amenities = requestDto.getAmenities().replace("\\n", "\n");
         this.member = member;
     }
 
