@@ -38,11 +38,9 @@ public class PostService {
 //             throw new IllegalArgumentException();
 //         }
 
-//         String imageUrl = imageService.uploadFile(image);
-        if(image == null || image.isEmpty()){
-            String imageUrl = "image.jpg";
-        }
-
+        String imageUrl = imageService.uploadFile(image);
+       
+        
         Post post = new Post(postRequestDto, member);
         post.setPostImage(imageUrl);
         postRepository.save(post);
