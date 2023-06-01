@@ -12,5 +12,5 @@ import lombok.Setter;
 public class ChatResponseDto {
     private Long roomId; // 방번호
     private String sender; // nickname
-    private String content; // 메시지
+    private String message; // 메시지
 }
