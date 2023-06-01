@@ -24,13 +24,7 @@ public class QPost extends EntityPathBase<Post> {
 
     public final QTimestamped _super = new QTimestamped(this);
 
-    public final StringPath amenities = createString("amenities");
-
-    public final NumberPath<Integer> capacity = createNumber("capacity", Integer.class);
-
     public final StringPath content = createString("content");
-
-    public final StringPath contentDetails = createString("contentDetails");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
@@ -47,8 +41,6 @@ public class QPost extends EntityPathBase<Post> {
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifiedAt = _super.modifiedAt;
-
-    public final StringPath operatingTime = createString("operatingTime");
 
     public final StringPath postImage = createString("postImage");
 

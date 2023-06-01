@@ -8,12 +8,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PostRequestDto {
     private String title;
+    private String content;
     private String location;
     private int price;
-    private int capacity;  //
-    private String content;
-    private String operatingTime; //
-    private String contentDetails; //
-    private String amenities; //
 
 }

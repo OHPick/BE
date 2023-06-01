@@ -34,16 +34,6 @@ public class Post extends Timestamped {
     // 임대료
     @Column(nullable = false)
     private int price;
-
-    @Column(nullable = false)
-    private int capacity;  //
-    @Column(nullable = false)
-    private String operatingTime; //
-    @Column(nullable = false)
-    private String contentDetails; //
-    @Column(nullable = false)
-    private String amenities; //
-
     //좋아요 개수
     @Column(nullable = false)
     @ColumnDefault("0")
@@ -61,10 +51,6 @@ public class Post extends Timestamped {
         this.content = requestDto.getContent();
         this.location = requestDto.getLocation();
         this.price = requestDto.getPrice();
-        this.capacity = requestDto.getCapacity();
-        this.operatingTime = requestDto.getOperatingTime();
-        this.contentDetails = requestDto.getContentDetails();
-        this.amenities = requestDto.getAmenities();
         this.member = member;
     }
 
@@ -72,11 +58,6 @@ public class Post extends Timestamped {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.location = requestDto.getLocation();
-        this.price = requestDto.getPrice();
-        this.capacity = requestDto.getCapacity();
-        this.operatingTime = requestDto.getOperatingTime();
-        this.contentDetails = requestDto.getContentDetails();
-        this.amenities = requestDto.getAmenities();
     }
 
     public void updateLike(Boolean likeOrDislike) {
