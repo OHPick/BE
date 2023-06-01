@@ -7,6 +7,7 @@ import com.team11.shareoffice.post.dto.PostResponseDto;
 import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -26,6 +27,7 @@ public class PostController {
 
     private final PostService postService;
 
+    @Operation(summary = "게시글작성 API", description = "게시글작성")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     public ResponseDto<Long> createPost(@RequestPart PostRequestDto postRequestDto,
                                         @RequestPart(value = "imageFile", required = false) MultipartFile image,
@@ -33,6 +35,7 @@ public class PostController {
         return postService.createPost(postRequestDto, image, userDetails.getMember());
     }
 
+    @Operation(summary = "게시글수정 API", description = "게시글수정")
     @PutMapping("/{id}")
     public ResponseDto<Long> updatePost(@PathVariable Long id,
                                         @RequestPart(value = "postRequestDto", required = false) PostUpdateRequestDto postRequestDto,
@@ -41,6 +44,7 @@ public class PostController {
         return postService.updatePost(id, postRequestDto, image, userDetails.getMember());
     }
 
+    @Operation(summary = "게시글삭제 API", description = "게시글삭제")
     @DeleteMapping("/{id}")
     public ResponseDto<Long> deletePost(@PathVariable Long id,@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.deletePost(id, userDetails.getMember());
@@ -48,6 +52,7 @@ public class PostController {
 
 
     //상세 게시글 조회
+    @Operation(summary = "상세게시글 API", description = "상세게시글")
     @GetMapping("/{id}")
     public ResponseDto<PostResponseDto> GetPost(@PathVariable Long id) {
         if (isAuthenticated()) {

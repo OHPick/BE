@@ -4,6 +4,7 @@ package com.team11.shareoffice.post.controller;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.post.dto.MainPageResponseDto;
 import com.team11.shareoffice.post.service.MainPageService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ public class MainPageController {
 
     private final MainPageService mainPageService;
 
+    @Operation(summary = "메인페이지 API", description = "메인페이지")
     @GetMapping("/api/posts")
     public Page<MainPageResponseDto> getPosts(@AuthenticationPrincipal @Nullable UserDetailsImpl userDetails,
                                               @RequestParam(required = false) String keyword,

@@ -7,12 +7,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ChatDto {
-
-    private Long roomId;
-    private String sender;
-    private String message;
-
+@AllArgsConstructor
+public class ChatResponseDto {
+    private Long roomId; // 방번호
+    private String sender; // nickname
+    private String message; // 메시지
 }
