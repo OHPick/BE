@@ -1,6 +1,7 @@
 package com.team11.shareoffice.post.dto;
 
 
+import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.entity.Post;
 import jakarta.persistence.Column;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class PostResponseDto {
     private String amenities;
     private boolean likeStatus;
     private int userStatus;
+
 
     public PostResponseDto(Post post, boolean likeStatus, int userStatus) {
         this.id = post.getId();
