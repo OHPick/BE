@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class ChatController {
     private final ChatService chatService;
 
-
 //    @GetMapping("/chat/room")
 //    public ResponseDto findMessageHistory(@RequestParam(value = "roomId", required = false) Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 //        return chatService.findMessageHistory(roomId, userDetails.getUser());
