@@ -34,11 +34,14 @@ public class PostService {
 
     public ResponseDto<Long> createPost(PostRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
         // 이미지 존재 확인
-        if (image == null || image.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+//         if (image == null || image.isEmpty()) {
+//             throw new IllegalArgumentException();
+//         }
 
-        String imageUrl = imageService.uploadFile(image);
+//         String imageUrl = imageService.uploadFile(image);
+        if(image == null || image.isEmpty()){
+            String imageUrl = "image.jpg";
+        }
 
         Post post = new Post(postRequestDto, member);
         post.setPostImage(imageUrl);
