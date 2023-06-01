@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -30,16 +32,18 @@ public class PostService {
     private final PostValidator postValidator;
     private final ImageService imageService;
     private final LikeRepository likeRepository;
+    private final ReservationRepository reservationRepository;
 
 
     public ResponseDto<?> createPost(PostRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
         // 이미지 존재 확인
-        if (image == null || image.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+//         if (image == null || image.isEmpty()) {
+//             throw new IllegalArgumentException();
+//         }
 
         String imageUrl = imageService.uploadFile(image);
-
+       
+        
         Post post = new Post(postRequestDto, member);
         post.setPostImage(imageUrl);
         postRepository.save(post);
@@ -88,7 +92,8 @@ public class PostService {
 
 
     private PostResponseDto getPostByUserDetails(Member member, Post post) {
-        PostResponseDto postResponseDto = new PostResponseDto(member,post, false);
+        PostResponseDto postResponseDto = new PostResponseDto(post, false, 0);
+
 
         if (member != null) {
             for (Likes likes : likeRepository.findAllByPost(post)) {
@@ -97,8 +102,24 @@ public class PostService {
                     break;
                 }
             }
+            postResponseDto.setUserStatus(getUserStatus(member,post));
         }
         return postResponseDto;
+    }
+
+    private int getUserStatus(Member member, Post post){
+        if(post.getMember().getEmail().equals(member.getEmail())){
+            return 2;
+        }
+        else {
+            List<Post> reservations = reservationRepository.findAllByMember(member).stream().map(Reservation::getPost).toList();
+            for(Post reservedPost : reservations){
+                if(reservedPost.getId().equals(post.getId())){
+                    return 1;
+                }
+            }
+            return 0;
+        }
     }
 
 }

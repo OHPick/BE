@@ -10,7 +10,6 @@ import lombok.Setter;
 @Setter
 public class PostResponseDto {
     private Long id;
-    private String wirterEmail;
     private String title;
     private String content;
     private String location;
@@ -19,10 +18,11 @@ public class PostResponseDto {
     private int price;
     private int capacity;
     private boolean likeStatus;
+    private int userStatus;
 
-    public PostResponseDto(Member member, Post post, boolean likeStatus) {
+
+    public PostResponseDto(Post post, boolean likeStatus, int userStatus) {
         this.id = post.getId();
-        this.wirterEmail = member.getEmail();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.location = post.getLocation();
@@ -31,5 +31,6 @@ public class PostResponseDto {
         this.price = post.getPrice();
         this.capacity = post.getCapacity();
         this.likeStatus = likeStatus;
+        this.userStatus = userStatus;
     }
 }

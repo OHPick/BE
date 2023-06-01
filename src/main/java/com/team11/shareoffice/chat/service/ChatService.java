@@ -61,7 +61,7 @@ public class ChatService {
         ChatRoom room = chatRoomRepository.findById(message.getRoomId()).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
         ChatMessage chatMessage = new ChatMessage(member, message.getMessage(), room);
         chatMessageRepository.saveAndFlush(chatMessage);
-        ChatResponseDto responseDto = new ChatResponseDto(chatMessage.getRoom().getId(), chatMessage.getSender().getNickname(), chatMessage.getMessage());
+        ChatResponseDto responseDto = new ChatResponseDto(chatMessage.getRoom().getId(), chatMessage.getSender().getNickname(), chatMessage.getMessage(), changeDateFormat(chatMessage.getCreatedAt()));
         template.convertAndSend("/sub/chat/room/" + message.getRoomId(), responseDto);
     }
 
@@ -81,6 +81,13 @@ public class ChatService {
     public ResponseDto<List<?>> getAllChatRooms(Member member){
 //        List<ChatRoom> chatRooms = chatRoomRepository.findAllByMember(member);
         return ResponseDto.setSuccess(chatRoomRepository.findAllByMember(member));
+    }
+
+    private String changeDateFormat(String createdAt) {
+        String[] date = createdAt.split(" ");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
+        return date[0].equals(today) ? date[1] : date[0];
     }
 
 }
