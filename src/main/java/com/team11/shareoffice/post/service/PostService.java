@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -30,9 +32,10 @@ public class PostService {
     private final PostValidator postValidator;
     private final ImageService imageService;
     private final LikeRepository likeRepository;
+    private final ReservationRepository reservationRepository;
 
 
-    public ResponseDto<Long> createPost(PostRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
+    public ResponseDto<?> createPost(PostRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
         // 이미지 존재 확인
 //         if (image == null || image.isEmpty()) {
 //             throw new IllegalArgumentException();
@@ -44,10 +47,10 @@ public class PostService {
         Post post = new Post(postRequestDto, member);
         post.setPostImage(imageUrl);
         postRepository.save(post);
-        return ResponseDto.setSuccess(null);
+        return ResponseDto.setSuccess("게시글 작성 성공");
     }
 
-    public ResponseDto<Long> updatePost(Long id, PostUpdateRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
+    public ResponseDto<?> updatePost(Long id, PostUpdateRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
         //게시글 존재 확인.
         Post post = postValidator.validateIsExistPost(id);
         //게시글 작성자가 맞는지 확인.
@@ -64,16 +67,16 @@ public class PostService {
             post.setPostImage(uploadFilename);
         }
 
-        return ResponseDto.setSuccess(null);
+        return ResponseDto.setSuccess("게시글 수정 성공");
     }
 
-    public ResponseDto<Long> deletePost(Long id,Member member) {
+    public ResponseDto<?> deletePost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
         postValidator.validatePostAuthor(post, member);
         likeRepository.deleteLikesByPost(post);
         imageService.delete(post.getPostImage()); // 버켓의 이미지파일도 삭제
         postRepository.delete(post);
-        return ResponseDto.setSuccess(null);
+        return ResponseDto.setSuccess("게시글 삭제 성공");
     }
 
     // 상세 게시글 조회
@@ -84,7 +87,7 @@ public class PostService {
     }
 
     private PostResponseDto getPostByUserDetails(Member member, Post post) {
-        PostResponseDto postResponseDto = new PostResponseDto(post, false);
+        PostResponseDto postResponseDto = new PostResponseDto(post, false, 0);
 
         if (member != null) {
             for (Likes likes : likeRepository.findAllByPost(post)) {
@@ -93,8 +96,24 @@ public class PostService {
                     break;
                 }
             }
+            postResponseDto.setUserStatus(getUserStatus(member,post));
         }
         return postResponseDto;
+    }
+
+    private int getUserStatus(Member member, Post post){
+        if(post.getMember().getEmail().equals(member.getEmail())){
+            return 2;
+        }
+        else {
+            List<Post> reservations = reservationRepository.findAllByMember(member).stream().map(Reservation::getPost).toList();
+            for(Post reservedPost : reservations){
+                if(reservedPost.getId().equals(post.getId())){
+                    return 1;
+                }
+            }
+            return 0;
+        }
     }
 
 }
