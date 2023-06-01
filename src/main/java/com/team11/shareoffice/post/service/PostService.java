@@ -82,18 +82,12 @@ public class PostService {
     // 상세 게시글 조회
     public ResponseDto<PostResponseDto> getPost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
-
-        //예약한 사람 정보 가져오기
-
-
         PostResponseDto postResponseDto = getPostByUserDetails(member,post);
         return ResponseDto.setSuccess("상세 게시글 조회 성공", postResponseDto);
     }
 
-
     private PostResponseDto getPostByUserDetails(Member member, Post post) {
         PostResponseDto postResponseDto = new PostResponseDto(post, false, 0);
-
 
         if (member != null) {
             for (Likes likes : likeRepository.findAllByPost(post)) {
@@ -109,16 +103,13 @@ public class PostService {
 
     private int getUserStatus(Member member, Post post){
         if(post.getMember().getEmail().equals(member.getEmail())){
-            return 2; // 작성자의 게시글
+            return 2;
         }
         else {
-            List<Post> reservations = reservationRepository.findAllByMember(member).stream().map(Reservation::getPost).toList();  // 로그인한사람이 예약한 게시글들
-            for(Post reservedPost : reservations){
-                if(reservedPost.getId().equals(post.getId())){ // 내가 상세조회한 게시글이 있는지 없는지
-                    return 1;
-                }
+            if(reservationRepository.findByMemberAndPost(member, post).isPresent()){
+                return 1;
             }
-            return 0; // 내가 예약을 안 한 게시글
+            return 0;
         }
     }
 

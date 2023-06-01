@@ -3,6 +3,7 @@ package com.team11.shareoffice.post.dto;
 
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.entity.Post;
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +18,9 @@ public class PostResponseDto {
     private int likeCount;
     private int price;
     private int capacity;
+    private String operatingTime;
+    private String contentDetails;
+    private String amenities;
     private boolean likeStatus;
     private int userStatus;
 
@@ -30,6 +34,9 @@ public class PostResponseDto {
         this.likeCount = post.getLikeCount();
         this.price = post.getPrice();
         this.capacity = post.getCapacity();
+        this.operatingTime = post.getOperatingTime();
+        this.contentDetails = post.getContentDetails();
+        this.amenities = post.getAmenities();
         this.likeStatus = likeStatus;
         this.userStatus = userStatus;
     }
