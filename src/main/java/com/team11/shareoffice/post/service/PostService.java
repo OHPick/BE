@@ -106,11 +106,8 @@ public class PostService {
             return 2;
         }
         else {
-            List<Post> reservations = reservationRepository.findAllByMember(member).stream().map(Reservation::getPost).toList();
-            for(Post reservedPost : reservations){
-                if(reservedPost.getId().equals(post.getId())){
-                    return 1;
-                }
+            if(reservationRepository.findByMemberAndPost(member, post).isPresent()){
+                return 1;
             }
             return 0;
         }
