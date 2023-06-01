@@ -109,16 +109,16 @@ public class PostService {
 
     private int getUserStatus(Member member, Post post){
         if(post.getMember().getEmail().equals(member.getEmail())){
-            return 2;
+            return 2; // 작성자의 게시글
         }
         else {
-            List<Post> reservations = reservationRepository.findAllByMember(member).stream().map(Reservation::getPost).toList();
+            List<Post> reservations = reservationRepository.findAllByMember(member).stream().map(Reservation::getPost).toList();  // 로그인한사람이 예약한 게시글들
             for(Post reservedPost : reservations){
-                if(reservedPost.getId().equals(post.getId())){
+                if(reservedPost.getId().equals(post.getId())){ // 내가 상세조회한 게시글이 있는지 없는지
                     return 1;
                 }
             }
-            return 0;
+            return 0; // 내가 예약을 안 한 게시글
         }
     }
 
