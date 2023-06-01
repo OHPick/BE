@@ -54,7 +54,7 @@ public class PostController {
     //상세 게시글 조회
     @Operation(summary = "상세게시글 API", description = "상세게시글")
     @GetMapping("/{id}")
-    public ResponseDto<PostResponseDto> GetPost(@PathVariable Long id) {
+    public ResponseDto<PostResponseDto> getPost(@PathVariable Long id) {
         if (isAuthenticated()) {
             UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             return postService.getPost(id, userDetails.getMember());
