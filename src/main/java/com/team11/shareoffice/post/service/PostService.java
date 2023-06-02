@@ -47,7 +47,7 @@ public class PostService {
         Post post = new Post(postRequestDto, member);
         post.setPostImage(imageUrl);
         postRepository.save(post);
-        return ResponseDto.setSuccess("게시글 작성 성공");
+        return ResponseDto.setSuccess("게시글 작성 성공", post.getId());
     }
 
     public ResponseDto<?> updatePost(Long id, PostUpdateRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
@@ -103,17 +103,13 @@ public class PostService {
 
     private int getUserStatus(Member member, Post post){
         if(post.getMember().getEmail().equals(member.getEmail())){
-            return 2;
+            return 3;
         }
         else {
-            List<Post> reservations = reservationRepository.findAllByMember(member).stream().map(Reservation::getPost).toList();
-            for(Post reservedPost : reservations){
-                if(reservedPost.getId().equals(post.getId())){
-                    return 1;
-                }
+            if(reservationRepository.findByMemberAndPost(member, post).isPresent()){
+                return 2;
             }
-            return 0;
+            return 1;
         }
     }
-
 }
