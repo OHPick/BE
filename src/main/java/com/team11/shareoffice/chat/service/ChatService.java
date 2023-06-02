@@ -6,19 +6,16 @@ import com.team11.shareoffice.chat.entity.ChatMessage;
 import com.team11.shareoffice.chat.entity.ChatRoom;
 import com.team11.shareoffice.chat.repository.ChatMessageRepository;
 import com.team11.shareoffice.chat.repository.ChatRoomRepository;
+import com.team11.shareoffice.chat.repository.ChatRoomRepositoryImpl;
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.exception.CustomException;
-import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
-import com.team11.shareoffice.member.service.MemberService;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +33,7 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final SimpMessageSendingOperations template;
     //private final MemberService memberService;
+    private final ChatRoomRepositoryImpl chatRoomRepositoryImpl;
 
     @Transactional
     public ResponseDto<Long> enterRoom(Long postId, String nickname) {
@@ -77,17 +75,37 @@ public class ChatService {
         return ResponseDto.setSuccess("채팅방 삭제 성공");
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseDto<List<?>> getAllChatRooms(Member member){
-//        List<ChatRoom> chatRooms = chatRoomRepository.findAllByMember(member);
-        return ResponseDto.setSuccess(chatRoomRepository.findAllByMember(member));
+        return ResponseDto.setSuccess(chatRoomRepositoryImpl.findAllChatRoom(member));
     }
+
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getChatRoom(Long roomId, Member member){
+        ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow( () -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+
+        List<ChatMessage> messages = chatMessageRepository.findAllByRoomOrderByCreatedAt(room);
+        List<ChatResponseDto> chatResponseDtos = messages.stream()
+                .map(message -> new ChatResponseDto(roomId, changeNickname(message.getSender().getNickname(), member), message.getMessage(), changeDateFormat(message.getCreatedAt())))
+                        .toList();
+
+
+        return ResponseDto.setSuccess(chatResponseDtos);
+    }
+
 
     private String changeDateFormat(String createdAt) {
         String[] date = createdAt.split(" ");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
         return date[0].equals(today) ? date[1] : date[0];
+    }
+
+    private String changeNickname(String nickname, Member member) {
+        if(member.getNickname().equals(nickname)){
+            return "ME";
+        }
+        return nickname;
     }
 
 }

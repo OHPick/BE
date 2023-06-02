@@ -7,8 +7,6 @@ import com.team11.shareoffice.global.util.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.NoSuchElementException;
-
 @Component
 @RequiredArgsConstructor
 public class EmailValidator {

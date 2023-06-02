@@ -3,7 +3,6 @@ package com.team11.shareoffice.post.service;
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.like.repository.LikeRepository;
-import com.team11.shareoffice.like.service.LikeService;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.dto.PostRequestDto;
 import com.team11.shareoffice.post.dto.PostResponseDto;
@@ -11,7 +10,6 @@ import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.post.validator.PostValidator;
-import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -92,7 +88,7 @@ public class PostService {
         if (member != null) {
             for (Likes likes : likeRepository.findAllByPost(post)) {
                 if (member.getEmail().equals(likes.getMember().getEmail())) {
-                    postResponseDto.setLikeStatus(true);
+                    postResponseDto.setLikeStatus(likes.isLikeStatus());
                     break;
                 }
             }
