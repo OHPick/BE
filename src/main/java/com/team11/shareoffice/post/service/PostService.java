@@ -103,13 +103,13 @@ public class PostService {
 
     private int getUserStatus(Member member, Post post){
         if(post.getMember().getEmail().equals(member.getEmail())){
-            return 2;
+            return 3;
         }
         else {
             if(reservationRepository.findByMemberAndPost(member, post).isPresent()){
-                return 1;
+                return 2;
             }
-            return 0;
+            return 1;
         }
     }
 }
