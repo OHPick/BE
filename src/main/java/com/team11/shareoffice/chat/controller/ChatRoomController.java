@@ -26,10 +26,10 @@ public class ChatRoomController {
     public ResponseDto<List<?>> getAllChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return chatService.getAllChatRooms(userDetails.getMember());
     }
-//    @GetMapping("/chat/room/{roomId}")
-//    public ResponseDto<> getChatRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-//        return chatService.getChatRoom(roomId,userDetails.getMember());
-//    }
+    @GetMapping("/chat/room/{roomId}")
+    public ResponseDto<?> getChatRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return chatService.getChatRoom(roomId,userDetails.getMember());
+    }
 
     @DeleteMapping("/chat/room/{roomId}")
     public ResponseDto<?> deleteRoom(@PathVariable Long roomId,@AuthenticationPrincipal UserDetailsImpl userDetails) {

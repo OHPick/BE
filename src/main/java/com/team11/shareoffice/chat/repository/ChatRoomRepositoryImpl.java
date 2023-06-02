@@ -3,6 +3,7 @@ package com.team11.shareoffice.chat.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.team11.shareoffice.chat.dto.ChatResponseDto;
 import com.team11.shareoffice.chat.dto.ChatRoomResponseDto;
 import com.team11.shareoffice.chat.entity.ChatMessage;
 import com.team11.shareoffice.chat.entity.ChatRoom;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
@@ -66,19 +68,4 @@ public class ChatRoomRepositoryImpl extends QuerydslRepositorySupport implements
                 .toList();
     }
 
-
-
-   //  .leftJoin(chatMessage)
-   //             .on(chatRoom.toUser.id.eq(chatMessage.user.id))
-
-//    @Override
-    public List<Long> getRoomId(Long memberId) {
-        QChatRoom chatRoom = QChatRoom.chatRoom;
-
-        return jpaQueryFactory
-                .select(chatRoom.id)
-                .from(chatRoom)
-                .where(chatRoom.member.id.eq(memberId))
-                .fetch();
-    }
 }
