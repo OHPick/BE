@@ -26,14 +26,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String accessToken = jwtUtil.resolveToken(request, JwtUtil.ACCESS_TOKEN);
         String refreshToken = jwtUtil.resolveToken(request, JwtUtil.REFRESH_TOKEN);
         if (accessToken != null) {
-            //Access 토큰 유효 시, security context에 인증 정보 저장
-            if (jwtUtil.validateToken(accessToken)) {
+
+            if (jwtUtil.validateToken(accessToken)) {  //Access 토큰 유효 시, security context에 인증 정보 저장
                 setAuthentication(jwtUtil.getUserInfoFromToken(accessToken));
-            }
-            // Access 토큰 만료
-            else if (refreshToken != null) {
-                // Refresh 토큰 유효
-                if (Boolean.TRUE.equals(jwtUtil.validateRefreshToken(refreshToken))) {
+
+            }else if (refreshToken != null) {   // Access 토큰 만료 + 리프레쉬토큰은 있을 경우
+
+                if (Boolean.TRUE.equals(jwtUtil.validateToken(refreshToken))) {
                     String userEmail = jwtUtil.getUserInfoFromToken(refreshToken);
                     //new accessToken 발급
                     String newAccessToken = jwtUtil.createToken(userEmail, JwtUtil.ACCESS_TOKEN);
@@ -43,9 +42,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     String newToken = newAccessToken.substring(7);
                     setAuthentication(jwtUtil.getUserInfoFromToken(newToken));
                     log.info("새로운 토큰 생성 완료");
-                }
-                //Access & Refresh 토큰 만료시
-                else {
+
+               }else {   //Access & Refresh 토큰 만료시
                     log.info("토큰 에러 here");
                     jwtExceptionHandler(response, "유효하지 않은 토큰 입니다.", HttpStatus.UNAUTHORIZED.value());
                     return;

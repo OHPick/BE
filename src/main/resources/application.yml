@@ -11,6 +11,12 @@ spring:
         show_sql: true
 #        hbm2ddl:
 #          auto: auto
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+
 
 #swagger
 springdoc:
@@ -22,3 +28,4 @@ springdoc:
     disable-swagger-default-url: true
     display-request-duration: true
     operations-sorter: alpha
+

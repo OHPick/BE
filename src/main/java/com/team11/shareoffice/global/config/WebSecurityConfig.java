@@ -76,12 +76,12 @@ public class WebSecurityConfig {
 
 
         //로그아웃 기능
-        http.logout()
-//                .logoutRequestMatcher(new AntPathRequestMatcher("/api/members/logout", "POST"))
-//                .logoutUrl("/api/members/logout")
-                .invalidateHttpSession(true)
-                .deleteCookies(JwtUtil.ACCESS_TOKEN, JwtUtil.REFRESH_TOKEN)
-                .logoutSuccessUrl("/api/posts");
+//        http.logout()
+////                .logoutRequestMatcher(new AntPathRequestMatcher("/api/members/logout", "POST"))
+////                .logoutUrl("/api/members/logout")
+//                .invalidateHttpSession(true)
+//                .deleteCookies(JwtUtil.ACCESS_TOKEN, JwtUtil.REFRESH_TOKEN)
+//                .logoutSuccessUrl("/api/posts");
 
         // 401 Error 처리, Authorization 즉, 인증과정에서 실패할 시 처리
 //        http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);

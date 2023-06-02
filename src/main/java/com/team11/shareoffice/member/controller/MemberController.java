@@ -11,12 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,14 +41,20 @@ public class MemberController {
     public ResponseDto<?> login(@RequestBody MemberRequestDto requestDto, HttpServletResponse response){
         return memberService.login(requestDto, response);
     }
+
+    @Operation(summary = "토큰 재발급API")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "토큰재발급 완료")})
+    @PostMapping("/token")
+    public ResponseDto<?> reissueToken(HttpServletRequest request, HttpServletResponse response){
+        return memberService.reissueToken(request, response);
+    }
+
     @Operation(summary = "로그아웃API")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "로그아웃 완료")})
-    @Transactional
     @PostMapping("/logout")
-    public ResponseDto<?> logout(HttpServletRequest request, HttpServletResponse response, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-      new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-      refreshTokenRepository.deleteByMember(userDetails.getMember());
-      return ResponseDto.setSuccess("로그아웃 성공");
+    public ResponseDto<String> logout( @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        memberService.logout(userDetails.getMember());
+        return ResponseDto.setSuccess("로그아웃 성공");
     }
 
     @Operation(summary = "회원탈퇴API")

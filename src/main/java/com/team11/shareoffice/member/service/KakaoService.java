@@ -49,7 +49,7 @@ public class KakaoService {
         //Token 생성
         TokenDto tokenDto = jwtUtil.createAllToken(userInfo.getEmail());
         //RefreshToken 있는지 확인
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMember(kakaoUser);
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMember(kakaoUser);  //이부분 수정해야할듯
         // 있으면 새 토큰 발급 후 업데이트
         // 없으면 새로 만들고 DB에 저장
         if (refreshToken.isPresent()) {

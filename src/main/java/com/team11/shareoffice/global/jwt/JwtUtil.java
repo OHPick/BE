@@ -106,21 +106,21 @@ public class JwtUtil {
 
     //RefreshToken 검증
     //DB에 저장돼 있는 토큰과 비교
-    public Boolean validateRefreshToken(String token) {
-        //1차 토큰 검증
-        if (!validateToken(token)) return false;
-
-        // 이 부분 오료 해결시 주석 푸시면 됩니다~
-        //사용자 찾기
-        Member member = memberRepository.findByEmail(getUserInfoFromToken(token)).orElseThrow(
-                () -> new NullPointerException(HttpStatus.BAD_REQUEST.getReasonPhrase())
-        );
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMember(member);
-
-        // 사용자의 Refresh 토큰 가져오기
-        return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken().substring(7));
-
-    }
+//    public Boolean validateRefreshToken(String refreshTokenFromRequest) {
+//        //1차 토큰 검증
+////        if (!validateToken(refreshTokenFromRequest)) {
+////            return false;
+////        }else{
+////            return true;
+//        return validateToken(refreshTokenFromRequest);
+//        //사용자 찾기
+////        Member member = memberRepository.findByEmail(getUserInfoFromToken(refreshTokenFromRequest)).orElseThrow(
+////                () -> new NullPointerException(HttpStatus.BAD_REQUEST.getReasonPhrase())
+////        );
+////        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMember(member);
+////        // 사용자의 Refresh 토큰 가져오기
+////        return refreshToken.isPresent() && refreshTokenFromRequest.equals(refreshToken.get().getRefreshToken().substring(7));
+//    }
 
     // 카카오토큰 생성
 //    public String createKakaoToken(String userEmail, Long kakaoId) {
@@ -139,6 +139,10 @@ public class JwtUtil {
     // 토큰에서 사용자 정보 가져오기
     public String getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public Claims getClaimsFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
     // 인증 객체 생성

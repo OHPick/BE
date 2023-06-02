@@ -90,10 +90,11 @@ public class MemberValidator {
     }
 
     //토큰 검증
-    public void validateToken(Member member) {
-        if (refreshTokenRepository.findByMember(member).isEmpty()) {
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
-        }
+//    public void validateToken(Member member) {
+//        if (refreshTokenRepository.findByMember(member).isEmpty()) {
+//            throw new CustomException(ErrorCode.INVALID_TOKEN);
+//        }
+//    }
 
-    }
+
 }
