@@ -3,7 +3,6 @@ package com.team11.shareoffice.post.service;
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.like.repository.LikeRepository;
-import com.team11.shareoffice.like.service.LikeService;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.dto.PostRequestDto;
 import com.team11.shareoffice.post.dto.PostResponseDto;
@@ -11,7 +10,6 @@ import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.post.validator.PostValidator;
-import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,23 +28,25 @@ public class PostService {
     private final PostValidator postValidator;
     private final ImageService imageService;
     private final LikeRepository likeRepository;
+    private final ReservationRepository reservationRepository;
 
 
-    public ResponseDto<Long> createPost(PostRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
+    public ResponseDto<?> createPost(PostRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
         // 이미지 존재 확인
-        if (image == null || image.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+//         if (image == null || image.isEmpty()) {
+//             throw new IllegalArgumentException();
+//         }
 
         String imageUrl = imageService.uploadFile(image);
-
+       
+        
         Post post = new Post(postRequestDto, member);
         post.setPostImage(imageUrl);
         postRepository.save(post);
-        return ResponseDto.setSuccess(null);
+        return ResponseDto.setSuccess("게시글 작성 성공", post.getId());
     }
 
-    public ResponseDto<Long> updatePost(Long id, PostUpdateRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
+    public ResponseDto<?> updatePost(Long id, PostUpdateRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
         //게시글 존재 확인.
         Post post = postValidator.validateIsExistPost(id);
         //게시글 작성자가 맞는지 확인.
@@ -63,16 +63,16 @@ public class PostService {
             post.setPostImage(uploadFilename);
         }
 
-        return ResponseDto.setSuccess(null);
+        return ResponseDto.setSuccess("게시글 수정 성공");
     }
 
-    public ResponseDto<Long> deletePost(Long id,Member member) {
+    public ResponseDto<?> deletePost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
         postValidator.validatePostAuthor(post, member);
         likeRepository.deleteLikesByPost(post);
         imageService.delete(post.getPostImage()); // 버켓의 이미지파일도 삭제
         postRepository.delete(post);
-        return ResponseDto.setSuccess(null);
+        return ResponseDto.setSuccess("게시글 삭제 성공");
     }
 
     // 상세 게시글 조회
@@ -83,7 +83,7 @@ public class PostService {
     }
 
     private PostResponseDto getPostByUserDetails(Member member, Post post) {
-        PostResponseDto postResponseDto = new PostResponseDto(post, false);
+        PostResponseDto postResponseDto = new PostResponseDto(post, false, 0);
 
         if (member != null) {
             for (Likes likes : likeRepository.findAllByPost(post)) {
@@ -92,8 +92,20 @@ public class PostService {
                     break;
                 }
             }
+            postResponseDto.setUserStatus(getUserStatus(member,post));
         }
         return postResponseDto;
     }
 
+    private int getUserStatus(Member member, Post post){
+        if(post.getMember().getEmail().equals(member.getEmail())){
+            return 3;
+        }
+        else {
+            if(reservationRepository.findByMemberAndPost(member, post).isPresent()){
+                return 2;
+            }
+            return 1;
+        }
+    }
 }

@@ -28,7 +28,11 @@ public enum ErrorCode {
 
     //예약관련
     INVALID_DATE ("InvalidDate", "예약할 수 없는 날짜입니다."),
-    NOT_RESERVED ("NotReserved", "예약 취소는 예약자만 가능 합니다.");
+    NOT_RESERVED ("NotReserved", "예약 취소는 예약자만 가능 합니다."),
+
+    //채팅관련
+    CHATROOM_NOT_FOUND("NotExistChatRoom", "채팅방이 없습니다"),
+    INVALID_CHAT_MEMBER("InvalidChatMember", "채팅방에 속해 있는 사용자만 삭제 가능합니다.");
 
     String errorCode;
     String message;

@@ -7,6 +7,7 @@ import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.dto.PostResponseDto;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
+import com.team11.shareoffice.post.validator.PostValidator;
 import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class MyPageService {
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
     private final ReservationRepository reservationRepository;
+    private final PostValidator postValidator;
 
     @Transactional(readOnly = true)
     public ResponseDto<List<PostResponseDto>> getMyPosts(Member member) {
@@ -31,7 +33,8 @@ public class MyPageService {
         List<Post> posts = postRepository.findAllByMemberOrderByCreatedAt(member);
 
         List<PostResponseDto> postResponseList = posts.stream()
-                .map(post -> new PostResponseDto(post, isLikedByMember(post, member)))
+                .map(post -> new PostResponseDto(post, isLikedByMember(post, member), 3))
+
                 .collect(Collectors.toList());
 
         return ResponseDto.setSuccess("내 게시글목록 조회성공", postResponseList);
@@ -44,7 +47,9 @@ public class MyPageService {
                 .map(like -> like.getPost()) // Like 엔티티에서 Post 엔티티로 변환
                 .collect(Collectors.toList());
         List<PostResponseDto> postResponseList = postList.stream()
-                .map(post -> new PostResponseDto(post, isLikedByMember(post, member)) )
+
+                .map(post -> new PostResponseDto(post, isLikedByMember(post, member), getUserStatus(member, post)) )
+
                 .collect(Collectors.toList());
         return ResponseDto.setSuccess("내 좋아요 목록 조회 성공", postResponseList);
     }
@@ -54,7 +59,8 @@ public class MyPageService {
     public ResponseDto<List<PostResponseDto>> getMyReserves(Member member) {
         List<Post> reservations = reservationRepository.findAllByMember(member).stream().map(Reservation::getPost).toList();
 
-        List<PostResponseDto> postResponseDtoList = reservations.stream().map(post -> new PostResponseDto(post, isLikedByMember(post, member))).collect(Collectors.toList());
+
+        List<PostResponseDto> postResponseDtoList = reservations.stream().map(post -> new PostResponseDto(post, isLikedByMember(post, member), 2)).collect(Collectors.toList());
 
         return ResponseDto.setSuccess("나의 예약 현황 목록 조회 완료", postResponseDtoList);
     }
@@ -62,5 +68,17 @@ public class MyPageService {
     private boolean isLikedByMember(Post post, Member member) {
         Likes like = likeRepository.findByMemberAndPost(member, post);
         return like != null;  // like가  null이 아니면 true를  반환.  아니면 false
+    }
+
+    private int getUserStatus(Member member, Post post){
+        if(post.getMember().getEmail().equals(member.getEmail())){
+            return 3;
+        }
+        else {
+            if(reservationRepository.findByMemberAndPost(member,post).isPresent()){
+                return 2;
+            }
+            return 1;
+        }
     }
 }
