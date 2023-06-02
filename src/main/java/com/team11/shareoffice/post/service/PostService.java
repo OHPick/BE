@@ -88,7 +88,7 @@ public class PostService {
         if (member != null) {
             for (Likes likes : likeRepository.findAllByPost(post)) {
                 if (member.getEmail().equals(likes.getMember().getEmail())) {
-                    postResponseDto.setLikeStatus(true);
+                    postResponseDto.setLikeStatus(likes.isLikeStatus());
                     break;
                 }
             }
