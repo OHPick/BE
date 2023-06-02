@@ -1,7 +1,6 @@
 package com.team11.shareoffice.post.service;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
-import com.team11.shareoffice.global.exception.CustomException;
 import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.like.repository.LikeRepository;
 import com.team11.shareoffice.member.entity.Member;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

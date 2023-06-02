@@ -2,7 +2,6 @@ package com.team11.shareoffice.global.config;
 
 import com.team11.shareoffice.global.jwt.JwtAuthFilter;
 import com.team11.shareoffice.global.jwt.JwtUtil;
-import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
