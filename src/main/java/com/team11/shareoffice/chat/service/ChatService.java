@@ -6,19 +6,16 @@ import com.team11.shareoffice.chat.entity.ChatMessage;
 import com.team11.shareoffice.chat.entity.ChatRoom;
 import com.team11.shareoffice.chat.repository.ChatMessageRepository;
 import com.team11.shareoffice.chat.repository.ChatRoomRepository;
+import com.team11.shareoffice.chat.repository.ChatRoomRepositoryImpl;
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.exception.CustomException;
-import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
-import com.team11.shareoffice.member.service.MemberService;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +33,7 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final SimpMessageSendingOperations template;
     //private final MemberService memberService;
+    private final ChatRoomRepositoryImpl chatRoomRepositoryImpl;
 
     @Transactional
     public ResponseDto<Long> enterRoom(Long postId, String nickname) {
@@ -80,7 +78,7 @@ public class ChatService {
     @Transactional
     public ResponseDto<List<?>> getAllChatRooms(Member member){
 //        List<ChatRoom> chatRooms = chatRoomRepository.findAllByMember(member);
-        return ResponseDto.setSuccess(chatRoomRepository.findAllByMember(member));
+        return ResponseDto.setSuccess(chatRoomRepositoryImpl.findAllChatRoom(member));
     }
 
     private String changeDateFormat(String createdAt) {

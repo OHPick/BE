@@ -1,9 +1,7 @@
 package com.team11.shareoffice.post.dto;
 
 
-import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.entity.Post;
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 

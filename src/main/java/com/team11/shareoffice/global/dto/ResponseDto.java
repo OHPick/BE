@@ -2,7 +2,6 @@ package com.team11.shareoffice.global.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.global.util.StatusCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

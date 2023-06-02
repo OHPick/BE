@@ -2,7 +2,6 @@ package com.team11.shareoffice.global.exception;
 
 import com.team11.shareoffice.global.util.ErrorCode;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public class CustomException extends RuntimeException {
