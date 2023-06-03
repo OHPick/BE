@@ -3,7 +3,6 @@ package com.team11.shareoffice.member.validator;
 import com.team11.shareoffice.email.entity.Email;
 import com.team11.shareoffice.email.repository.EmailRepository;
 import com.team11.shareoffice.global.exception.CustomException;
-import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
 import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.member.dto.MemberRequestDto;
 import com.team11.shareoffice.member.entity.Member;
@@ -24,7 +23,6 @@ public class MemberValidator {
     private final MemberRepository memberRepository;
     private final EmailRepository emailRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     //회원가입 - 비밀번호 확인 일치 여부
     public void validatePasswordCheck(MemberRequestDto requestDto) {
@@ -90,10 +88,11 @@ public class MemberValidator {
     }
 
     //토큰 검증
-    public void validateToken(Member member) {
-        if (refreshTokenRepository.findByMember(member).isEmpty()) {
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
-        }
+//    public void validateToken(Member member) {
+//        if (refreshTokenRepository.findByMember(member).isEmpty()) {
+//            throw new CustomException(ErrorCode.INVALID_TOKEN);
+//        }
+//    }
 
-    }
+
 }

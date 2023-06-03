@@ -21,7 +21,6 @@ public class PostResponseDto {
     private String amenities;
     private boolean likeStatus;
     private int userStatus;
-    private int postCount;
 
     public PostResponseDto(Post post, boolean likeStatus, int userStatus) {
         this.id = post.getId();
@@ -37,22 +36,5 @@ public class PostResponseDto {
         this.amenities = post.getAmenities();
         this.likeStatus = likeStatus;
         this.userStatus = userStatus;
-    }
-
-    public PostResponseDto(Post post, boolean likeStatus, int userStatus, int postCount) {
-        this.id = post.getId();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.location = post.getLocation();
-        this.imageUrl = post.getPostImage();
-        this.likeCount = post.getLikeCount();
-        this.price = post.getPrice();
-        this.capacity = post.getCapacity();
-        this.operatingTime = post.getOperatingTime();
-        this.contentDetails = post.getContentDetails();
-        this.amenities = post.getAmenities();
-        this.likeStatus = likeStatus;
-        this.userStatus = userStatus;
-        this.postCount = postCount;
     }
 }
