@@ -1,7 +1,6 @@
 package com.team11.shareoffice.member.controller;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
-import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.member.dto.MemberRequestDto;
 import com.team11.shareoffice.member.dto.ProfileCountDto;
@@ -25,7 +24,6 @@ import java.io.IOException;
 public class MemberController {
 
     private final MemberService memberService;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     // Sign up
     @Operation(summary = "회원가입 API", description = "회원가입")

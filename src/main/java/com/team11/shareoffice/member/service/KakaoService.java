@@ -6,8 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.jwt.JwtUtil;
 import com.team11.shareoffice.global.jwt.dto.TokenDto;
-import com.team11.shareoffice.global.jwt.entity.RefreshToken;
-import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
+import com.team11.shareoffice.global.service.RedisService;
 import com.team11.shareoffice.member.dto.UserInfoDto;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
@@ -21,8 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Optional;
+import java.time.Duration;
 import java.util.UUID;
+
+import static com.team11.shareoffice.global.dto.ResponseDto.setSuccess;
 
 @Slf4j
 @Service
@@ -31,7 +32,9 @@ public class KakaoService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+//    private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisService redisService;
+
 
     @Value("${kakao.client.secret}")
     private String clientSecret;
@@ -45,24 +48,35 @@ public class KakaoService {
         // 3. 필요 시에 회원 가입
         Member kakaoUser = registerKakaoUserIfNeeded(userInfo);
         // 4. jWT 액서스 토큰 반환
-        String createToken = jwtUtil.createToken(kakaoUser.getEmail(), accessToken);
-        //Token 생성
-        TokenDto tokenDto = jwtUtil.createAllToken(userInfo.getEmail());
-        //RefreshToken 있는지 확인
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMember(kakaoUser);  //이부분 수정해야할듯
-        // 있으면 새 토큰 발급 후 업데이트
-        // 없으면 새로 만들고 DB에 저장
-        if (refreshToken.isPresent()) {
-            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
-        } else {
-            refreshTokenRepository.saveAndFlush(RefreshToken.saveToken(tokenDto.getRefreshToken(), kakaoUser));
-        }
+//        String createToken = jwtUtil.createToken(kakaoUser.getEmail(), jwtUtil.ACCESS_TOKEN);
+//        //Token 생성
+//        TokenDto tokenDto = jwtUtil.createAllToken(userInfo.getEmail());
+//        //RefreshToken 있는지 확인
+//        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMember(kakaoUser);  //이부분 수정해야할듯
+//        // 있으면 새 토큰 발급 후 업데이트
+//        // 없으면 새로 만들고 DB에 저장
+//        if (refreshToken.isPresent()) {
+//            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
+//        } else {
+//            refreshTokenRepository.saveAndFlush(RefreshToken.saveToken(tokenDto.getRefreshToken(), kakaoUser));
+//        }
+//
+//        //header에 accesstoken, refreshtoken 추가
+//        response.addHeader(JwtUtil.ACCESS_TOKEN, createToken);
+//        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+//        return ResponseDto.setSuccess("로그인에 성공했습니다");
+        issueTokens(response, kakaoUser.getEmail());
 
-        //header에 accesstoken, refreshtoken 추가
-        response.addHeader(JwtUtil.ACCESS_TOKEN, createToken);
+        return setSuccess("로그인 성공");
+    }
+
+    public void issueTokens(HttpServletResponse response, String email){
+        System.out.println("MemberService.issueTokens");
+        TokenDto tokenDto = jwtUtil.createAllToken(email);
+        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-        return ResponseDto.setSuccess("로그인에 성공했습니다");
 
+        redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(60));
     }
 
     private String getToken(String code) throws JsonProcessingException {

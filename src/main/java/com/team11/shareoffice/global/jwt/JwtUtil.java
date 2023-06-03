@@ -1,10 +1,7 @@
 package com.team11.shareoffice.global.jwt;
 
 import com.team11.shareoffice.global.jwt.dto.TokenDto;
-import com.team11.shareoffice.global.jwt.entity.RefreshToken;
-import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
 import com.team11.shareoffice.global.security.UserDetailsServiceImpl;
-import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -14,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +21,6 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -33,7 +28,6 @@ import java.util.Optional;
 public class JwtUtil {
 
     private final MemberRepository memberRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final UserDetailsServiceImpl userDetailsService;
     public static final String ACCESS_TOKEN = "Access_Token";
     public static final String REFRESH_TOKEN = "Refresh_Token";
