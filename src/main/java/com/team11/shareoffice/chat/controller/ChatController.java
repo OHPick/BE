@@ -26,8 +26,4 @@ public class ChatController {
         chatService.saveMessage(message);
     }
 
-    @DeleteMapping("/chat/room/{roomId}")
-    public ResponseDto deleteRoom(@PathVariable Long roomId,@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return chatService.deleteRoom(roomId,userDetails.getMember());
-    }
 }
