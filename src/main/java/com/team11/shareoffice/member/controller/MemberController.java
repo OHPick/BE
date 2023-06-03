@@ -1,7 +1,6 @@
 package com.team11.shareoffice.member.controller;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
-import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.member.dto.MemberRequestDto;
 import com.team11.shareoffice.member.dto.ProfileCountDto;
@@ -14,9 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +24,6 @@ import java.io.IOException;
 public class MemberController {
 
     private final MemberService memberService;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     // Sign up
     @Operation(summary = "회원가입 API", description = "회원가입")
@@ -45,14 +40,20 @@ public class MemberController {
     public ResponseDto<?> login(@RequestBody MemberRequestDto requestDto, HttpServletResponse response){
         return memberService.login(requestDto, response);
     }
+
+//    @Operation(summary = "토큰 재발급API")
+//    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "토큰재발급 완료")})
+//    @PostMapping("/token")
+//    public ResponseDto<?> reissueToken(HttpServletRequest request, HttpServletResponse response){
+//        return memberService.reissueToken(request, response);
+//    }
+
     @Operation(summary = "로그아웃API")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "로그아웃 완료")})
-    @Transactional
     @PostMapping("/logout")
-    public ResponseDto<?> logout(HttpServletRequest request, HttpServletResponse response, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-      new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-      refreshTokenRepository.deleteByMember(userDetails.getMember());
-      return ResponseDto.setSuccess("로그아웃 성공");
+    public ResponseDto<String> logout(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
+        memberService.logout(userDetails.getMember(), request);
+        return ResponseDto.setSuccess("로그아웃 성공");
     }
 
     @Operation(summary = "회원탈퇴API")
