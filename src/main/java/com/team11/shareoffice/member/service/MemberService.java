@@ -9,7 +9,9 @@ import com.team11.shareoffice.global.jwt.entity.RefreshToken;
 import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.global.util.ErrorCode;
+import com.team11.shareoffice.like.repository.LikeRepository;
 import com.team11.shareoffice.member.dto.MemberRequestDto;
+import com.team11.shareoffice.member.dto.ProfileCountDto;
 import com.team11.shareoffice.member.dto.ProfileDto;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
@@ -17,6 +19,8 @@ import com.team11.shareoffice.member.validator.MemberValidator;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.post.service.ImageService;
+import com.team11.shareoffice.reservation.entity.Reservation;
+import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.team11.shareoffice.global.dto.ResponseDto.setSuccess;
 
@@ -45,6 +50,8 @@ public class MemberService {
     private final PostRepository postRepository;
     private final MemberValidator memberValidator;
     private final ImageService imageService;
+    private final LikeRepository likeRepository;
+    private final ReservationRepository reservationRepository;
 
 
     // 회원가입
@@ -123,7 +130,7 @@ public class MemberService {
 
     //프로필조회
     @Transactional(readOnly = true)
-    public ResponseDto<ProfileDto> profile(Member member) {
+    public ResponseDto<ProfileCountDto> profile(Member member) {
 
         memberValidator.validateEmailExist(member.getEmail());
 
@@ -131,9 +138,23 @@ public class MemberService {
         String nickName = member.getNickname();
         String imageUrl = member.getImageUrl();
 
-        ProfileDto profileDto = new ProfileDto(email,nickName, imageUrl);
+        // 내가 쓴 게시글 리스트 찾기.
+        List<Post> myPosts = postRepository.findAllByMemberOrderByCreatedAt(member);
+        int postCount = myPosts.size();
 
-        return ResponseDto.setSuccess("프로필 조회성공",profileDto);
+        // 내가 좋아요한 게시글 리스트 찾기.
+        List<Post> myLikes = likeRepository.findAllByMemberAndLikeStatus(member, true).stream()
+                .map(like -> like.getPost()) // Like 엔티티에서 Post 엔티티로 변환
+                .collect(Collectors.toList());
+        int likeCount = myLikes.size();
+
+        // 내가 예약한 게시글 리스트 찾기.
+        List<Post> myReservations = reservationRepository.findAllByMember(member).stream().map(Reservation::getPost).toList();
+        int reserveCount = myReservations.size();
+
+        ProfileCountDto profileCountDto = new ProfileCountDto(email,nickName, imageUrl, postCount, likeCount, reserveCount);
+
+        return ResponseDto.setSuccess("프로필 조회성공",profileCountDto);
     }
 
     // 프로필 수정
