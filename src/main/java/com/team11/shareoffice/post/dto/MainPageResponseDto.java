@@ -21,7 +21,6 @@ public class MainPageResponseDto {
     private String memberNickname;
     private int likeCount;
     private boolean likeStatus;
-    private int capacity;  //
 
     public MainPageResponseDto(Post post) {
         this.id = post.getId();
@@ -48,7 +47,6 @@ public class MainPageResponseDto {
         } else {
             this.likeStatus = false;
         }
-        this.capacity =post.getCapacity();
     }
 
 }

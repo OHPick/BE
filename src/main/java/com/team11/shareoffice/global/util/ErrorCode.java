@@ -1,6 +1,7 @@
 package com.team11.shareoffice.global.util;
 
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
@@ -19,6 +20,7 @@ public enum ErrorCode {
     INVALID_TOKEN("InvalidToken","토큰이 만료됐거나 유효하지 않습니다."),
     INVALID_AUTHOR("InvalidAuthor", "작성자만 할 수 있습니다"),
     INVALID_MEMBER("InvalidMember", "유효하지 않는 이메일 입니다."),
+    NOT_MATCH_REFRESHTOKEN("RTKError", "Refresh Token이 일치하지 않습니다."),
 
 
     //게시글 관련

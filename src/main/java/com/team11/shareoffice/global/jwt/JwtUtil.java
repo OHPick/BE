@@ -1,10 +1,7 @@
 package com.team11.shareoffice.global.jwt;
 
 import com.team11.shareoffice.global.jwt.dto.TokenDto;
-import com.team11.shareoffice.global.jwt.entity.RefreshToken;
-import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
 import com.team11.shareoffice.global.security.UserDetailsServiceImpl;
-import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -14,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +21,6 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -33,12 +28,11 @@ import java.util.Optional;
 public class JwtUtil {
 
     private final MemberRepository memberRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final UserDetailsServiceImpl userDetailsService;
     public static final String ACCESS_TOKEN = "Access_Token";
     public static final String REFRESH_TOKEN = "Refresh_Token";
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final long ACCESS_TOKEN_TIME = 60 * 60 * 1000L;   //AccessToken Time 1 hr
+    private static final long ACCESS_TOKEN_TIME =60 * 60 * 1000L;   //AccessToken Time 1 hr
     private static final long REFRESH_TOKEN_TIME = 24 * 60 * 60 * 1000L; //RefreshToken Time 1 day
 
     @Value("${jwt.secret.key}")
@@ -54,20 +48,27 @@ public class JwtUtil {
 
     // header 토큰을 가져오기
     public String resolveToken(HttpServletRequest request, String type) {
-        if (type.equals(ACCESS_TOKEN)) {
-            String bearerToken = request.getHeader(ACCESS_TOKEN);
-            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-                return bearerToken.substring(7);
-            }
-            return null;
-        } else {
-            String bearerToken = request.getHeader(REFRESH_TOKEN);
-            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-                return bearerToken.substring(7);
-            }
-            return null;
+        String bearerToken = request.getHeader(type);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(7);
         }
+        return null;
     }
+//    public String resolveToken(HttpServletRequest request, String type) {
+//        if (type.equals(ACCESS_TOKEN)) {
+//            String bearerToken = request.getHeader(ACCESS_TOKEN);
+//            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+//                return bearerToken.substring(7);
+//            }
+//            return null;
+//        } else {
+//            String bearerToken = request.getHeader(REFRESH_TOKEN);
+//            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+//                return bearerToken.substring(7);
+//            }
+//            return null;
+//        }
+//    }
 
     public TokenDto createAllToken(String userEmail) {
         return new TokenDto(createToken(userEmail, ACCESS_TOKEN), createToken(userEmail, REFRESH_TOKEN));
@@ -106,21 +107,21 @@ public class JwtUtil {
 
     //RefreshToken 검증
     //DB에 저장돼 있는 토큰과 비교
-    public Boolean validateRefreshToken(String token) {
-        //1차 토큰 검증
-        if (!validateToken(token)) return false;
-
-        // 이 부분 오료 해결시 주석 푸시면 됩니다~
-        //사용자 찾기
-        Member member = memberRepository.findByEmail(getUserInfoFromToken(token)).orElseThrow(
-                () -> new NullPointerException(HttpStatus.BAD_REQUEST.getReasonPhrase())
-        );
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMember(member);
-
-        // 사용자의 Refresh 토큰 가져오기
-        return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken().substring(7));
-
-    }
+//    public Boolean validateRefreshToken(String refreshTokenFromRequest) {
+//        //1차 토큰 검증
+////        if (!validateToken(refreshTokenFromRequest)) {
+////            return false;
+////        }else{
+////            return true;
+//        return validateToken(refreshTokenFromRequest);
+//        //사용자 찾기
+////        Member member = memberRepository.findByEmail(getUserInfoFromToken(refreshTokenFromRequest)).orElseThrow(
+////                () -> new NullPointerException(HttpStatus.BAD_REQUEST.getReasonPhrase())
+////        );
+////        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMember(member);
+////        // 사용자의 Refresh 토큰 가져오기
+////        return refreshToken.isPresent() && refreshTokenFromRequest.equals(refreshToken.get().getRefreshToken().substring(7));
+//    }
 
     // 카카오토큰 생성
 //    public String createKakaoToken(String userEmail, Long kakaoId) {
@@ -139,6 +140,10 @@ public class JwtUtil {
     // 토큰에서 사용자 정보 가져오기
     public String getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public Claims getClaimsFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
     // 인증 객체 생성
