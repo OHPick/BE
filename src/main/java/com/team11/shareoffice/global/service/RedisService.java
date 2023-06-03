@@ -25,5 +25,16 @@ public class RedisService {
     public void delValues(String email){
         redisTemplate.delete(email);
     }
+
+    public void setBlackList(String accessTokenFromRequest) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        values.set(accessTokenFromRequest, "blacklisted", Duration.ofHours(1));
+    }
+
+    public boolean isBlackListed(String accessToken) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        String value = values.get(accessToken);
+        return value != null && value.equals("blacklisted");
+    }
 }
 

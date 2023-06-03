@@ -2,6 +2,7 @@ package com.team11.shareoffice.global.config;
 
 import com.team11.shareoffice.global.jwt.JwtAuthFilter;
 import com.team11.shareoffice.global.jwt.JwtUtil;
+import com.team11.shareoffice.global.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
 
+    private final RedisService redisService;
     private final JwtUtil jwtUtil;
 //    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
@@ -72,7 +74,7 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "api/chat/**").permitAll()
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
-                .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .and().addFilterBefore(new JwtAuthFilter(jwtUtil, redisService), UsernamePasswordAuthenticationFilter.class);
 
         // 이 설정을 해주지 않으면 밑의 cors가 적용되지 않는다
         http.cors();

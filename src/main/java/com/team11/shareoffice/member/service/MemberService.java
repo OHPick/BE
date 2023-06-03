@@ -65,7 +65,7 @@ public class MemberService {
         // 닉네임 중복 검사
         memberValidator.validateNicknameOverlapped(nickname);
 //        인증된 이메일인지 검사
-//        memberValidator.validateEmailAuth(email);
+        memberValidator.validateEmailAuth(email);
 
         // 유저 등록
         Member member = Member.builder()
@@ -86,6 +86,7 @@ public class MemberService {
 
     // 로그인
     public ResponseDto<?> login(MemberRequestDto requestDto, HttpServletResponse response){
+        System.out.println("MemberService.login");
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
 
@@ -114,48 +115,42 @@ public class MemberService {
 //        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
 
         //엑세스, 리프레쉬 다 발급 + 리프레쉬 레디스 저장
-        issueTokens(response, email);  //이렇게만 해도 response에 ATK RTK 들어가는지?
+        issueTokens(response, email);
 
         return setSuccess("로그인 성공");
     }
 
     public void issueTokens(HttpServletResponse response, String email){
+        System.out.println("MemberService.issueTokens");
         TokenDto tokenDto = jwtUtil.createAllToken(email);
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-
-        System.out.println("issueTokens- tokenDto.getRTK : " + tokenDto.getRefreshToken());
 
         redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(60));
     }
 
     //토큰 재발급
-    public ResponseDto<?> reissueToken(HttpServletRequest request, HttpServletResponse response) {
-        String refreshTokenFromRequest = request.getHeader(JwtUtil.REFRESH_TOKEN); //요청헤더에서 온 RTK
-        String token = jwtUtil.resolveToken(request,JwtUtil.ACCESS_TOKEN); //요청헤더에서 온 ATK(bearer 제외)
-        Claims info = jwtUtil.getClaimsFromToken(token); //ATK에서 body가지고 옴
-        String email = info.getSubject(); //가지고온 body에서 subject 빼오기 = email
+//    public ResponseDto<?> reissueToken(HttpServletRequest request, HttpServletResponse response) {
+//        String refreshTokenFromRequest = request.getHeader(JwtUtil.REFRESH_TOKEN); //요청헤더에서 온 RTK
+//        String token = jwtUtil.resolveToken(request,JwtUtil.ACCESS_TOKEN); //요청헤더에서 온 ATK(bearer 제외)
+//        Claims info = jwtUtil.getClaimsFromToken(token); //ATK에서 body가지고 옴
+//        String email = info.getSubject(); //가지고온 body에서 subject 빼오기 = email
+//
+//        String refreshTokenFromRedis = redisService.getValues(email);
+//
+//        if(refreshTokenFromRequest.equals(refreshTokenFromRedis)){
+//            jwtUtil.validateToken(refreshTokenFromRequest);
+//            issueTokens(response, email);
+//            return setSuccess("토큰 재발급 성공");
+//        } else {
+//            throw new CustomException(ErrorCode.NOT_MATCH_REFRESHTOKEN);
+//        }
+//    }
 
-        System.out.println("재발급/ refreshTokenFromRequest : " + refreshTokenFromRequest);
-        System.out.println("재발급/요청헤더에서 온 ATK(bearer 제외) : " + token);
-        System.out.println("재발급/atk를 통한 info.getSubject() email값 : " + email);
-
-        String refreshTokenFromRedis = redisService.getValues(email);
-        System.out.println("refreshTokenFromRedis : " + refreshTokenFromRedis);
-
-        if(refreshTokenFromRequest.equals(refreshTokenFromRedis)){
-            jwtUtil.validateToken(refreshTokenFromRequest);
-            issueTokens(response, email);
-            return setSuccess("토큰 재발급 성공");
-        } else {
-            throw new CustomException(ErrorCode.NOT_MATCH_REFRESHTOKEN);
-        }
-    }
-
-    public void logout(Member member){
+    public void logout(Member member, HttpServletRequest request){
+        String accessToken = jwtUtil.resolveToken(request,JwtUtil.ACCESS_TOKEN);
+        redisService.setBlackList(accessToken);
         redisService.delValues(member.getEmail());
-        System.out.println("로그아웃 서비스 " + member.getEmail());
-
     }
 
     //프로필조회
@@ -200,6 +195,7 @@ public class MemberService {
 
     //회원탈퇴
     public ResponseDto<?> signout(UserDetailsImpl userDetails, MemberRequestDto request) {
+        System.out.println("MemberService.signout");
         String password = request.getPassword();
 
         Member member = memberValidator.validateEmailExist(userDetails.getMember().getEmail());

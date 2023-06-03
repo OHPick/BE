@@ -42,18 +42,18 @@ public class MemberController {
         return memberService.login(requestDto, response);
     }
 
-    @Operation(summary = "토큰 재발급API")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "토큰재발급 완료")})
-    @PostMapping("/token")
-    public ResponseDto<?> reissueToken(HttpServletRequest request, HttpServletResponse response){
-        return memberService.reissueToken(request, response);
-    }
+//    @Operation(summary = "토큰 재발급API")
+//    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "토큰재발급 완료")})
+//    @PostMapping("/token")
+//    public ResponseDto<?> reissueToken(HttpServletRequest request, HttpServletResponse response){
+//        return memberService.reissueToken(request, response);
+//    }
 
     @Operation(summary = "로그아웃API")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "로그아웃 완료")})
     @PostMapping("/logout")
-    public ResponseDto<String> logout( @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        memberService.logout(userDetails.getMember());
+    public ResponseDto<String> logout(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
+        memberService.logout(userDetails.getMember(), request);
         return ResponseDto.setSuccess("로그아웃 성공");
     }
 
