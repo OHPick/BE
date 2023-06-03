@@ -36,8 +36,7 @@ public class ChatService {
     private final ChatRoomRepositoryImpl chatRoomRepositoryImpl;
 
     @Transactional
-    public ResponseDto<Long> enterRoom(Long postId, String nickname) {
-        Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new CustomException(ErrorCode.INVALID_MEMBER));
+    public ResponseDto<Long> enterRoom(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
         Member owner = memberRepository.findByNickname(post.getMember().getNickname()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_MEMBER));
         ChatRoom room = chatRoomRepository.findChatRoomByPostAndMember(post, member).orElse(null);
