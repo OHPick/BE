@@ -16,9 +16,9 @@ public class ChatRoomController {
 
     private final ChatService chatService;
 
-    @PostMapping("/chat/room/{postId}/{nickname}")
-    public ResponseDto<Long> enterRoom(@PathVariable Long postId, @PathVariable String nickname) {
-        return chatService.enterRoom(postId, nickname);
+    @PostMapping("/chat/room/{postId}")
+    public ResponseDto<Long> enterRoom(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return chatService.enterRoom(postId, userDetails.getMember());
     }
 
 
@@ -26,10 +26,10 @@ public class ChatRoomController {
     public ResponseDto<List<?>> getAllChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return chatService.getAllChatRooms(userDetails.getMember());
     }
-//    @GetMapping("/chat/room/{roomId}")
-//    public ResponseDto<> getChatRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-//        return chatService.getChatRoom(roomId,userDetails.getMember());
-//    }
+    @GetMapping("/chat/room/{roomId}")
+    public ResponseDto<?> getChatRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return chatService.getChatRoom(roomId,userDetails.getMember());
+    }
 
     @DeleteMapping("/chat/room/{roomId}")
     public ResponseDto<?> deleteRoom(@PathVariable Long roomId,@AuthenticationPrincipal UserDetailsImpl userDetails) {

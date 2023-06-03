@@ -1,5 +1,7 @@
 package com.team11.shareoffice.like.LikeValidator;
 
+import com.team11.shareoffice.global.exception.CustomException;
+import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
@@ -20,7 +22,7 @@ public class LikeValidator {
     // 로그인 여부 확인
     public void validateIsLogin(Member member) {
         if (member == null) {
-            throw new IllegalArgumentException();
+            throw new CustomException(ErrorCode.INVALID_MEMBER);
         }
     }
 }

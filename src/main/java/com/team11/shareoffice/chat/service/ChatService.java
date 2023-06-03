@@ -36,8 +36,7 @@ public class ChatService {
     private final ChatRoomRepositoryImpl chatRoomRepositoryImpl;
 
     @Transactional
-    public ResponseDto<Long> enterRoom(Long postId, String nickname) {
-        Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new CustomException(ErrorCode.INVALID_MEMBER));
+    public ResponseDto<Long> enterRoom(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
         Member owner = memberRepository.findByNickname(post.getMember().getNickname()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_MEMBER));
         ChatRoom room = chatRoomRepository.findChatRoomByPostAndMember(post, member).orElse(null);
@@ -75,17 +74,37 @@ public class ChatService {
         return ResponseDto.setSuccess("채팅방 삭제 성공");
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseDto<List<?>> getAllChatRooms(Member member){
-//        List<ChatRoom> chatRooms = chatRoomRepository.findAllByMember(member);
         return ResponseDto.setSuccess(chatRoomRepositoryImpl.findAllChatRoom(member));
     }
+
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getChatRoom(Long roomId, Member member){
+        ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow( () -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+
+        List<ChatMessage> messages = chatMessageRepository.findAllByRoomOrderByCreatedAt(room);
+        List<ChatResponseDto> chatResponseDtos = messages.stream()
+                .map(message -> new ChatResponseDto(roomId, changeNickname(message.getSender().getNickname(), member), message.getMessage(), changeDateFormat(message.getCreatedAt())))
+                        .toList();
+
+
+        return ResponseDto.setSuccess(chatResponseDtos);
+    }
+
 
     private String changeDateFormat(String createdAt) {
         String[] date = createdAt.split(" ");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
         return date[0].equals(today) ? date[1] : date[0];
+    }
+
+    private String changeNickname(String nickname, Member member) {
+        if(member.getNickname().equals(nickname)){
+            return "ME";
+        }
+        return nickname;
     }
 
 }

@@ -4,6 +4,7 @@ import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.member.dto.MemberRequestDto;
+import com.team11.shareoffice.member.dto.ProfileCountDto;
 import com.team11.shareoffice.member.dto.ProfileDto;
 import com.team11.shareoffice.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,21 +66,22 @@ public class MemberController {
     }
 
 
-    // Profile
+    // MyPage Profile 조회.
     @Operation(summary = "프로필 API", description = "프로필")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "프로필 조회 완료")})
-    @GetMapping("/myprofile")
-    public ResponseDto<ProfileDto> profile(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    @GetMapping("/mypage")
+    public ResponseDto<ProfileCountDto> profile(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return memberService.profile(userDetails.getMember());
     }
 
-    // Profile 수정
+    // MyPage Profile 수정
     @Operation(summary = "프로필 수정 API", description = "프로필 수정")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "프로필 수정 완료")})
-    @PutMapping("/myprofile/modify")
+    @PutMapping("/mypage/modify")
     public ResponseDto<ProfileDto> profileModify(@RequestPart(value = "profileDto", required = false) ProfileDto profileDto,
                                          @RequestPart(value = "imageFile", required = false) MultipartFile image,
                                          @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return memberService.profileModify(profileDto, image, userDetails.getMember());
     }
+
 }

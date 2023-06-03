@@ -2,6 +2,8 @@ package com.team11.shareoffice.like.service;
 
 
 import com.team11.shareoffice.global.dto.ResponseDto;
+import com.team11.shareoffice.global.exception.CustomException;
+import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.like.LikeValidator.LikeValidator;
 import com.team11.shareoffice.like.dto.LikeResponseDto;
 import com.team11.shareoffice.like.entity.Likes;
@@ -27,6 +29,10 @@ public class LikeService {
 
         // 로그인 여부 확인
         likeValidator.validateIsLogin(member);
+
+        if (member == null) {
+            throw new CustomException(ErrorCode.INVALID_MEMBER);
+        }
 
         //좋아요 존재여부 확인
         Likes like = likeRepository.findByMemberAndPost(member, post);

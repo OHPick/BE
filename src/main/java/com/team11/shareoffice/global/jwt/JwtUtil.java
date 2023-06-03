@@ -53,7 +53,6 @@ public class JwtUtil {
     }
 
     // header 토큰을 가져오기
-
     public String resolveToken(HttpServletRequest request, String type) {
         String bearerToken = request.getHeader(type);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
@@ -146,7 +145,6 @@ public class JwtUtil {
 
     // 토큰에서 사용자 정보 가져오기
     public String getUserInfoFromToken(String token) {
-        System.out.println("1. getUserInfoFromToken - token : " + token);
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
     }
 

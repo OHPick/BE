@@ -10,7 +10,9 @@ import com.team11.shareoffice.global.jwt.repository.RefreshTokenRepository;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.global.service.RedisService;
 import com.team11.shareoffice.global.util.ErrorCode;
+import com.team11.shareoffice.like.repository.LikeRepository;
 import com.team11.shareoffice.member.dto.MemberRequestDto;
+import com.team11.shareoffice.member.dto.ProfileCountDto;
 import com.team11.shareoffice.member.dto.ProfileDto;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
@@ -20,6 +22,8 @@ import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.post.service.ImageService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
+import com.team11.shareoffice.reservation.entity.Reservation;
+import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +36,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.team11.shareoffice.global.dto.ResponseDto.setSuccess;
 
@@ -50,6 +55,8 @@ public class MemberService {
     private final MemberValidator memberValidator;
     private final ImageService imageService;
     private final RedisService redisService;
+    private final LikeRepository likeRepository;
+    private final ReservationRepository reservationRepository;
 
 
     // 회원가입
@@ -86,7 +93,6 @@ public class MemberService {
 
     // 로그인
     public ResponseDto<?> login(MemberRequestDto requestDto, HttpServletResponse response){
-        System.out.println("MemberService.login");
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
 
@@ -155,7 +161,7 @@ public class MemberService {
 
     //프로필조회
     @Transactional(readOnly = true)
-    public ResponseDto<ProfileDto> profile(Member member) {
+    public ResponseDto<ProfileCountDto> profile(Member member) {
 
         memberValidator.validateEmailExist(member.getEmail());
 
@@ -163,22 +169,36 @@ public class MemberService {
         String nickName = member.getNickname();
         String imageUrl = member.getImageUrl();
 
-        ProfileDto profileDto = new ProfileDto(email,nickName, imageUrl);
+        // 내가 쓴 게시글 리스트 찾기.
+        List<Post> myPosts = postRepository.findAllByMemberOrderByCreatedAt(member);
+        int postCount = myPosts.size();
 
-        return ResponseDto.setSuccess("프로필 조회성공",profileDto);
+        // 내가 좋아요한 게시글 리스트 찾기.
+        List<Post> myLikes = likeRepository.findAllByMemberAndLikeStatus(member, true).stream()
+                .map(like -> like.getPost()) // Like 엔티티에서 Post 엔티티로 변환
+                .collect(Collectors.toList());
+        int likeCount = myLikes.size();
+
+        // 내가 예약한 게시글 리스트 찾기.
+        List<Post> myReservations = reservationRepository.findAllByMember(member).stream().map(Reservation::getPost).toList();
+        int reserveCount = myReservations.size();
+
+        ProfileCountDto profileCountDto = new ProfileCountDto(email,nickName, imageUrl, postCount, likeCount, reserveCount);
+
+        return ResponseDto.setSuccess("프로필 조회성공",profileCountDto);
     }
 
     // 프로필 수정
     public ResponseDto<ProfileDto> profileModify(ProfileDto profileDto, MultipartFile image, Member member) throws IOException {
                 
-        String nickName = profileDto.getNickName();
+        String nickName = profileDto.getNickname();
 
         // 닉네임 중복 검사
         Optional<Member> foundByUsername = memberRepository.findByNickname(nickName);
         if (foundByUsername.isPresent()){
             throw new CustomException(ErrorCode.EXIST_NICKNAME);
         }
-        member.updateNickName(profileDto.getNickName());
+        member.updateNickName(profileDto.getNickname());
 
         //기존에 있던 이미지 파일 s3에서 삭제
         imageService.delete(member.getImageUrl());
@@ -195,7 +215,6 @@ public class MemberService {
 
     //회원탈퇴
     public ResponseDto<?> signout(UserDetailsImpl userDetails, MemberRequestDto request) {
-        System.out.println("MemberService.signout");
         String password = request.getPassword();
 
         Member member = memberValidator.validateEmailExist(userDetails.getMember().getEmail());
