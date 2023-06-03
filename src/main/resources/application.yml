@@ -9,12 +9,13 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
-  #        hbm2ddl:
-  #          auto: auto
+#        hbm2ddl:
+#          auto: auto
   data:
     redis:
       host: localhost
       port: 6379
+
 #swagger
 springdoc:
   packages-to-scan: com.team11.shareoffice

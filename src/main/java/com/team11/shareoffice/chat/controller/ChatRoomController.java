@@ -16,9 +16,9 @@ public class ChatRoomController {
 
     private final ChatService chatService;
 
-    @PostMapping("/chat/room/{postId}/{nickname}")
-    public ResponseDto<Long> enterRoom(@PathVariable Long postId, @PathVariable String nickname) {
-        return chatService.enterRoom(postId, nickname);
+    @PostMapping("/chat/room/{postId}")
+    public ResponseDto<Long> enterRoom(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return chatService.enterRoom(postId, userDetails.getMember());
     }
 
 
