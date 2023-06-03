@@ -128,59 +128,7 @@ public class MemberService {
         return setSuccess("로그인 성공");
     }
 
-    //프로필조회
-    @Transactional(readOnly = true)
-    public ResponseDto<ProfileCountDto> profile(Member member) {
 
-        memberValidator.validateEmailExist(member.getEmail());
-
-        String email = member.getEmail();
-        String nickName = member.getNickname();
-        String imageUrl = member.getImageUrl();
-
-        // 내가 쓴 게시글 리스트 찾기.
-        List<Post> myPosts = postRepository.findAllByMemberOrderByCreatedAt(member);
-        int postCount = myPosts.size();
-
-        // 내가 좋아요한 게시글 리스트 찾기.
-        List<Post> myLikes = likeRepository.findAllByMemberAndLikeStatus(member, true).stream()
-                .map(like -> like.getPost()) // Like 엔티티에서 Post 엔티티로 변환
-                .collect(Collectors.toList());
-        int likeCount = myLikes.size();
-
-        // 내가 예약한 게시글 리스트 찾기.
-        List<Post> myReservations = reservationRepository.findAllByMember(member).stream().map(Reservation::getPost).toList();
-        int reserveCount = myReservations.size();
-
-        ProfileCountDto profileCountDto = new ProfileCountDto(email,nickName, imageUrl, postCount, likeCount, reserveCount);
-
-        return ResponseDto.setSuccess("프로필 조회성공",profileCountDto);
-    }
-
-    // 프로필 수정
-    public ResponseDto<ProfileDto> profileModify(ProfileDto profileDto, MultipartFile image, Member member) throws IOException {
-                
-        String nickName = profileDto.getNickname();
-
-        // 닉네임 중복 검사
-        Optional<Member> foundByUsername = memberRepository.findByNickname(nickName);
-        if (foundByUsername.isPresent()){
-            throw new CustomException(ErrorCode.EXIST_NICKNAME);
-        }
-        member.updateNickName(profileDto.getNickname());
-
-        //기존에 있던 이미지 파일 s3에서 삭제
-        imageService.delete(member.getImageUrl());
-        //새로 등록한 사진 s3에 업로드
-        String uploadFilename = imageService.uploadFile(image);
-        //업로드 된 사진으로 수정
-        member.updateImageUrl(uploadFilename);
-
-        memberRepository.save(member); // ??????????????????
-        ProfileDto modified = new ProfileDto(member.getEmail(), nickName,uploadFilename);
-
-        return ResponseDto.setSuccess("프로필 수정 성공",modified);
-    }
 
     //회원탈퇴
     public ResponseDto<?> signout(UserDetailsImpl userDetails, MemberRequestDto request) {
