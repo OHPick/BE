@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: secret, s3
+    include: secret, s3, redis
   jpa:
     database: mysql
     hibernate:
@@ -11,10 +11,6 @@ spring:
         show_sql: true
 #        hbm2ddl:
 #          auto: auto
-  data:
-    redis:
-      host: localhost
-      port: 6379
 
 
 #swagger
