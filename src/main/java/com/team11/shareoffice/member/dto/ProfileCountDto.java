@@ -9,15 +9,15 @@ import lombok.Setter;
 public class ProfileCountDto {
 
     private String email;
-    private String nickName;
+    private String nickname;
     private String imageUrl;
     private int postCount;
     private int likeCount;
     private int reserveCount;
 
-    public ProfileCountDto(String email, String nickName, String imageUrl, int postCount, int likeCount, int reserveCount) {
+    public ProfileCountDto(String email, String nickname, String imageUrl, int postCount, int likeCount, int reserveCount) {
         this.email = email;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.imageUrl = imageUrl;
         this.postCount = postCount;
         this.likeCount = likeCount;

@@ -8,12 +8,12 @@ import lombok.Setter;
 public class ProfileDto {
 
     private String email;
-    private String nickName;
+    private String nickname;
     private String imageUrl;
 
-    public ProfileDto(String email, String nickName, String imageUrl) {
+    public ProfileDto(String email, String nickname, String imageUrl) {
         this.email = email;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.imageUrl = imageUrl;
     }
 }
