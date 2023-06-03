@@ -86,7 +86,7 @@ public class PostService {
         PostResponseDto postResponseDto = new PostResponseDto(post, false, 0);
 
         if (member != null) {
-            for (Likes likes : likeRepository.findAllByPost(post)) {
+            for (Likes likes : likeRepository.findAllByPost(post)) {  // 게시글에 달린 좋아요 객체 가져오기
                 if (member.getEmail().equals(likes.getMember().getEmail())) {
                     postResponseDto.setLikeStatus(likes.isLikeStatus());
                     break;

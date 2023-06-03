@@ -32,9 +32,10 @@ public class MyPageService {
         // 내가 쓴 게시글 리스트 찾기.
         List<Post> posts = postRepository.findAllByMemberOrderByCreatedAt(member);
 
-        List<PostResponseDto> postResponseList = posts.stream()
-                .map(post -> new PostResponseDto(post, isLikedByMember(post, member), 3))
+        int postCount = posts.size();
 
+        List<PostResponseDto> postResponseList = posts.stream()
+                .map(post -> new PostResponseDto(post, isLikedByMember(post, member), 3,postCount))
                 .collect(Collectors.toList());
 
         return ResponseDto.setSuccess("내 게시글목록 조회성공", postResponseList);
