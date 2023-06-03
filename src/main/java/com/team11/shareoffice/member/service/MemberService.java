@@ -128,7 +128,7 @@ public class MemberService {
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
 
-        redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(60));
+        redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
     }
 
     //토큰 재발급
