@@ -36,34 +36,43 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (redisService.isBlackListed(accessToken)) {
             log.info("블랙리스트 처리된 토큰");
-            jwtExceptionHandler(response, "블랙리스트", HttpStatus.UNAUTHORIZED.value());
+            jwtExceptionHandler(response, "로그아웃된 아이디 입니다.(블랙리스트)", HttpStatus.UNAUTHORIZED.value());
             return;
         }
-
+        //엑세스 토큰 유효하면 킵고잉
         boolean isValidAccessToken = jwtUtil.validateToken(accessToken);
         if (isValidAccessToken) {
             setAuthentication(jwtUtil.getUserInfoFromToken(accessToken));
             filterChain.doFilter(request, response);
             return;
         }
-
+        //엑세스토큰이 무효한데, 리프레쉬 토큰이 없다면
         if (refreshToken == null) {
-            jwtExceptionHandler(response, "유효하지 않은 토큰 입니다.", HttpStatus.UNAUTHORIZED.value());
+            jwtExceptionHandler(response, "엑세스토큰은 무효하고, 리프레쉬토큰이 없습니다.", HttpStatus.UNAUTHORIZED.value());
             return;
         }
 
         String userEmail = jwtUtil.getUserInfoFromToken(refreshToken);
-        String refreshTokenFromRedis = redisService.getValues(userEmail).substring(7);
-
-        if (!refreshToken.equals(refreshTokenFromRedis)) {
-            jwtExceptionHandler(response, "토큰을 갱신할 수 없습니다.", HttpStatus.UNAUTHORIZED.value());
+        if (userEmail == null) {
+            jwtExceptionHandler(response, "리프레쉬 토큰이 만료되어 로그인이 필요합니다.", HttpStatus.UNAUTHORIZED.value());
             return;
         }
 
-        String newAccessToken = jwtUtil.createToken(userEmail, JwtUtil.ACCESS_TOKEN);
-        response.setHeader(JwtUtil.ACCESS_TOKEN, newAccessToken);
-        setAuthentication(jwtUtil.getUserInfoFromToken(newAccessToken.substring(7)));
-        log.info("새로운 토큰 생성 완료");
+        //엑세스토큰 무효, 리프레쉬토큰이 있는데 무효하면
+        boolean isValidRefreshToken = jwtUtil.validateToken(refreshToken);
+        if (isValidRefreshToken) {
+            String refreshTokenFromRedis = redisService.getValues(userEmail).substring(7);
+
+            if (!refreshToken.equals(refreshTokenFromRedis)) {
+                jwtExceptionHandler(response, "리프레쉬토큰을 확인해주세요. 엑세스토큰을 갱신할 수 없습니다.", HttpStatus.UNAUTHORIZED.value());
+                return;
+            }
+            //리프레쉬 토큰은 유효하면
+            String newAccessToken = jwtUtil.createToken(userEmail, JwtUtil.ACCESS_TOKEN);
+            response.setHeader(JwtUtil.ACCESS_TOKEN, newAccessToken);
+            setAuthentication(jwtUtil.getUserInfoFromToken(newAccessToken.substring(7)));
+            log.info("새로운 토큰 생성 완료");
+        }
 
         filterChain.doFilter(request, response);
     }

@@ -32,8 +32,8 @@ public class JwtUtil {
     public static final String ACCESS_TOKEN = "Access_Token";
     public static final String REFRESH_TOKEN = "Refresh_Token";
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final long ACCESS_TOKEN_TIME = 10 * 1000L;   //AccessToken Time 1 hr = 60 * 60 * 1000L; 
-    private static final long REFRESH_TOKEN_TIME = 10 * 60 * 1000L; //RefreshToken Time 1 day = 24 * 60 * 60 * 1000L;
+    private static final long ACCESS_TOKEN_TIME = 60 * 1000L;   //AccessToken Time 1 hr = 60 * 60 * 1000L;
+    private static final long REFRESH_TOKEN_TIME = 2* 60 * 1000L; //RefreshToken Time 1 day = 24 * 60 * 60 * 1000L;
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -54,21 +54,6 @@ public class JwtUtil {
         }
         return null;
     }
-//    public String resolveToken(HttpServletRequest request, String type) {
-//        if (type.equals(ACCESS_TOKEN)) {
-//            String bearerToken = request.getHeader(ACCESS_TOKEN);
-//            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-//                return bearerToken.substring(7);
-//            }
-//            return null;
-//        } else {
-//            String bearerToken = request.getHeader(REFRESH_TOKEN);
-//            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-//                return bearerToken.substring(7);
-//            }
-//            return null;
-//        }
-//    }
 
     public TokenDto createAllToken(String userEmail) {
         return new TokenDto(createToken(userEmail, ACCESS_TOKEN), createToken(userEmail, REFRESH_TOKEN));
@@ -105,6 +90,7 @@ public class JwtUtil {
         return false;
     }
 
+
     //RefreshToken 검증
     //DB에 저장돼 있는 토큰과 비교
 //    public Boolean validateRefreshToken(String refreshTokenFromRequest) {
@@ -138,13 +124,20 @@ public class JwtUtil {
 //    }
 
     // 토큰에서 사용자 정보 가져오기
-    public String getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
-    }
+//    public String getUserInfoFromToken(String token) {
+//        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+//    }
 
-    public Claims getClaimsFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    // 토큰에서 사용자 정보 가져오기
+    public String getUserInfoFromToken(String token) {
+    try {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+    } catch (ExpiredJwtException e) {
+        log.info("Expired JWT token, 만료된 JWT token 입니다.");
+        return null;
     }
+}
+
 
     // 인증 객체 생성
     @Transactional(readOnly = true)
