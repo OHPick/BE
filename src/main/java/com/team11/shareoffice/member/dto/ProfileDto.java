@@ -7,13 +7,13 @@ import lombok.Setter;
 @Setter
 public class ProfileDto {
 
-    private String email;
-    private String nickname;
-    private String imageUrl;
 
-    public ProfileDto(String email, String nickname, String imageUrl) {
-        this.email = email;
+    private String nickname;
+
+
+    public ProfileDto(String nickname) {
+
         this.nickname = nickname;
-        this.imageUrl = imageUrl;
+
     }
 }

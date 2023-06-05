@@ -63,23 +63,4 @@ public class MemberController {
         return memberService.signout(userDetails, request);
     }
 
-
-    // MyPage Profile 조회.
-    @Operation(summary = "프로필 API", description = "프로필")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "프로필 조회 완료")})
-    @GetMapping("/mypage")
-    public ResponseDto<ProfileCountDto> profile(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        return memberService.profile(userDetails.getMember());
-    }
-
-    // MyPage Profile 수정
-    @Operation(summary = "프로필 수정 API", description = "프로필 수정")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "프로필 수정 완료")})
-    @PutMapping("/mypage/modify")
-    public ResponseDto<ProfileDto> profileModify(@RequestPart(value = "profileDto", required = false) ProfileDto profileDto,
-                                         @RequestPart(value = "imageFile", required = false) MultipartFile image,
-                                         @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return memberService.profileModify(profileDto, image, userDetails.getMember());
-    }
-
 }
