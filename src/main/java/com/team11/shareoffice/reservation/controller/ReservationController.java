@@ -16,6 +16,12 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
+    @GetMapping("/{postId}/reserve")
+    public ResponseDto<?> showReservedPost(@PathVariable Long postId,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return reservationService.showReservedPost(postId, userDetails.getMember());
+    }
+
     @PostMapping("/{postId}/reserve")
     public ResponseDto<?> reservePost(@PathVariable Long postId,
                                       @RequestBody ReservationRequestDto requestDto,
