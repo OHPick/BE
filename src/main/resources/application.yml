@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: secret, s3
+    include: secret, s3, redis
   jpa:
     database: mysql
     hibernate:
