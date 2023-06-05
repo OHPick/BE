@@ -49,7 +49,7 @@ public class KakaoService {
         UserInfoDto userInfo = fetchKakaoUserInfo(accessToken);
         // 3. 필요 시에 회원 가입
         Member kakaoUser = registerKakaoUserIfNeeded(userInfo);
-        // 4. jWT 액서스 토큰 반환
+//        // 4. jWT 액서스 토큰 반환
 //        String createToken = jwtUtil.createToken(kakaoUser.getEmail(), jwtUtil.ACCESS_TOKEN);
 //        //Token 생성
 //        TokenDto tokenDto = jwtUtil.createAllToken(userInfo.getEmail());
@@ -62,23 +62,22 @@ public class KakaoService {
 //        } else {
 //            refreshTokenRepository.saveAndFlush(RefreshToken.saveToken(tokenDto.getRefreshToken(), kakaoUser));
 //        }
-//
 //        //header에 accesstoken, refreshtoken 추가
 //        response.addHeader(JwtUtil.ACCESS_TOKEN, createToken);
 //        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
 //        return ResponseDto.setSuccess("로그인에 성공했습니다");
+
         issueTokens(response, kakaoUser.getEmail());
 
         return setSuccess("로그인 성공");
     }
 
     public void issueTokens(HttpServletResponse response, String email){
-        System.out.println("MemberService.issueTokens");
         TokenDto tokenDto = jwtUtil.createAllToken(email);
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
 
-        redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(60));
+        redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
     }
 
     private String getToken(String code) throws JsonProcessingException {
