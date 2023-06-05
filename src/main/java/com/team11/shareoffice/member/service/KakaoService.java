@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -28,6 +29,7 @@ import static com.team11.shareoffice.global.dto.ResponseDto.setSuccess;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class KakaoService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
