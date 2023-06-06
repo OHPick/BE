@@ -14,6 +14,7 @@ public enum ErrorCode {
     INVALID_EMAIL_PATTERN ("InvalidEmailPattern", "유효하지 않은 이메일 형식입니다."),
     WRONG_EMAIL_CODE ("WrongEmailCode", "인증 코드가 일치하지 않습니다"),
     WRONG_EMAIL ("WrongEmail", "인증을 요청한 이메일이 아닙니다."),
+    EMAIL_SEND_FAILED("EmailSendFailed", "이메일 전송에 실패하였습니다."),
     NOT_EXIST_EMAIL("NotExistEmail", "등록되지 않은 이메일입니다."),
     NOT_FOUND_USER_INFO("NoUserExist",  "유저 정보를 찾을 수 없습니다."),
     WRONG_PASSWORD("WrongPassword", "비밀번호를 확인해주세요"),

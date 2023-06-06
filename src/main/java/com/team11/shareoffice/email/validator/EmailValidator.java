@@ -7,11 +7,25 @@ import com.team11.shareoffice.global.util.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Component
 @RequiredArgsConstructor
 public class EmailValidator {
 
     private final EmailRepository emailRepository;
+
+    //이메일 패턴 확인
+    public void validateEmailPattern(String email) {
+        String emailPattern = "^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$";
+        Pattern pattern = Pattern.compile(emailPattern);
+        Matcher matcher = pattern.matcher(email);
+        if (!matcher.matches()) {
+            throw new CustomException(ErrorCode.INVALID_EMAIL_PATTERN);
+        }
+
+    }
 
     //이메일이 DB에 존재 여부 확인
     public Email validateIsExistEmail(String email) {
