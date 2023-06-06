@@ -4,7 +4,7 @@ import com.team11.shareoffice.email.entity.Email;
 import com.team11.shareoffice.email.repository.EmailRepository;
 import com.team11.shareoffice.global.exception.CustomException;
 import com.team11.shareoffice.global.util.ErrorCode;
-import com.team11.shareoffice.member.dto.MemberRequestDto;
+import com.team11.shareoffice.member.dto.SignupRequestDto;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class MemberValidator {
     private final PasswordEncoder passwordEncoder;
 
     //회원가입 - 비밀번호 확인 일치 여부
-    public void validatePasswordCheck(MemberRequestDto requestDto) {
+    public void validatePasswordCheck(SignupRequestDto requestDto) {
         if (!Objects.equals(requestDto.getPassword(), requestDto.getPasswordCheck())) {
             throw new CustomException(ErrorCode.NOT_SAME_PASSWORD);
         }
