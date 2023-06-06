@@ -11,6 +11,10 @@ import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
@@ -25,8 +29,19 @@ public class ReservationValidator {
     }
 
     public void validateReserveDate(Post post, ReservationRequestDto requestDto){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
+        LocalDate todayDate = LocalDate.parse(today, formatter);
+        LocalDate reservationStartDate = requestDto.getStartDate();
+
+        int comparison = todayDate.compareTo(reservationStartDate);
+
+        if (comparison < 0) {
+            throw new CustomException(ErrorCode.INVALID_DATE);
+        }
+
         List<Reservation> reservationList = reservationRepository.findAllByPostReserved(post, requestDto.getStartDate(), requestDto.getEndDate());
-        if(reservationList.size()>0){
+        if(!reservationList.isEmpty()){
             throw new CustomException(ErrorCode.INVALID_DATE);
         }
     }
