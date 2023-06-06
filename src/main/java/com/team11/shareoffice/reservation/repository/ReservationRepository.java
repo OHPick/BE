@@ -21,5 +21,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findAllByPostReserved (@Param("post")Post post, @Param("startDate")LocalDate startDate, @Param("endDate")LocalDate endDate);
 
     Optional<Reservation> findByMemberAndPost(Member member, Post post);
+    List<Reservation> findAllByMemberOrderByStartDateAsc(Member member);
     List<Reservation> findAllByMember(Member member);
 }

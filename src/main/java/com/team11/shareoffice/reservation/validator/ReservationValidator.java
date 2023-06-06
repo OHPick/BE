@@ -36,7 +36,7 @@ public class ReservationValidator {
 
         int comparison = todayDate.compareTo(reservationStartDate);
 
-        if (comparison < 0) {
+        if (comparison > 0) {
             throw new CustomException(ErrorCode.INVALID_DATE);
         }
 
