@@ -66,12 +66,24 @@ public class MyPageService {
     //나의 예약 현황
     @Transactional(readOnly = true)
     public ResponseDto<List<PostResponseDto>> getMyReserves(Member member) {
+
+        List<Reservation> reservationList = reservationRepository.findAllByMember(member);
+
         List<Post> reservations = reservationRepository.findAllByMember(member).stream().map(Reservation::getPost).toList();
 
 
-        List<PostResponseDto> postResponseDtoList = reservations.stream().map(post -> new PostResponseDto(post, isLikedByMember(post, member), 2)).collect(Collectors.toList());
+        List<PostResponseDto> postResponseDtoList = reservations.stream().map(post -> new PostResponseDto(post, isLikedByMember(post, member), 2,findReservationByPost(reservationList, post))).collect(Collectors.toList());
 
         return ResponseDto.setSuccess("나의 예약 현황 목록 조회 완료", postResponseDtoList);
+    }
+
+    private Reservation findReservationByPost(List<Reservation> reservationList, Post post) {
+        for (Reservation reservation : reservationList) {
+            if (reservation.getPost().equals(post)) {
+                return reservation;
+            }
+        }
+        return null;
     }
 
     private boolean isLikedByMember(Post post, Member member) {
