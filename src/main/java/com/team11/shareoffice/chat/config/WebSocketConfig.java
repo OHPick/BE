@@ -1,6 +1,9 @@
 package com.team11.shareoffice.chat.config;
 
+import com.team11.shareoffice.global.jwt.JwtUtil;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -9,6 +12,12 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker  //STOMP 사용
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    private final JwtUtil jwtUtil;
+
+    public WebSocketConfig(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {  //한 클라이언트에서 다른 클라이언트로 메시지를 라우팅 하는 데 사용될 메시지 브로커를 구성
@@ -19,5 +28,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {   //웹 소켓 서버에 연결하는 데 사용할 웹 소켓 엔드 포인트를 등록
         registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS();
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        // WebSocket 인터셉터 등록
+        registration.interceptors(webSocketTokenInterceptor());
+    }
+
+    @Bean
+    public WebSocketTokenInterceptor webSocketTokenInterceptor() {
+        return new WebSocketTokenInterceptor(jwtUtil);
     }
 }
