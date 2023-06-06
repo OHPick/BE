@@ -6,6 +6,8 @@ import com.team11.shareoffice.email.entity.Email;
 import com.team11.shareoffice.email.repository.EmailRepository;
 import com.team11.shareoffice.email.validator.EmailValidator;
 import com.team11.shareoffice.global.dto.ResponseDto;
+import com.team11.shareoffice.global.exception.CustomException;
+import com.team11.shareoffice.global.util.ErrorCode;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -90,13 +92,14 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public ResponseDto<?> sendMessage(EmailRequestDto requestDto)throws Exception {
         String code = createKey();
+        emailValidator.validateEmailPattern(requestDto.getEmail());
         Email email = Email.saveEmail(requestDto);
         MimeMessage message = createMessage(email.getEmail(),code);
         try{//예외처리
             javaMailSender.send(message);
         }catch(MailException e){
             e.printStackTrace();
-            throw new IllegalArgumentException();
+            throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
         }
         email.updateCode(code);
         emailRepository.save(email);
