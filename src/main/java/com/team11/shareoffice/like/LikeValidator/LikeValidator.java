@@ -16,7 +16,7 @@ public class LikeValidator {
 
     //프로젝트 존재 여부 확인
     public Post validateIsExistPost(Long id) {
-        return postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException());
+        return postRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));  //
     }
 
     // 로그인 여부 확인
