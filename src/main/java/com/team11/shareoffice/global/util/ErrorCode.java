@@ -24,7 +24,7 @@ public enum ErrorCode {
 
 
     //게시글 관련
-    NOT_EXIST_POST("NotExistPost", "존재하지 않은 게시글 입니다."),
+    NOT_EXIST_POST("NotExistPost", "존재하지 않는 게시글 입니다."),
 
     //예약관련
     INVALID_DATE ("InvalidDate", "예약할 수 없는 날짜입니다."),
