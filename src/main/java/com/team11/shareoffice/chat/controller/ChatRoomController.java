@@ -21,11 +21,11 @@ public class ChatRoomController {
         return chatService.enterRoom(postId, userDetails.getMember());
     }
 
-
     @GetMapping("/chat/room")
     public ResponseDto<List<?>> getAllChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return chatService.getAllChatRooms(userDetails.getMember());
     }
+
     @GetMapping("/chat/room/{roomId}")
     public ResponseDto<?> getChatRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return chatService.getChatRoom(roomId,userDetails.getMember());

@@ -16,14 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChatController {
     private final ChatService chatService;
 
-//    @GetMapping("/chat/room")
-//    public ResponseDto findMessageHistory(@RequestParam(value = "roomId", required = false) Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        return chatService.findMessageHistory(roomId, userDetails.getUser());
-//    }
-
     @MessageMapping("/chat/message")
     public void message(ChatDto message) {
         chatService.saveMessage(message);
     }
-
 }
