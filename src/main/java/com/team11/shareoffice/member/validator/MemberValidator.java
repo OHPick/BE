@@ -42,7 +42,6 @@ public class MemberValidator {
     //회원가입 - 이메일 중복 검사
     public void validateEmailOverlapped(String email) {
         Optional<Member> foundByEmail = memberRepository.findByEmail(email);
-        System.out.println("foundByEmail : " + foundByEmail);
         if (foundByEmail.isPresent() && !foundByEmail.get().isDelete()) {
             throw new CustomException(ErrorCode.EXIST_EMAIL);
         }
@@ -51,7 +50,6 @@ public class MemberValidator {
     //회원가입 - 닉네임 중복 검사
     public void validateNicknameOverlapped(String nickname) {
         Optional<Member> foundByUsername = memberRepository.findByNickname(nickname);
-        System.out.println("foundByUsername : " + foundByUsername);
         if (foundByUsername.isPresent() && !foundByUsername.get().isDelete()) {
             throw new CustomException(ErrorCode.EXIST_NICKNAME);
         }

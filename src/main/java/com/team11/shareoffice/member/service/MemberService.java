@@ -99,7 +99,6 @@ public class MemberService {
     }
 
     public void issueTokens(HttpServletResponse response, String email){
-        System.out.println("MemberService.issueTokens");
         TokenDto tokenDto = jwtUtil.createAllToken(email);
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
@@ -125,7 +124,6 @@ public class MemberService {
         String signoutUser = "signout" + member.getId();
         member.setEmail(member.getEmail() + signoutUser);
         member.setNickname(member.getNickname() + signoutUser);
-
 
         member.setDelete(true);
         memberRepository.save(member);
