@@ -69,7 +69,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/email/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/posts/**").permitAll()
                 // 채팅관련
-                .requestMatchers("/ws/**").permitAll()
+                .requestMatchers("/ws").permitAll()
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil, redisService), UsernamePasswordAuthenticationFilter.class);
