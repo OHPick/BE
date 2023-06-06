@@ -124,12 +124,15 @@ public class MyPageService {
     public ResponseDto<ProfileDto> profileModify(ProfileDto profileDto, MultipartFile image, Member member) throws IOException {
 
         String nickName = profileDto.getNickname();
-
         // 닉네임 중복 검사
-        Optional<Member> foundByUsername = memberRepository.findByNickname(nickName);
-        if (foundByUsername.isPresent()){
-            throw new CustomException(ErrorCode.EXIST_NICKNAME);
-        }
+//        Optional<Member> foundByUsername = memberRepository.findByNickname(nickName);
+//        if (foundByUsername.isPresent()){
+//            throw new CustomException(ErrorCode.EXIST_NICKNAME);
+//        }
+
+        // 닉네임 패턴 및 중복 검사
+        memberValidator.validateNickname(nickName);
+
         member.updateNickName(profileDto.getNickname());
 
         //기존에 있던 이미지 파일 s3에서 삭제

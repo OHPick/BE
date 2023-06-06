@@ -48,9 +48,13 @@ public class MemberValidator {
     }
 
     //회원가입 - 닉네임 중복 검사
-    public void validateNicknameOverlapped(String nickname) {
+    public void validateNickname(String nickname) {
+        if(nickname.length()<2 || nickname.length()>10){
+            throw new CustomException(ErrorCode.INVALID_NICKNAME_PATTERN);
+        }
+
         Optional<Member> foundByUsername = memberRepository.findByNickname(nickname);
-        if (foundByUsername.isPresent() && !foundByUsername.get().isDelete()) {
+        if (foundByUsername.isPresent() && !foundByUsername.get().isDelete()) {  // 탈퇴안한경우 false -> 즉 !false => true
             throw new CustomException(ErrorCode.EXIST_NICKNAME);
         }
     }

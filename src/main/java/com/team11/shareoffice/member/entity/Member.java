@@ -54,7 +54,6 @@ public class Member{
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-//        this.isDelete = isDelete;
         this.imageUrl = imageUrl;
     }
 
