@@ -26,7 +26,7 @@ public class PostResponseDto {
     private boolean likeStatus;
     private int userStatus;
     private LocalDate startDate;
-    private LocalDate entDate;
+    private LocalDate endDate;
 
 
     public PostResponseDto(Post post, boolean likeStatus, int userStatus) {
@@ -60,7 +60,6 @@ public class PostResponseDto {
         this.likeStatus = likeStatus;
         this.userStatus = userStatus;
         this.startDate = reservation.getStartDate();
-        this.entDate = reservation.getEndDate();
+        this.endDate = reservation.getEndDate();
     }
-
 }
