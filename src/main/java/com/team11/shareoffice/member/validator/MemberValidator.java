@@ -4,7 +4,7 @@ import com.team11.shareoffice.email.entity.Email;
 import com.team11.shareoffice.email.repository.EmailRepository;
 import com.team11.shareoffice.global.exception.CustomException;
 import com.team11.shareoffice.global.util.ErrorCode;
-import com.team11.shareoffice.member.dto.MemberRequestDto;
+import com.team11.shareoffice.member.dto.SignupRequestDto;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class MemberValidator {
     private final PasswordEncoder passwordEncoder;
 
     //회원가입 - 비밀번호 확인 일치 여부
-    public void validatePasswordCheck(MemberRequestDto requestDto) {
+    public void validatePasswordCheck(SignupRequestDto requestDto) {
         if (!Objects.equals(requestDto.getPassword(), requestDto.getPasswordCheck())) {
             throw new CustomException(ErrorCode.NOT_SAME_PASSWORD);
         }
@@ -42,7 +42,8 @@ public class MemberValidator {
     //회원가입 - 이메일 중복 검사
     public void validateEmailOverlapped(String email) {
         Optional<Member> foundByEmail = memberRepository.findByEmail(email);
-        if (foundByEmail.isPresent()) {
+        System.out.println("foundByEmail : " + foundByEmail);
+        if (foundByEmail.isPresent() && !foundByEmail.get().isDelete()) {
             throw new CustomException(ErrorCode.EXIST_EMAIL);
         }
     }
@@ -50,7 +51,8 @@ public class MemberValidator {
     //회원가입 - 닉네임 중복 검사
     public void validateNicknameOverlapped(String nickname) {
         Optional<Member> foundByUsername = memberRepository.findByNickname(nickname);
-        if (foundByUsername.isPresent()) {
+        System.out.println("foundByUsername : " + foundByUsername);
+        if (foundByUsername.isPresent() && !foundByUsername.get().isDelete()) {
             throw new CustomException(ErrorCode.EXIST_NICKNAME);
         }
     }
@@ -86,13 +88,5 @@ public class MemberValidator {
             throw new CustomException(ErrorCode.WRONG_PASSWORD);
         }
     }
-
-    //토큰 검증
-//    public void validateToken(Member member) {
-//        if (refreshTokenRepository.findByMember(member).isEmpty()) {
-//            throw new CustomException(ErrorCode.INVALID_TOKEN);
-//        }
-//    }
-
 
 }
