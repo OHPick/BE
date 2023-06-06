@@ -62,9 +62,6 @@ public class Member{
         this.kakaoId = kakaoId;
         return this;
     }
-//    public void softDelete() {
-//        this.isDelete = true;
-//    }
 
 
     public void updateNickName(String nickName) {

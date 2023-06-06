@@ -118,10 +118,13 @@ public class MemberService {
     //회원탈퇴
     public ResponseDto<?> signout(UserDetailsImpl userDetails, SignoutRequestDto request) {
         String password = request.getPassword();
-
         Member member = memberValidator.validateEmailExist(userDetails.getMember().getEmail());
-
         memberValidator.passwordCheck(password, member);
+
+        // 탈퇴시 이메일 닉네임 수정
+        String signoutUser = "signout" + member.getId();
+        member.setEmail(member.getEmail() + signoutUser);
+        member.setNickname(member.getNickname() + signoutUser);
 
 
         member.setDelete(true);
