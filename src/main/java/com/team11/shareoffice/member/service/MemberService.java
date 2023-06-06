@@ -2,23 +2,20 @@ package com.team11.shareoffice.member.service;
 
 import com.team11.shareoffice.email.repository.EmailRepository;
 import com.team11.shareoffice.global.dto.ResponseDto;
-import com.team11.shareoffice.global.exception.CustomException;
 import com.team11.shareoffice.global.jwt.JwtUtil;
 import com.team11.shareoffice.global.jwt.dto.TokenDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.global.service.RedisService;
-import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.like.repository.LikeRepository;
-import com.team11.shareoffice.member.dto.MemberRequestDto;
-import com.team11.shareoffice.member.dto.ProfileCountDto;
-import com.team11.shareoffice.member.dto.ProfileDto;
+import com.team11.shareoffice.member.dto.LoginRequestDto;
+import com.team11.shareoffice.member.dto.SignoutRequestDto;
+import com.team11.shareoffice.member.dto.SignupRequestDto;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
 import com.team11.shareoffice.member.validator.MemberValidator;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.post.service.ImageService;
-import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,13 +24,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.team11.shareoffice.global.dto.ResponseDto.setSuccess;
 
@@ -56,7 +49,7 @@ public class MemberService {
 
 
     // 회원가입
-    public ResponseDto<?> signup(MemberRequestDto requestDto){
+    public ResponseDto<?> signup(SignupRequestDto requestDto){
         String email = requestDto.getEmail();
         String password = passwordEncoder.encode(requestDto.getPassword());
         String nickname = requestDto.getNickname();
@@ -68,7 +61,7 @@ public class MemberService {
         // 닉네임 중복 검사
         memberValidator.validateNicknameOverlapped(nickname);
 //        인증된 이메일인지 검사
-        memberValidator.validateEmailAuth(email);
+//        memberValidator.validateEmailAuth(email);
 
         // 유저 등록
         Member member = Member.builder()
@@ -88,7 +81,7 @@ public class MemberService {
     }
 
     // 로그인
-    public ResponseDto<?> login(MemberRequestDto requestDto, HttpServletResponse response){
+    public ResponseDto<?> login(LoginRequestDto requestDto, HttpServletResponse response){
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
 
@@ -98,23 +91,6 @@ public class MemberService {
         memberValidator.validateEmailisDeleted(member);
         // 패스워드 검사
         memberValidator.passwordCheck(password, member);
-        //Token 생성
-//        TokenDto tokenDto = jwtUtil.createAllToken(email);
-        //RefreshToken 있는지 확인
-//        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMember(member);
-        //있으면 새 토큰 발급 후 업데이트  //없으면 새로 만들고 DB에 저장
-//        if (refreshToken.isPresent()) {
-//            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
-//            System.out.println("RTK있을때 if문 email값: " + email);
-//
-//        } else {
-//            refreshTokenRepository.saveAndFlush(RefreshToken.saveToken(tokenDto.getRefreshToken(), member));
-//            issueTokens(response, email);
-//            System.out.println("RTK없을때 else문 email값: " + email);
-//        }
-        //header에 accesstoken, refreshtoken 추가
-//        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
-//        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
 
         //엑세스, 리프레쉬 다 발급 + 리프레쉬 레디스 저장
         issueTokens(response, email);
@@ -131,24 +107,6 @@ public class MemberService {
         redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
     }
 
-    //토큰 재발급
-//    public ResponseDto<?> reissueToken(HttpServletRequest request, HttpServletResponse response) {
-//        String refreshTokenFromRequest = request.getHeader(JwtUtil.REFRESH_TOKEN); //요청헤더에서 온 RTK
-//        String token = jwtUtil.resolveToken(request,JwtUtil.ACCESS_TOKEN); //요청헤더에서 온 ATK(bearer 제외)
-//        Claims info = jwtUtil.getClaimsFromToken(token); //ATK에서 body가지고 옴
-//        String email = info.getSubject(); //가지고온 body에서 subject 빼오기 = email
-//
-//        String refreshTokenFromRedis = redisService.getValues(email);
-//
-//        if(refreshTokenFromRequest.equals(refreshTokenFromRedis)){
-//            jwtUtil.validateToken(refreshTokenFromRequest);
-//            issueTokens(response, email);
-//            return setSuccess("토큰 재발급 성공");
-//        } else {
-//            throw new CustomException(ErrorCode.NOT_MATCH_REFRESHTOKEN);
-//        }
-//    }
-
     public void logout(Member member, HttpServletRequest request){
         String accessToken = jwtUtil.resolveToken(request,JwtUtil.ACCESS_TOKEN);
         redisService.setBlackList(accessToken);
@@ -158,14 +116,16 @@ public class MemberService {
 
 
     //회원탈퇴
-    public ResponseDto<?> signout(UserDetailsImpl userDetails, MemberRequestDto request) {
+    public ResponseDto<?> signout(UserDetailsImpl userDetails, SignoutRequestDto request) {
         String password = request.getPassword();
-
         Member member = memberValidator.validateEmailExist(userDetails.getMember().getEmail());
-
         memberValidator.passwordCheck(password, member);
 
-//        memberValidator.validateToken(member);
+        // 탈퇴시 이메일 닉네임 수정
+        String signoutUser = "signout" + member.getId();
+        member.setEmail(member.getEmail() + signoutUser);
+        member.setNickname(member.getNickname() + signoutUser);
+
 
         member.setDelete(true);
         memberRepository.save(member);
@@ -177,7 +137,6 @@ public class MemberService {
                 postRepository.save(p);
             }
         }
-//        refreshTokenRepository.deleteByMember(member);
 
         return ResponseDto.setSuccess("회원탈퇴 성공");
     }
