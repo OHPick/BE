@@ -26,7 +26,7 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String title;
     // 게시글 내용
-    @Column(nullable = false)
+    @Column(nullable = false, length = 5000)
     private String content;
     // 주소
     @Column(nullable = false)
