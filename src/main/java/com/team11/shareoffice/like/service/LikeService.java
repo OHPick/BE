@@ -30,9 +30,9 @@ public class LikeService {
         // 로그인 여부 확인
         likeValidator.validateIsLogin(member);
 
-        if (member == null) {
-            throw new CustomException(ErrorCode.INVALID_MEMBER);
-        }
+//        if (member == null) {   //위와 겹치는거 같음
+//            throw new CustomException(ErrorCode.INVALID_MEMBER);
+//        }
 
         //좋아요 존재여부 확인
         Likes like = likeRepository.findByMemberAndPost(member, post);

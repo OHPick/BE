@@ -34,7 +34,6 @@ public class KakaoService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
-//    private final RefreshTokenRepository refreshTokenRepository;
     private final RedisService redisService;
 
 
@@ -49,23 +48,6 @@ public class KakaoService {
         UserInfoDto userInfo = fetchKakaoUserInfo(accessToken);
         // 3. 필요 시에 회원 가입
         Member kakaoUser = registerKakaoUserIfNeeded(userInfo);
-//        // 4. jWT 액서스 토큰 반환
-//        String createToken = jwtUtil.createToken(kakaoUser.getEmail(), jwtUtil.ACCESS_TOKEN);
-//        //Token 생성
-//        TokenDto tokenDto = jwtUtil.createAllToken(userInfo.getEmail());
-//        //RefreshToken 있는지 확인
-//        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMember(kakaoUser);  //이부분 수정해야할듯
-//        // 있으면 새 토큰 발급 후 업데이트
-//        // 없으면 새로 만들고 DB에 저장
-//        if (refreshToken.isPresent()) {
-//            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
-//        } else {
-//            refreshTokenRepository.saveAndFlush(RefreshToken.saveToken(tokenDto.getRefreshToken(), kakaoUser));
-//        }
-//        //header에 accesstoken, refreshtoken 추가
-//        response.addHeader(JwtUtil.ACCESS_TOKEN, createToken);
-//        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-//        return ResponseDto.setSuccess("로그인에 성공했습니다");
 
         issueTokens(response, kakaoUser.getEmail());
 
@@ -90,7 +72,7 @@ public class KakaoService {
         String url = UriComponentsBuilder.fromHttpUrl("https://kauth.kakao.com/oauth/token")
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("client_id", "a2e918a8313b1ec2a828afcfa8e8991b")
-                .queryParam("redirect_uri", "http://localhost:3000/oauth/kakao")
+                //.queryParam("redirect_uri", "http://localhost:3000/oauth/kakao")
                 .queryParam("redirect_uri", "https://ohpick.vercel.app/oauth/kakao")
                 .queryParam("Client_Secret", clientSecret)
                 .queryParam("code", code)

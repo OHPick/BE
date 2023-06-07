@@ -8,7 +8,7 @@ public enum ErrorCode {
     //회원가입 / 로그인 부분
     EXIST_EMAIL("ExistEmail", "이미 등록된 이메일 입니다."),
     EXIST_NICKNAME("ExistNickname", "이미 등록된 닉네임 입니다."),
-    INVALID_NICKNAME_PATTERN ("InvalidNicknamePattern", "닉네임은 최소 2~10글자여야 합니다."),
+    INVALID_NICKNAME_PATTERN ("InvalidNicknamePattern", "닉네임은 2~10글자로 설정해주세요."),
     NOT_SAME_PASSWORD("NotSamePassword", "비밀번호가 서로 일치하지 않습니다."),
     INVALID_PASSWORD_PATTERN ("InvalidPasswordPattern", "비밀번호는 8-15자리, 최소 하나의 영어 대소문자, 숫자, 특수문자(@$!%*?&()_)를 포함해야 합니다."),
     INVALID_EMAIL_PATTERN ("InvalidEmailPattern", "유효하지 않은 이메일 형식입니다."),
@@ -21,11 +21,10 @@ public enum ErrorCode {
     INVALID_TOKEN("InvalidToken","토큰이 만료됐거나 유효하지 않습니다."),
     INVALID_AUTHOR("InvalidAuthor", "작성자만 할 수 있습니다"),
     INVALID_MEMBER("InvalidMember", "유효하지 않는 이메일 입니다."),
-    NOT_MATCH_REFRESHTOKEN("RTKError", "Refresh Token이 일치하지 않습니다."),
 
 
     //게시글 관련
-    NOT_EXIST_POST("NotExistPost", "존재하지 않은 게시글 입니다."),
+    NOT_EXIST_POST("NotExistPost", "존재하지 않는 게시글 입니다."),
 
     //예약관련
     INVALID_DATE ("InvalidDate", "예약할 수 없는 날짜입니다."),
