@@ -58,8 +58,8 @@ public class MemberService {
         memberValidator.validatePasswordCheck(requestDto);
         // 이메일 중복 검사
         memberValidator.validateEmailOverlapped(email);
-        // 닉네임 중복 검사
-        memberValidator.validateNicknameOverlapped(nickname);
+        // 닉네임 패턴 및 중복 검사
+        memberValidator.validateNickname(nickname);
 //        인증된 이메일인지 검사
         memberValidator.validateEmailAuth(email);
 
@@ -99,7 +99,6 @@ public class MemberService {
     }
 
     public void issueTokens(HttpServletResponse response, String email){
-        System.out.println("MemberService.issueTokens");
         TokenDto tokenDto = jwtUtil.createAllToken(email);
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
@@ -122,10 +121,9 @@ public class MemberService {
         memberValidator.passwordCheck(password, member);
 
         // 탈퇴시 이메일 닉네임 수정
-        String signoutUser = "signout" + member.getId();
+        String signoutUser = "(탈퇴한 회원 No." + member.getId() +")";
         member.setEmail(member.getEmail() + signoutUser);
         member.setNickname(member.getNickname() + signoutUser);
-
 
         member.setDelete(true);
         memberRepository.save(member);

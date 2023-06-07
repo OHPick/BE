@@ -11,7 +11,6 @@ public class SignupRequestDto {
     @NotBlank
     private String email;
 
-    @Size(min = 2, max = 10)
     @NotBlank
     private String nickname;
 

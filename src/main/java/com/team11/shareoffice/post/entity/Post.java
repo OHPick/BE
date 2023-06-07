@@ -26,7 +26,7 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String title;
     // 게시글 내용
-    @Column(nullable = false)
+    @Column(nullable = false, length = 5000)
     private String content;
     // 주소
     @Column(nullable = false)
@@ -58,7 +58,7 @@ public class Post extends Timestamped {
 
     public Post (PostRequestDto requestDto, Member member){
         this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
+        this.content = requestDto.getContent().replace("\\n", "\n");
         this.location = requestDto.getLocation();
         this.price = requestDto.getPrice();
         this.capacity = requestDto.getCapacity();
@@ -70,13 +70,13 @@ public class Post extends Timestamped {
 
     public void updatePost (PostUpdateRequestDto requestDto){
         this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
+        this.content = requestDto.getContent().replace("\\n", "\n");
         this.location = requestDto.getLocation();
         this.price = requestDto.getPrice();
         this.capacity = requestDto.getCapacity();
-        this.operatingTime = requestDto.getOperatingTime();
-        this.contentDetails = requestDto.getContentDetails();
-        this.amenities = requestDto.getAmenities();
+        this.operatingTime = requestDto.getOperatingTime().replace("\\n", "\n");
+        this.contentDetails = requestDto.getContentDetails().replace("\\n", "\n");
+        this.amenities = requestDto.getAmenities().replace("\\n", "\n");
     }
 
     public void updateLike(Boolean likeOrDislike) {
