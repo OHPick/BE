@@ -3,6 +3,7 @@ package com.team11.shareoffice.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity(name = "members")
 @Getter
