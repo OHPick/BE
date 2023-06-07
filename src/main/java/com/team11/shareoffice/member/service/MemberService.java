@@ -61,7 +61,7 @@ public class MemberService {
         // 닉네임 중복 검사
         memberValidator.validateNicknameOverlapped(nickname);
 //        인증된 이메일인지 검사
-//        memberValidator.validateEmailAuth(email);
+        memberValidator.validateEmailAuth(email);
 
         // 유저 등록
         Member member = Member.builder()
