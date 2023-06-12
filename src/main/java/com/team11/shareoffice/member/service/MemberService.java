@@ -49,7 +49,7 @@ public class MemberService {
 
 
     // 회원가입
-    public ResponseDto<?> signup(SignupRequestDto requestDto){
+    public void signup(SignupRequestDto requestDto){
         String email = requestDto.getEmail();
         String password = passwordEncoder.encode(requestDto.getPassword());
         String nickname = requestDto.getNickname();
@@ -61,7 +61,7 @@ public class MemberService {
         // 닉네임 패턴 및 중복 검사
         memberValidator.validateNickname(nickname);
 //        인증된 이메일인지 검사
-        memberValidator.validateEmailAuth(email);
+//        memberValidator.validateEmailAuth(email);
 
         // 유저 등록
         Member member = Member.builder()
@@ -73,15 +73,12 @@ public class MemberService {
 
         String basicImage = "https://shareoffice12.s3.ap-northeast-2.amazonaws.com/image.png";
 
-//        Member member = new Member(email,password,nickname,basicImage);  //  이 부분
-
         memberRepository.save(member);
         emailRepository.deleteById(email);
-        return setSuccess("회원가입에 성공했습니다.");
     }
 
     // 로그인
-    public ResponseDto<?> login(LoginRequestDto requestDto, HttpServletResponse response){
+    public void login(LoginRequestDto requestDto, HttpServletResponse response){
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
 
@@ -94,8 +91,6 @@ public class MemberService {
 
         //엑세스, 리프레쉬 다 발급 + 리프레쉬 레디스 저장
         issueTokens(response, email);
-
-        return setSuccess("로그인 성공");
     }
 
     public void issueTokens(HttpServletResponse response, String email){
@@ -115,7 +110,7 @@ public class MemberService {
 
 
     //회원탈퇴
-    public ResponseDto<?> signout(UserDetailsImpl userDetails, SignoutRequestDto request) {
+    public void signout(UserDetailsImpl userDetails, SignoutRequestDto request) {
         String password = request.getPassword();
         Member member = memberValidator.validateEmailExist(userDetails.getMember().getEmail());
         memberValidator.passwordCheck(password, member);
@@ -135,8 +130,8 @@ public class MemberService {
                 postRepository.save(p);
             }
         }
-
-        return ResponseDto.setSuccess("회원탈퇴 성공");
     }
+
+
 }
 

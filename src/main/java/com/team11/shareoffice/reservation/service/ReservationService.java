@@ -24,27 +24,24 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ReservationValidator reservationValidator;
 
-    public ResponseDto<?> showReservedPost( Long postId, Member member) {
+    public ReservationResponseDto showReservedPost( Long postId, Member member) {
         Post post = reservationValidator.validateIsExistPost(postId);
         Reservation reservation = reservationValidator.validateReservation(post, member);
-
-        return ResponseDto.setSuccess(new ReservationResponseDto(post,reservation));
+        return new ReservationResponseDto(post,reservation);
     }
 
 
-    public ResponseDto<?> reservePost(Long postId, ReservationRequestDto requestDto, Member member) {
+    public void reservePost(Long postId, ReservationRequestDto requestDto, Member member) {
         Post post = reservationValidator.validateIsExistPost(postId);
         reservationValidator.validateReserveDate(post,requestDto);
         Reservation newReserve = new Reservation(member, post, requestDto.getStartDate(), requestDto.getEndDate());
         reservationRepository.save(newReserve);
-        return ResponseDto.setSuccess(null);
     }
 
-    public ResponseDto<?> cancelReservePost(Long postId, Member member) {
+    public void cancelReservePost(Long postId, Member member) {
         Post post = reservationValidator.validateIsExistPost(postId);
         Reservation reservation = reservationValidator.validateReservation(post,member);
         reservationRepository.delete(reservation);
-        return ResponseDto.setSuccess(null);
     }
 
 }
