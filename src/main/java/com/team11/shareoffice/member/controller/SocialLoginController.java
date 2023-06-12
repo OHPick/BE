@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @CrossOrigin
 public class SocialLoginController {
+
     private final KakaoService kakaoService;
 
     // 카카오 로그인
@@ -23,4 +24,5 @@ public class SocialLoginController {
     public ResponseDto<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         return kakaoService.kakaoLogin(code, response);
     }
+
 }

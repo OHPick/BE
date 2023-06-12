@@ -2,6 +2,7 @@ package com.team11.shareoffice.chat.service;
 
 import com.team11.shareoffice.chat.dto.ChatDto;
 import com.team11.shareoffice.chat.dto.ChatResponseDto;
+import com.team11.shareoffice.chat.dto.ChatRoomResponseDto;
 import com.team11.shareoffice.chat.entity.ChatMessage;
 import com.team11.shareoffice.chat.entity.ChatRoom;
 import com.team11.shareoffice.chat.repository.ChatMessageRepository;
@@ -32,11 +33,10 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final SimpMessageSendingOperations template;
-    //private final MemberService memberService;
     private final ChatRoomRepositoryImpl chatRoomRepositoryImpl;
 
     @Transactional
-    public ResponseDto<Long> enterRoom(Long postId, Member member) {
+    public Long enterRoom(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
         Member owner = memberRepository.findByNickname(post.getMember().getNickname()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_MEMBER));
         ChatRoom room = chatRoomRepository.findChatRoomByPostAndMember(post, member).orElse(null);
@@ -44,7 +44,7 @@ public class ChatService {
             room = new ChatRoom(post, member, owner);
             chatRoomRepository.saveAndFlush(room);
         }
-        return ResponseDto.setSuccess("방 입장", room.getId());
+        return room.getId();
     }
 
 //    @Transactional
@@ -63,7 +63,7 @@ public class ChatService {
     }
 
     @Transactional
-    public ResponseDto<?> deleteRoom(Long roomId,Member member) {
+    public void deleteRoom(Long roomId,Member member) {
         ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
         if (room.getMember().getNickname().equals(member.getNickname()) || room.getOwner().getNickname().equals(member.getNickname())){
             chatRoomRepository.deleteById(room.getId());
@@ -71,16 +71,15 @@ public class ChatService {
         else {
             throw new CustomException(ErrorCode.INVALID_CHAT_MEMBER);
         }
-        return ResponseDto.setSuccess("채팅방 삭제 성공");
     }
 
     @Transactional(readOnly = true)
-    public ResponseDto<List<?>> getAllChatRooms(Member member){
-        return ResponseDto.setSuccess(chatRoomRepositoryImpl.findAllChatRoom(member));
+    public List<ChatRoomResponseDto> getAllChatRooms(Member member){
+        return chatRoomRepositoryImpl.findAllChatRoom(member);
     }
 
     @Transactional(readOnly = true)
-    public ResponseDto<?> getChatRoom(Long roomId, Member member){
+    public List<ChatResponseDto> getChatRoom(Long roomId, Member member){
         ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow( () -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
 
         List<ChatMessage> messages = chatMessageRepository.findAllByRoomOrderByCreatedAt(room);
@@ -88,8 +87,7 @@ public class ChatService {
                 .map(message -> new ChatResponseDto(roomId, changeNickname(message.getSender().getNickname(), member), message.getMessage(), changeDateFormat(message.getCreatedAt())))
                         .toList();
 
-
-        return ResponseDto.setSuccess(chatResponseDtos);
+        return chatResponseDtos;
     }
 
 
