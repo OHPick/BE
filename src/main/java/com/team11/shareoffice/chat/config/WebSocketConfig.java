@@ -30,14 +30,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        // WebSocket 인터셉터 등록
-        registration.interceptors(webSocketTokenInterceptor());
-    }
+//     @Override
+//     public void configureClientInboundChannel(ChannelRegistration registration) {
+//         // WebSocket 인터셉터 등록
+//         registration.interceptors(webSocketTokenInterceptor());
+//     }
 
-    @Bean
-    public WebSocketTokenInterceptor webSocketTokenInterceptor() {
-        return new WebSocketTokenInterceptor(jwtUtil);
-    }
+//     @Bean
+//     public WebSocketTokenInterceptor webSocketTokenInterceptor() {
+//         return new WebSocketTokenInterceptor(jwtUtil);
+//     }
 }
