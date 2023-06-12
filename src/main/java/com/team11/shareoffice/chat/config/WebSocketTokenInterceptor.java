@@ -25,7 +25,7 @@ public class WebSocketTokenInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);   // 메시지의 헤더에 접근
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             // CONNECT 메시지인 경우 토큰 검증을 수행합니다.
-            String token = accessor.getFirstNativeHeader("ACCESS_TOKEN");
+            String token = accessor.getFirstNativeHeader(JwtUtil.ACCESS_TOKEN);
             if (token != null && jwtUtil.validateToken(token)) {
                 // 토큰이 유효한 경우 연결을 허용합니다.
                 return message;
