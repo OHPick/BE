@@ -10,9 +10,10 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public class ChatRoomResponseDto {
 
-    private Long id;
+    private Long roomId;
     private String title;
     private String postImage;
     private String message;
+    private String createdAt;
 
 }

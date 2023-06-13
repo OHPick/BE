@@ -59,7 +59,7 @@ public class ChatService {
         ChatRoom room = chatRoomRepository.findById(message.getRoomId()).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
         ChatMessage chatMessage = new ChatMessage(member, message.getMessage(), room);
         chatMessageRepository.saveAndFlush(chatMessage);
-        ChatResponseDto responseDto = new ChatResponseDto(chatMessage.getRoom().getId(), chatMessage.getSender().getNickname(), chatMessage.getMessage(), changeDateFormat(chatMessage.getCreatedAt()));
+        ChatResponseDto responseDto = new ChatResponseDto(chatMessage.getRoom().getId(), chatMessage.getSender().getNickname(), chatMessage.getMessage(), changeDateFormatMessage(chatMessage.getCreatedAt()), member.getImageUrl());
         template.convertAndSend("/sub/chat/room/" + message.getRoomId(), responseDto);
     }
 
@@ -76,7 +76,9 @@ public class ChatService {
 
     @Transactional(readOnly = true)
     public List<ChatRoomResponseDto> getAllChatRooms(Member member){
-        return chatRoomRepositoryImpl.findAllChatRoom(member);
+        return chatRoomRepositoryImpl.findAllChatRoom(member).stream()
+                .peek(chatRoomResponseDto -> chatRoomResponseDto.setCreatedAt(changeDateFormatChatRoom(chatRoomResponseDto.getCreatedAt())))
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -85,18 +87,26 @@ public class ChatService {
 
         List<ChatMessage> messages = chatMessageRepository.findAllByRoomOrderByCreatedAt(room);
         List<ChatResponseDto> chatResponseDtos = messages.stream()
-                .map(message -> new ChatResponseDto(roomId, message.getSender().getNickname(), message.getMessage(), changeDateFormat(message.getCreatedAt())))
+                .map(message -> new ChatResponseDto(roomId, message.getSender().getNickname(), message.getMessage(), changeDateFormatMessage(message.getCreatedAt()), member.getImageUrl()))
                         .toList();
 
         return new ChatListResponseDto(member.getNickname(), chatResponseDtos);
     }
 
 
-    private String changeDateFormat(String createdAt) {
+    private String changeDateFormatMessage(String createdAt) {
         String[] date = createdAt.split(" ");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
         return date[0].equals(today) ? date[1] : date[0];
+    }
+
+    private String changeDateFormatChatRoom(String createdAt) {
+        String[] date = createdAt.split(" ");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy.MM.dd");
+        String today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
+        String convertedDate = date[0].formatted(formatter);
+        return convertedDate.equals(today) ? "오늘" : convertedDate;
     }
 
 
