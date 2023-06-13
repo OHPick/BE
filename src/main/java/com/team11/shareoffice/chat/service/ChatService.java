@@ -103,9 +103,12 @@ public class ChatService {
     }
 
     private String changeDateFormatChatRoom(String createdAt) {
-        String[] date = createdAt.split(" ");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy.MM.dd");
         String today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
+        if(createdAt == null){
+            return today;
+        }
+        String[] date = createdAt.split(" ");
         LocalDate dateFormat = LocalDate.parse(date[0]);
         String convertedDate = dateFormat.format(formatter);
         return convertedDate.equals(today) ? date[1] : convertedDate;
