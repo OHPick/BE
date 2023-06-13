@@ -34,19 +34,19 @@ public class ChatRoomRepositoryImpl extends QuerydslRepositorySupport implements
         QChatRoom chatRoom = QChatRoom.chatRoom;
         QPost post = QPost.post;
         QChatMessage chatMessageSubQuery = QChatMessage.chatMessage;
+        QChatMessage lastMessageSubQuery = QChatMessage.chatMessage;
 
         List<ChatMessage> latestMessages = jpaQueryFactory  // latestMessages : 최신 메시지들 저장리스트
-            .selectFrom(chatMessageSubQuery)
-            .where(chatMessageSubQuery.id.in(
+            .selectFrom(lastMessageSubQuery)
+            .where(lastMessageSubQuery.id.in(
                 JPAExpressions.select(chatMessageSubQuery.id.max())  // (하위쿼리) room.id별로 메시지id의 최댓값 (즉,최신메세지)
                     .from(chatMessageSubQuery)
                     .groupBy(chatMessageSubQuery.room.id)))
             .fetch();
-
         return jpaQueryFactory
             .select(Projections.fields(  // 채팅방목록에 보여줄  제목,이미지,마지막메시지
                 ChatRoomResponseDto.class,
-                chatRoom.id,
+                chatRoom.id.as("roomId"),
                 post.title,
                 post.postImage,
                 chatMessageSubQuery.message,
