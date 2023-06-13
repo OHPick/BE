@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatListResponseDto {
-    private String nickname;
+    private String member;
+    private String owner;
     private List<ChatResponseDto> chats;
 }
