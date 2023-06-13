@@ -32,7 +32,10 @@ public enum ErrorCode {
 
     //채팅관련
     CHATROOM_NOT_FOUND("NotExistChatRoom", "채팅방이 없습니다"),
-    INVALID_CHAT_MEMBER("InvalidChatMember", "채팅방에 속해 있는 사용자만 삭제 가능합니다.");
+    INVALID_CHAT_MEMBER("InvalidChatMember", "채팅방에 속해 있는 사용자만 삭제 가능합니다."),
+
+    // 이미지관련
+    INVALID_IMAGE("InvalidImage", "유효하지 않는 이미지입니다.");
 
     String errorCode;
     String message;

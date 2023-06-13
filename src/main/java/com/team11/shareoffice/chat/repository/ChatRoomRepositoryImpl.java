@@ -49,7 +49,7 @@ public class ChatRoomRepositoryImpl extends QuerydslRepositorySupport implements
                 ChatRoomResponseDto.class,
                 chatRoom.id,
                 post.title,
-                post.postImage,
+                post.postImages.get(0),
                 chatMessageSubQuery.message
                              ))
             .from(chatRoom) // 채팅방으로부터

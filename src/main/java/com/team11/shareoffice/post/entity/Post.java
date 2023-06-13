@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 @Entity(name = "posts")
 @Getter
 @Setter
@@ -51,7 +56,7 @@ public class Post extends Timestamped {
 
     @Column(columnDefinition = "LONGTEXT")
     @Lob
-    private String postImage;
+    private List<String> postImages;
 
     @Column
     private boolean isDelete;
@@ -68,7 +73,7 @@ public class Post extends Timestamped {
         this.member = member;
     }
 
-    public void updatePost (PostUpdateRequestDto requestDto){
+    public void updatePost (PostUpdateRequestDto requestDto, List<String> updatedImageUrl){
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent().replace("\\n", "\n");
         this.location = requestDto.getLocation();
@@ -77,9 +82,21 @@ public class Post extends Timestamped {
         this.operatingTime = requestDto.getOperatingTime().replace("\\n", "\n");
         this.contentDetails = requestDto.getContentDetails().replace("\\n", "\n");
         this.amenities = requestDto.getAmenities().replace("\\n", "\n");
+        this.postImages = updatedImageUrl;
     }
 
     public void updateLike(Boolean likeOrDislike) {
         this.likeCount = Boolean.TRUE.equals(likeOrDislike) ? this.likeCount + 1 : this.likeCount - 1;
+    }
+
+    public List<String> getPostImagesCustom(){
+        List<String> imageList = new ArrayList<>();
+        for (String images : this.getPostImages()) {
+            // Remove brackets and split by comma
+            String[] urls = images.substring(1, images.length() - 1).split(", ");
+            // Add all URLs to imageList
+            imageList.addAll(Arrays.asList(urls));
+        }
+        return imageList;
     }
 }

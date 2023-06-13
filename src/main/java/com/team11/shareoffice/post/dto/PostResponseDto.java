@@ -16,7 +16,7 @@ public class PostResponseDto {
     private String title;
     private String content;
     private String location;
-    private String imageUrl;
+    private List<String> imageUrl;
     private int likeCount;
     private int price;
     private int capacity;
@@ -34,7 +34,7 @@ public class PostResponseDto {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.location = post.getLocation();
-        this.imageUrl = post.getPostImage();
+        this.imageUrl = post.getPostImages();
         this.likeCount = post.getLikeCount();
         this.price = post.getPrice();
         this.capacity = post.getCapacity();
@@ -50,7 +50,7 @@ public class PostResponseDto {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.location = post.getLocation();
-        this.imageUrl = post.getPostImage();
+        this.imageUrl = post.getPostImages();
         this.likeCount = post.getLikeCount();
         this.price = post.getPrice();
         this.capacity = post.getCapacity();
