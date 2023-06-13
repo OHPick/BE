@@ -22,7 +22,7 @@ public class LikeService {
     private final LikeValidator likeValidator;
 
     @Transactional
-    public ResponseDto<?> likePost(Long postId, Member member) {
+    public LikeResponseDto likePost(Long postId, Member member) {
 
         //게시글 확인
         Post post = likeValidator.validateIsExistPost(postId);
@@ -30,17 +30,13 @@ public class LikeService {
         // 로그인 여부 확인
         likeValidator.validateIsLogin(member);
 
-//        if (member == null) {   //위와 겹치는거 같음
-//            throw new CustomException(ErrorCode.INVALID_MEMBER);
-//        }
-
         //좋아요 존재여부 확인
         Likes like = likeRepository.findByMemberAndPost(member, post);
         if (like == null) {
             Likes newLikes = likeRepository.save(Likes.addLike(member, post));
             newLikes.setLikeStatus();
             post.updateLike(true);
-            return ResponseDto.setSuccess(new LikeResponseDto(post, newLikes));
+            return new LikeResponseDto(post, newLikes);
         } else {
             if (!like.isLikeStatus()) {
                 like.setLikeStatus();
@@ -49,7 +45,7 @@ public class LikeService {
                 like.setLikeStatus();
                 post.updateLike(false);
             }
-            return ResponseDto.setSuccess(new LikeResponseDto(post, like));
+            return new LikeResponseDto(post, like);
         }
     }
 }

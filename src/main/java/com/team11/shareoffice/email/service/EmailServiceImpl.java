@@ -90,7 +90,7 @@ public class EmailServiceImpl implements EmailService {
         return key.toString();
     }
     @Override
-    public ResponseDto<?> sendMessage(EmailRequestDto requestDto)throws Exception {
+    public String sendMessage(EmailRequestDto requestDto)throws Exception {
         String code = createKey();
         emailValidator.validateEmailPattern(requestDto.getEmail());
         Email email = Email.saveEmail(requestDto);
@@ -103,7 +103,7 @@ public class EmailServiceImpl implements EmailService {
         }
         email.updateCode(code);
         emailRepository.save(email);
-        return ResponseDto.setSuccess(code);
+        return code;
     }
 
 
@@ -112,10 +112,9 @@ public class EmailServiceImpl implements EmailService {
         일치여부와 상관없이 해당 데이터는 무조건 삭제
      */
     @Override
-    public ResponseDto<?> codeCheck(CodeRequestDto requestDto)throws Exception {
+    public void codeCheck(CodeRequestDto requestDto)throws Exception {
         Email email = emailValidator.validateIsExistEmail(requestDto.getEmail());
         emailValidator.validateCode(email,requestDto.getCode());
         email.updateChecked(true);
-        return ResponseDto.setSuccess(null);
     }
 }

@@ -5,6 +5,6 @@ import com.team11.shareoffice.email.dto.EmailRequestDto;
 import com.team11.shareoffice.global.dto.ResponseDto;
 
 public interface EmailService {
-    ResponseDto<?> sendMessage(EmailRequestDto requestDto)throws Exception;
-    ResponseDto<?> codeCheck(CodeRequestDto requestDto)throws Exception;
+    String sendMessage(EmailRequestDto requestDto)throws Exception;
+    void codeCheck(CodeRequestDto requestDto)throws Exception;
 }

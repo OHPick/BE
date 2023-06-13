@@ -1,6 +1,7 @@
 package com.team11.shareoffice.reservation.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.reservation.entity.Reservation;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReservationResponseDto {
     @JsonFormat
     private String title;
@@ -23,5 +25,12 @@ public class ReservationResponseDto {
         this.startDate = reservation.getStartDate();
         this.endDate = reservation.getEndDate();
         this.location = post.getLocation();
+    }
+
+    public ReservationResponseDto(Reservation reservation) {
+        this.title = null;
+        this.startDate = reservation.getStartDate();
+        this.endDate = reservation.getEndDate();
+        this.location = null;
     }
 }

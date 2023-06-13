@@ -39,10 +39,8 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
         QPost post = QPost.post;
         BooleanBuilder builder = new BooleanBuilder();
 
-        boolean otherFilterings = false;
 
         if (!StringUtils.isEmpty(keyword)) {
-            otherFilterings = true;
             builder.and(post.title.contains(keyword)
                     .or(post.content.contains(keyword))
                     .or(post.location.contains(keyword)));
@@ -50,7 +48,6 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
 
 
         if (!StringUtils.isEmpty(district)) {
-            otherFilterings = true;
             builder.and(post.location.contains(district));
         }
 
@@ -63,6 +60,8 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
+
+
 
         List<Post> resultsList = results.getResults();
         List<MainPageResponseDto> dtos = new ArrayList<>();
@@ -93,12 +92,12 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
                     orders.add(post.createdAt.desc());
                     break;
                 default:
-                    orders.add(post.likeCount.desc().nullsLast());
+                    orders.add(post.likeCount.desc());
                     orders.add(post.createdAt.desc());
             }
         } else {
             if (StringUtils.isEmpty(keyword) && StringUtils.isEmpty(district)) {
-                orders.add(post.likeCount.desc().nullsLast());
+                orders.add(post.likeCount.desc());
             }
             orders.add(post.createdAt.desc());
         }

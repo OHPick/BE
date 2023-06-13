@@ -23,6 +23,7 @@ public class MainPageResponseDto {
     private String memberNickname;
     private int likeCount;
     private boolean likeStatus;
+    private int capacity;
 
     public MainPageResponseDto(Post post) {
         this.id = post.getId();
@@ -44,6 +45,7 @@ public class MainPageResponseDto {
         this.likeCount = post.getLikeCount();
         this.postImages = post.getPostImages();
         this.memberNickname = post.getMember().getNickname();
+        this.capacity = post.getCapacity();
         if (likes != null) {
             this.likeStatus = likes.isLikeStatus();
         } else {

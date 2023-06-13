@@ -27,17 +27,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {   //웹 소켓 서버에 연결하는 데 사용할 웹 소켓 엔드 포인트를 등록
-        registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        // WebSocket 인터셉터 등록
-        registration.interceptors(webSocketTokenInterceptor());
-    }
+//     @Override
+//     public void configureClientInboundChannel(ChannelRegistration registration) {
+//         // WebSocket 인터셉터 등록
+//         registration.interceptors(webSocketTokenInterceptor());
+//     }
 
-    @Bean
-    public WebSocketTokenInterceptor webSocketTokenInterceptor() {
-        return new WebSocketTokenInterceptor(jwtUtil);
-    }
+//     @Bean
+//     public WebSocketTokenInterceptor webSocketTokenInterceptor() {
+//         return new WebSocketTokenInterceptor(jwtUtil);
+//     }
 }
