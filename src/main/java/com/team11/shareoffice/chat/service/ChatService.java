@@ -91,7 +91,7 @@ public class ChatService {
                 .map(message -> new ChatResponseDto(roomId, message.getSender().getNickname(), message.getMessage(), changeDateFormatMessage(message.getCreatedAt()), member.getImageUrl()))
                         .toList();
 
-        return new ChatListResponseDto(member.getNickname(), chatResponseDtos);
+        return new ChatListResponseDto(member.getNickname(), room.getOwner().getNickname(), chatResponseDtos);
     }
 
 
