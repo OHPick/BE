@@ -1,6 +1,5 @@
 package com.team11.shareoffice.chat.repository;
 
-import com.team11.shareoffice.chat.dto.ChatResponseDto;
 import com.team11.shareoffice.chat.dto.ChatRoomResponseDto;
 import com.team11.shareoffice.member.entity.Member;
 
