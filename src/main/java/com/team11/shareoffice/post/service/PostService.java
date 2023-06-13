@@ -1,12 +1,14 @@
 package com.team11.shareoffice.post.service;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
+import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.image.entity.Image;
 import com.team11.shareoffice.image.repository.ImageRepository;
 import com.team11.shareoffice.image.service.ImageService;
 import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.like.repository.LikeRepository;
 import com.team11.shareoffice.member.entity.Member;
+import com.team11.shareoffice.post.dto.MainPageResponseDto;
 import com.team11.shareoffice.post.dto.PostRequestDto;
 import com.team11.shareoffice.post.dto.PostResponseDto;
 import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
@@ -15,6 +17,8 @@ import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.post.validator.PostValidator;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,8 +39,12 @@ public class PostService {
     private final ReservationRepository reservationRepository;
     private final ImageRepository imageRepository;
 
+    public Page<MainPageResponseDto> findPosts(UserDetailsImpl userDetails, String keyword, String district, String sorting, Pageable pageable) {
+        return postRepository.FilteringAndPaging(userDetails, keyword, district, sorting, pageable);
+    }
 
-    public ResponseDto<?> createPost(PostRequestDto postRequestDto, List<MultipartFile> imageFileList, Member member) throws IOException {
+
+    public Long createPost(PostRequestDto postRequestDto, List<MultipartFile> imageFileList, Member member) throws IOException {
 
         Post post = postRepository.save(new Post(postRequestDto, member));
 
@@ -66,7 +74,7 @@ public class PostService {
 
         postRepository.save(post);
         System.out.println("!!!!!!!!!post.getPostImages() : " + post.getPostImages());  // [9b68bd75-af0f-4cb1-a119-4b700b607a6d_33.jpg, 802de3b3-e91a-4e1e-9ff3-5dfff9cb375d_우주1.jpg]
-        return ResponseDto.setSuccess("게시글 작성 성공", post.getId());
+        return post.getId();
     }
 
     public void updatePost(Long id, PostUpdateRequestDto postRequestDto, List<MultipartFile> updateImages, Member member) throws IOException {
@@ -146,10 +154,10 @@ public class PostService {
     }
 
     // 상세 게시글 조회
-    public ResponseDto<PostResponseDto> getPost(Long id,Member member) {
+    public PostResponseDto getPost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
         PostResponseDto postResponseDto = getPostByUserDetails(member,post);
-        return ResponseDto.setSuccess("상세 게시글 조회 성공", postResponseDto);
+        return postResponseDto;
     }
 
     private PostResponseDto getPostByUserDetails(Member member, Post post) {
