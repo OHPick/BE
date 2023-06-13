@@ -108,7 +108,7 @@ public class ChatService {
         String today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
         LocalDate dateFormat = LocalDate.parse(date[0]);
         String convertedDate = dateFormat.format(formatter);
-        return convertedDate.equals(today) ? "오늘" : convertedDate;
+        return convertedDate.equals(today) ? date[1] : convertedDate;
     }
 
 
