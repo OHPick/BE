@@ -42,8 +42,14 @@ public class MemberValidator {
     //회원가입 - 이메일 중복 검사
     public void validateEmailOverlapped(String email) {
         Optional<Member> foundByEmail = memberRepository.findByEmail(email);
-        if (foundByEmail.isPresent() && !foundByEmail.get().isDelete()) {
-            throw new CustomException(ErrorCode.EXIST_EMAIL);
+        if (foundByEmail.isPresent()) {
+            if (null != foundByEmail.get().getKakaoId()) {
+                throw new CustomException(ErrorCode.EXIST_KAKAO_EMAIL);
+            }
+
+            if (foundByEmail.isPresent() && !foundByEmail.get().isDelete()) {
+                throw new CustomException(ErrorCode.EXIST_EMAIL);
+            }
         }
     }
 

@@ -1,9 +1,11 @@
 package com.team11.shareoffice.post.service;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
+import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.like.repository.LikeRepository;
 import com.team11.shareoffice.member.entity.Member;
+import com.team11.shareoffice.post.dto.MainPageResponseDto;
 import com.team11.shareoffice.post.dto.PostRequestDto;
 import com.team11.shareoffice.post.dto.PostResponseDto;
 import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
@@ -12,6 +14,8 @@ import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.post.validator.PostValidator;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +35,13 @@ public class PostService {
     private final ReservationRepository reservationRepository;
 
 
-    public ResponseDto<?> createPost(PostRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
+
+    public Page<MainPageResponseDto> findPosts(UserDetailsImpl userDetails, String keyword, String district, String sorting, Pageable pageable) {
+        return postRepository.FilteringAndPaging(userDetails, keyword, district, sorting, pageable);
+    }
+
+
+    public Long createPost(PostRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
 
          if (image == null || image.isEmpty()) {
              throw new IllegalArgumentException();
@@ -42,10 +52,10 @@ public class PostService {
         Post post = new Post(postRequestDto, member);
         post.setPostImage(imageUrl);
         postRepository.save(post);
-        return ResponseDto.setSuccess("게시글 작성 성공", post.getId());
+        return post.getId();
     }
 
-    public ResponseDto<?> updatePost(Long id, PostUpdateRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
+    public void updatePost(Long id, PostUpdateRequestDto postRequestDto, MultipartFile image, Member member) throws IOException {
         //게시글 존재 확인.
         Post post = postValidator.validateIsExistPost(id);
         //게시글 작성자가 맞는지 확인.
@@ -61,24 +71,21 @@ public class PostService {
             //업로드 된 사진으로 수정
             post.setPostImage(uploadFilename);
         }
-
-        return ResponseDto.setSuccess("게시글 수정 성공");
     }
 
-    public ResponseDto<?> deletePost(Long id,Member member) {
+    public void deletePost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
         postValidator.validatePostAuthor(post, member);
         likeRepository.deleteLikesByPost(post);
         imageService.delete(post.getPostImage()); // 버켓의 이미지파일도 삭제
         postRepository.delete(post);
-        return ResponseDto.setSuccess("게시글 삭제 성공");
     }
 
     // 상세 게시글 조회
-    public ResponseDto<PostResponseDto> getPost(Long id,Member member) {
+    public PostResponseDto getPost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
         PostResponseDto postResponseDto = getPostByUserDetails(member,post);
-        return ResponseDto.setSuccess("상세 게시글 조회 성공", postResponseDto);
+        return postResponseDto;
     }
 
     private PostResponseDto getPostByUserDetails(Member member, Post post) {

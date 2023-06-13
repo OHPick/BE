@@ -21,6 +21,7 @@ public enum ErrorCode {
     INVALID_TOKEN("InvalidToken","토큰이 만료됐거나 유효하지 않습니다."),
     INVALID_AUTHOR("InvalidAuthor", "작성자만 할 수 있습니다"),
     INVALID_MEMBER("InvalidMember", "유효하지 않는 이메일 입니다."),
+    EXIST_KAKAO_EMAIL("AlreadyUsingEmail(Kakao)", "이미 카카오 계정으로 가입된 아이디입니다."),
 
 
     //게시글 관련
@@ -28,6 +29,7 @@ public enum ErrorCode {
 
     //예약관련
     INVALID_DATE ("InvalidDate", "예약할 수 없는 날짜입니다."),
+    EXIST_RESERVE_DATE ("ExistReserveDate", "이미 예약이 된 날짜입니다."),
     NOT_RESERVED ("NotReserved", "예약 취소는 예약자만 가능 합니다."),
 
     //채팅관련

@@ -42,7 +42,7 @@ public class ReservationValidator {
 
         List<Reservation> reservationList = reservationRepository.findAllByPostReserved(post, requestDto.getStartDate(), requestDto.getEndDate());
         if(!reservationList.isEmpty()){
-            throw new CustomException(ErrorCode.INVALID_DATE);
+            throw new CustomException(ErrorCode.EXIST_RESERVE_DATE);
         }
     }
 
