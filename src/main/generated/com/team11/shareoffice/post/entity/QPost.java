@@ -50,7 +50,7 @@ public class QPost extends EntityPathBase<Post> {
 
     public final StringPath operatingTime = createString("operatingTime");
 
-    public final StringPath postImage = createString("postImage");
+    public final ListPath<String, StringPath> postImages = this.<String, StringPath>createList("postImages", String.class, StringPath.class, PathInits.DIRECT2);
 
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
 

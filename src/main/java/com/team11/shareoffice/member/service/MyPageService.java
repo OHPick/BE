@@ -1,8 +1,7 @@
 package com.team11.shareoffice.member.service;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
-import com.team11.shareoffice.global.exception.CustomException;
-import com.team11.shareoffice.global.util.ErrorCode;
+import com.team11.shareoffice.image.service.ImageService;
 import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.like.repository.LikeRepository;
 import com.team11.shareoffice.member.dto.ProfileCountDto;
@@ -13,7 +12,6 @@ import com.team11.shareoffice.member.validator.MemberValidator;
 import com.team11.shareoffice.post.dto.PostResponseDto;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
-import com.team11.shareoffice.post.service.ImageService;
 import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -138,7 +136,9 @@ public class MyPageService {
         //기존에 있던 이미지 파일 s3에서 삭제
         imageService.delete(member.getImageUrl());
         //새로 등록한 사진 s3에 업로드
-        String uploadFilename = imageService.uploadFile(image);
+        List<MultipartFile> images = new ArrayList<>();
+
+        String uploadFilename = imageService.uploadOneFile(image);
         //업로드 된 사진으로 수정
         member.updateImageUrl(uploadFilename);
 

@@ -3,6 +3,9 @@ package com.team11.shareoffice.post.dto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+import java.util.Set;
+
 @Getter
 @RequiredArgsConstructor
 public class PostUpdateRequestDto{
@@ -14,4 +17,5 @@ public class PostUpdateRequestDto{
     private String operatingTime;
     private String contentDetails;
     private String amenities;
+    private List<String> imageUrls;
 }
