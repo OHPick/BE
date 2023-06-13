@@ -1,6 +1,7 @@
 package com.team11.shareoffice.chat.service;
 
 import com.team11.shareoffice.chat.dto.ChatDto;
+import com.team11.shareoffice.chat.dto.ChatListResponseDto;
 import com.team11.shareoffice.chat.dto.ChatResponseDto;
 import com.team11.shareoffice.chat.dto.ChatRoomResponseDto;
 import com.team11.shareoffice.chat.entity.ChatMessage;
@@ -79,15 +80,15 @@ public class ChatService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChatResponseDto> getChatRoom(Long roomId, Member member){
+    public ChatListResponseDto getChatRoom(Long roomId, Member member){
         ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow( () -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
 
         List<ChatMessage> messages = chatMessageRepository.findAllByRoomOrderByCreatedAt(room);
         List<ChatResponseDto> chatResponseDtos = messages.stream()
-                .map(message -> new ChatResponseDto(roomId, changeNickname(message.getSender().getNickname(), member), message.getMessage(), changeDateFormat(message.getCreatedAt())))
+                .map(message -> new ChatResponseDto(roomId, message.getSender().getNickname(), message.getMessage(), changeDateFormat(message.getCreatedAt())))
                         .toList();
 
-        return chatResponseDtos;
+        return new ChatListResponseDto(member.getNickname(), chatResponseDtos);
     }
 
 
@@ -98,12 +99,7 @@ public class ChatService {
         return date[0].equals(today) ? date[1] : date[0];
     }
 
-    private String changeNickname(String nickname, Member member) {
-        if(member.getNickname().equals(nickname)){
-            return "ME";
-        }
-        return nickname;
-    }
+
 
 }
 
