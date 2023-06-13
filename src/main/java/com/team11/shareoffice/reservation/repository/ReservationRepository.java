@@ -22,5 +22,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     Optional<Reservation> findByMemberAndPost(Member member, Post post);
     List<Reservation> findAllByMemberOrderByStartDateAsc(Member member);
-    List<Reservation> findAllByMember(Member member);
+    List<Reservation> findAllByPost(Post post);
 }

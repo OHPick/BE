@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class ReservationController {
 
     private final ReservationService reservationService;
-    @Operation(summary = "예약된 게시물 API")
+    @Operation(summary = "예약된 게시물 정보 API")
     @GetMapping("/{postId}/reserve")
     public ResponseDto<?> showReservedPost(@PathVariable Long postId,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -40,6 +40,13 @@ public class ReservationController {
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
         reservationService.cancelReservePost(postId, userDetails.getMember());
         return ResponseDto.setSuccess(null);
+    }
+
+    @Operation(summary = "예약하고 싶은 게시물 예약날짜 보기 API")
+    @GetMapping("/{postId}/reserved")
+    public ResponseDto<?> showReservedDate(@PathVariable Long postId,
+                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseDto.setSuccess(reservationService.showReservedDate(postId, userDetails.getMember()));
     }
 
 }
