@@ -29,6 +29,7 @@ public enum ErrorCode {
 
     //예약관련
     INVALID_DATE ("InvalidDate", "예약할 수 없는 날짜입니다."),
+    EXIST_RESERVE_DATE ("ExistReserveDate", "이미 예약이 된 날짜입니다."),
     NOT_RESERVED ("NotReserved", "예약 취소는 예약자만 가능 합니다."),
 
     //채팅관련

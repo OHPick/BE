@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -42,6 +44,12 @@ public class ReservationService {
         Post post = reservationValidator.validateIsExistPost(postId);
         Reservation reservation = reservationValidator.validateReservation(post,member);
         reservationRepository.delete(reservation);
+    }
+
+    public List<ReservationResponseDto> showReservedDate( Long postId, Member member) {
+        Post post = reservationValidator.validateIsExistPost(postId);
+
+        return reservationRepository.findAllByPost(post).stream().map(ReservationResponseDto::new).toList();
     }
 
 }
