@@ -21,6 +21,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -105,7 +106,8 @@ public class ChatService {
         String[] date = createdAt.split(" ");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy.MM.dd");
         String today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
-        String convertedDate = date[0].formatted(formatter);
+        LocalDate dateFormat = LocalDate.parse(date[0]);
+        String convertedDate = dateFormat.format(formatter);
         return convertedDate.equals(today) ? "오늘" : convertedDate;
     }
 
