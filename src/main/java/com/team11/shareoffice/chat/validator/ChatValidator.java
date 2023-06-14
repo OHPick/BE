@@ -34,7 +34,7 @@ public class ChatValidator {
     }
 
     public void validateChatRoomMember(ChatRoom room, Member member){
-        if(!room.getMember().getId().equals(member.getId()) && !room.getOwner().getId().equals(member.getId())){
+        if(!(room.getMember().getId().equals(member.getId())) && !(room.getOwner().getId().equals(member.getId()))){
             throw new CustomException(ErrorCode.INVALID_CHAT_MEMBER);
         }
     }
