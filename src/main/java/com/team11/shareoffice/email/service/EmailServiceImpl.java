@@ -2,11 +2,8 @@ package com.team11.shareoffice.email.service;
 
 import com.team11.shareoffice.email.dto.CodeRequestDto;
 import com.team11.shareoffice.email.dto.EmailRequestDto;
-import com.team11.shareoffice.email.entity.Email;
-import com.team11.shareoffice.email.repository.EmailRepository;
-import com.team11.shareoffice.email.validator.EmailValidator;
-import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.exception.CustomException;
+import com.team11.shareoffice.global.service.RedisService;
 import com.team11.shareoffice.global.util.ErrorCode;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
@@ -21,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
+import java.time.Duration;
 
 
 @Service
@@ -30,9 +28,10 @@ import java.security.SecureRandom;
 @PropertySource("classpath:application-secret.yml")
 public class EmailServiceImpl implements EmailService {
 
-    private final EmailRepository emailRepository;
+//    private final EmailRepository emailRepository;
     private final JavaMailSender javaMailSender;
-    private final EmailValidator emailValidator;
+//    private final EmailValidator emailValidator;
+    private final RedisService redisService;
 
     @Value("${spring.mail.username}")
     private String id;
@@ -92,17 +91,20 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public String sendMessage(EmailRequestDto requestDto)throws Exception {
         String code = createKey();
-        emailValidator.validateEmailPattern(requestDto.getEmail());
-        Email email = Email.saveEmail(requestDto);
-        MimeMessage message = createMessage(email.getEmail(),code);
+//        emailValidator.validateEmailPattern(requestDto.getEmail());
+//        Email email = Email.saveEmail(requestDto);
+//        MimeMessage message = createMessage(email.getEmail(),code);
+        MimeMessage message = createMessage(requestDto.getEmail(),code);
+
         try{//예외처리
             javaMailSender.send(message);
         }catch(MailException e){
             e.printStackTrace();
             throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
         }
-        email.updateCode(code);
-        emailRepository.save(email);
+//        email.updateCode(code);
+//        emailRepository.save(email);
+        redisService.setEmailAuthCode(requestDto.getEmail(), code, Duration.ofMinutes(3));  //3분내 인증하도록
         return code;
     }
 
@@ -113,8 +115,14 @@ public class EmailServiceImpl implements EmailService {
      */
     @Override
     public void codeCheck(CodeRequestDto requestDto)throws Exception {
-        Email email = emailValidator.validateIsExistEmail(requestDto.getEmail());
-        emailValidator.validateCode(email,requestDto.getCode());
-        email.updateChecked(true);
+//        Email email = emailValidator.validateIsExistEmail(requestDto.getEmail());
+//        emailValidator.validateCode(email,requestDto.getCode());
+//        email.updateChecked(true);
+        String emailCodeFromRedis = redisService.getEmailAuthCode(requestDto.getEmail());
+        if (emailCodeFromRedis == null || !emailCodeFromRedis.equals(requestDto.getCode())) {
+            throw new CustomException(ErrorCode.WRONG_EMAIL_CODE);
+        }
+        redisService.setEmailVerified(requestDto.getEmail());
+        redisService.delEmailAuthCode(requestDto.getEmail());
     }
 }
