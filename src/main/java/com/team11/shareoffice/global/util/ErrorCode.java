@@ -22,6 +22,7 @@ public enum ErrorCode {
     INVALID_AUTHOR("InvalidAuthor", "작성자만 할 수 있습니다"),
     INVALID_MEMBER("InvalidMember", "유효하지 않는 이메일 입니다."),
     EXIST_KAKAO_EMAIL("AlreadyUsingEmail(Kakao)", "이미 카카오 계정으로 가입된 아이디입니다."),
+    EMAIL_UNVERIFIED("UnverifiedEmail", "인증된 이메일이 아닙니다."),
 
 
     //게시글 관련

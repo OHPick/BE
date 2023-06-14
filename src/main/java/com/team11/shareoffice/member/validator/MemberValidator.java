@@ -1,8 +1,7 @@
 package com.team11.shareoffice.member.validator;
 
-import com.team11.shareoffice.email.entity.Email;
-import com.team11.shareoffice.email.repository.EmailRepository;
 import com.team11.shareoffice.global.exception.CustomException;
+import com.team11.shareoffice.global.service.RedisService;
 import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.member.dto.SignupRequestDto;
 import com.team11.shareoffice.member.entity.Member;
@@ -21,7 +20,7 @@ import java.util.regex.Pattern;
 public class MemberValidator {
 
     private final MemberRepository memberRepository;
-    private final EmailRepository emailRepository;
+//    private final EmailRepository emailRepository;
     private final PasswordEncoder passwordEncoder;
 
     //회원가입 - 비밀번호 확인 일치 여부
@@ -66,11 +65,14 @@ public class MemberValidator {
     }
 
     //회원가입 - 인증된 이메일인지 검사
-    public void validateEmailAuth(String email) {
-        Email validEmail = emailRepository.findById(email).orElseThrow(()
-                -> new CustomException(ErrorCode.WRONG_EMAIL));
-        if (!validEmail.isChecked()) {
-            throw new CustomException(ErrorCode.WRONG_EMAIL);
+    public void validateEmailAuth(String email, RedisService redisService) {
+//        Email validEmail = emailRepository.findById(email).orElseThrow(()
+//                -> new CustomException(ErrorCode.WRONG_EMAIL));
+//        if (!validEmail.isChecked()) {
+//            throw new CustomException(ErrorCode.WRONG_EMAIL);
+//        }
+        if (!redisService.isEmailVerified(email)) {
+            throw new CustomException(ErrorCode.EMAIL_UNVERIFIED);
         }
     }
 
