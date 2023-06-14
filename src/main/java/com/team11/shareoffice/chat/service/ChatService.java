@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -71,7 +72,9 @@ public class ChatService {
 
     @Transactional(readOnly = true)
     public List<ChatRoomResponseDto> getAllChatRooms(Member member){
-        return chatRoomRepositoryImpl.findAllChatRoom(member).stream()
+        return chatRoomRepositoryImpl.findAllChatRoom(member)
+                .stream()
+                .sorted(Comparator.comparing(ChatRoomResponseDto::getCreatedAt).reversed())
                 .peek(chatRoomResponseDto -> chatRoomResponseDto.setCreatedAt(changeDateFormatChatRoom(chatRoomResponseDto.getCreatedAt())))
                 .toList();
     }
