@@ -1,7 +1,5 @@
 package com.team11.shareoffice.member.service;
 
-import com.team11.shareoffice.email.repository.EmailRepository;
-import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.jwt.JwtUtil;
 import com.team11.shareoffice.global.jwt.dto.TokenDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
@@ -28,8 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.util.List;
 
-import static com.team11.shareoffice.global.dto.ResponseDto.setSuccess;
-
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -39,7 +35,7 @@ public class MemberService {
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EmailRepository emailRepository;
+//    private final EmailRepository emailRepository;
     private final PostRepository postRepository;
     private final MemberValidator memberValidator;
     private final ImageService imageService;
@@ -61,7 +57,7 @@ public class MemberService {
         // 닉네임 패턴 및 중복 검사
         memberValidator.validateNickname(nickname);
 //        인증된 이메일인지 검사
-//        memberValidator.validateEmailAuth(email);
+        memberValidator.validateEmailAuth(email, redisService);
 
         // 유저 등록
         Member member = Member.builder()
@@ -74,7 +70,7 @@ public class MemberService {
         String basicImage = "https://shareoffice12.s3.ap-northeast-2.amazonaws.com/image.png";
 
         memberRepository.save(member);
-        emailRepository.deleteById(email);
+//        emailRepository.deleteById(email);
     }
 
     // 로그인
