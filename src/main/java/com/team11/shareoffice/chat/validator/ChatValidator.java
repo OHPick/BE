@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ChatValidator {
 
-    private PostRepository postRepository;
-    private MemberRepository memberRepository;
-    private ChatRoomRepository chatRoomRepository;
+    private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
 
     public Post validatePost(Long postId){
