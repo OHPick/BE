@@ -9,6 +9,7 @@ import com.team11.shareoffice.chat.entity.ChatRoom;
 import com.team11.shareoffice.chat.repository.ChatMessageRepository;
 import com.team11.shareoffice.chat.repository.ChatRoomRepository;
 import com.team11.shareoffice.chat.repository.ChatRoomRepositoryImpl;
+import com.team11.shareoffice.chat.validator.ChatValidator;
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.exception.CustomException;
 import com.team11.shareoffice.global.util.ErrorCode;
@@ -36,11 +37,12 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final SimpMessageSendingOperations template;
     private final ChatRoomRepositoryImpl chatRoomRepositoryImpl;
+    private final ChatValidator chatValidator;
 
     @Transactional
     public Long enterRoom(Long postId, Member member) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
-        Member owner = memberRepository.findByNickname(post.getMember().getNickname()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_MEMBER));
+        Post post = chatValidator.validatePost(postId);
+        Member owner = post.getMember();
         ChatRoom room = chatRoomRepository.findChatRoomByPostAndMember(post, member).orElse(null);
         if (room == null) {
             room = new ChatRoom(post, member, owner);
@@ -49,15 +51,11 @@ public class ChatService {
         return room.getId();
     }
 
-//    @Transactional
-//    public ResponseDto findMessageHistory(Long roomId, Member member) {
-//        return ResponseMessage.SuccessResponse("대화 불러오기 성공", chatMessageQueryRepository.findMessageList(roomId, user.getId()));
-//    }
-
     @Transactional
     public void saveMessage(ChatDto message) {
-        Member member = memberRepository.findByNickname(message.getSender()).orElseThrow(() -> new CustomException(ErrorCode.INVALID_MEMBER));
-        ChatRoom room = chatRoomRepository.findById(message.getRoomId()).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+        Member member = chatValidator.validateMember(message.getSender());
+        ChatRoom room = chatValidator.validateRoomId(message.getRoomId());
+        chatValidator.validateChatRoomMember(room,member);
         ChatMessage chatMessage = new ChatMessage(member, message.getMessage(), room);
         chatMessageRepository.saveAndFlush(chatMessage);
         ChatResponseDto responseDto = new ChatResponseDto(chatMessage.getRoom().getId(), chatMessage.getSender().getNickname(), chatMessage.getMessage(), changeDateFormatMessage(chatMessage.getCreatedAt()), member.getImageUrl());
@@ -66,13 +64,9 @@ public class ChatService {
 
     @Transactional
     public void deleteRoom(Long roomId,Member member) {
-        ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
-        if (room.getMember().getNickname().equals(member.getNickname()) || room.getOwner().getNickname().equals(member.getNickname())){
-            chatRoomRepository.deleteById(room.getId());
-        }
-        else {
-            throw new CustomException(ErrorCode.INVALID_CHAT_MEMBER);
-        }
+        ChatRoom room = chatValidator.validateRoomId(roomId);
+        chatValidator.validateChatRoomMember(room,member);
+        chatRoomRepository.deleteById(room.getId());
     }
 
     @Transactional(readOnly = true)
@@ -85,7 +79,7 @@ public class ChatService {
     @Transactional(readOnly = true)
     public ChatListResponseDto getChatRoom(Long roomId, Member member){
         ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow( () -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
-
+        chatValidator.validateChatRoomMember(room,member);
         List<ChatMessage> messages = chatMessageRepository.findAllByRoomOrderByCreatedAt(room);
         List<ChatResponseDto> chatResponseDtos = messages.stream()
                 .map(message -> new ChatResponseDto(roomId, message.getSender().getNickname(), message.getMessage(), changeDateFormatMessage(message.getCreatedAt()), member.getImageUrl()))
@@ -113,8 +107,6 @@ public class ChatService {
         String convertedDate = dateFormat.format(formatter);
         return convertedDate.equals(today) ? date[1] : convertedDate;
     }
-
-
 
 }
 

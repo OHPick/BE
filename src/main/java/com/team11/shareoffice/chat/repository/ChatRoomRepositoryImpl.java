@@ -55,7 +55,7 @@ public class ChatRoomRepositoryImpl extends QuerydslRepositorySupport implements
             .from(chatRoom) // 채팅방으로부터
             .leftJoin(post).on(chatRoom.post.id.eq(post.id))  // 이미지를 위해 조인
             .leftJoin(chatMessageSubQuery).on(chatRoom.id.eq(chatMessageSubQuery.room.id))  // 마지막메시지를위해 조인
-            .where(chatRoom.member.id.eq(member.getId()))   // 로그인한 사람이 사용중인 채팅방인  ( 채팅방멤버와 로그인한사람이 일치하는 )
+            .where(chatRoom.member.id.eq(member.getId()).or(chatRoom.owner.id.eq(member.getId())))   // 로그인한 사람이 사용중인 채팅방인  ( 채팅방멤버와 로그인한사람이 일치하는 )
             .groupBy(chatRoom.id)  // 채팅방id 별로
             .fetch()
                 .stream()
