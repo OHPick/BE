@@ -55,6 +55,7 @@ public class ChatService {
     public void saveMessage(ChatDto message) {
         Member member = chatValidator.validateMember(message.getSender());
         ChatRoom room = chatValidator.validateRoomId(message.getRoomId());
+        chatValidator.validateChatRoomMember(room,member);
         ChatMessage chatMessage = new ChatMessage(member, message.getMessage(), room);
         chatMessageRepository.saveAndFlush(chatMessage);
         ChatResponseDto responseDto = new ChatResponseDto(chatMessage.getRoom().getId(), chatMessage.getSender().getNickname(), chatMessage.getMessage(), changeDateFormatMessage(chatMessage.getCreatedAt()), member.getImageUrl());
