@@ -74,6 +74,7 @@ public class ChatService {
     public List<ChatRoomResponseDto> getAllChatRooms(Member member){
         return chatRoomRepositoryImpl.findAllChatRoom(member)
                 .stream()
+                .peek(chatRoomResponseDto -> chatRoomResponseDto.setCreatedAt(changeNullDateFormatChatRoom(chatRoomResponseDto.getCreatedAt())))
                 .sorted(Comparator.comparing(ChatRoomResponseDto::getCreatedAt).reversed())
                 .peek(chatRoomResponseDto -> chatRoomResponseDto.setCreatedAt(changeDateFormatChatRoom(chatRoomResponseDto.getCreatedAt())))
                 .toList();
@@ -110,6 +111,16 @@ public class ChatService {
         String convertedDate = dateFormat.format(formatter);
         return convertedDate.equals(today) ? date[1] : convertedDate;
     }
+
+    private String changeNullDateFormatChatRoom(String createdAt) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
+        if(createdAt == null){
+            return now;
+        }
+        return createdAt;
+    }
+
 
 }
 
