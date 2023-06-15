@@ -77,7 +77,9 @@ public class PostService {
         postValidator.validatePostAuthor(post, member);
         likeRepository.deleteLikesByPost(post);
         imageService.delete(post.getPostImage()); // 버켓의 이미지파일도 삭제
-        postRepository.delete(post);
+//        postRepository.delete(post);
+        post.setDelete(true);
+        postRepository.save(post);
     }
 
     // 상세 게시글 조회
