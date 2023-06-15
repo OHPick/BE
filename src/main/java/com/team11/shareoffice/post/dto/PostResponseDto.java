@@ -21,6 +21,7 @@ public class PostResponseDto {
     private String amenities;
     private boolean likeStatus;
     private int userStatus;
+    private String nickname;
 
 
     public PostResponseDto(Post post, boolean likeStatus, int userStatus) {
@@ -37,6 +38,7 @@ public class PostResponseDto {
         this.amenities = post.getAmenities();
         this.likeStatus = likeStatus;
         this.userStatus = userStatus;
+        this.nickname = post.getMember().getNickname();
     }
 
 }
