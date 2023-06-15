@@ -27,13 +27,11 @@ public class ReservationRepositoryImpl extends QuerydslRepositorySupport impleme
     public List<Reservation> findAllByPostReservedAndNotFinished (Post post, LocalDate startDate, LocalDate endDate){
         QReservation r = QReservation.reservation;
         return jpaQueryFactory
-                .select(r)
-                .from(r)
+                .selectFrom(r)
                 .where(r.post.id.eq(post.getId())
-                        .and(r.endDate.after(startDate))
-                        .and(r.startDate.before(endDate))
+                        .and(r.endDate.goe(startDate))
+                        .and(r.startDate.loe(endDate))
                         .and(r.isFinished.eq(false)))
-                .fetchAll()
                 .fetch();
     }
 

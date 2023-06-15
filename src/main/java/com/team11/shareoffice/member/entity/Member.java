@@ -39,7 +39,7 @@ public class Member{
 //    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
 //    private List<Likes> likes;
 
-    @ColumnDefault("https://shareoffice12.s3.ap-northeast-2.amazonaws.com/image.png")
+    @ColumnDefault("https://shareoffice12.s3.ap-northeast-2.amazonaws.com/profileDefault.png")
     private String imageUrl;
 
     public Member(String email, Long kakaoId, String password, String nickname){
