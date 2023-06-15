@@ -39,6 +39,8 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
         QPost post = QPost.post;
         BooleanBuilder builder = new BooleanBuilder();
 
+        builder.and(post.isDelete.eq(false)); // 탈퇴하지 않은 유저의 게시물만 조회
+
 
         if (!StringUtils.isEmpty(keyword)) {
             builder.and(post.title.contains(keyword)
