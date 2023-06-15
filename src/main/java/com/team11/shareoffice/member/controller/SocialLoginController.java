@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.team11.shareoffice.global.dto.ResponseDto.setSuccess;
+
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
@@ -22,7 +24,8 @@ public class SocialLoginController {
     @Operation(summary = "카카오로그인 API", description = "카카오로그인")
     @GetMapping("/oauth/kakao")
     public ResponseDto<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        return kakaoService.kakaoLogin(code, response);
+        kakaoService.kakaoLogin(code, response);
+        return setSuccess("로그인 성공");
     }
 
 }

@@ -1,9 +1,6 @@
 package com.team11.shareoffice.like.service;
 
 
-import com.team11.shareoffice.global.dto.ResponseDto;
-import com.team11.shareoffice.global.exception.CustomException;
-import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.like.LikeValidator.LikeValidator;
 import com.team11.shareoffice.like.dto.LikeResponseDto;
 import com.team11.shareoffice.like.entity.Likes;

@@ -1,6 +1,5 @@
 package com.team11.shareoffice.post.service;
 
-import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.like.repository.LikeRepository;
@@ -108,7 +107,7 @@ public class PostService {
             return 3;
         }
         else {
-            if(reservationRepository.findByMemberAndPost(member, post).isPresent()){
+            if(reservationRepository.findByMemberAndPostAndNotFinished(member, post).isPresent()){
                 return 2;
             }
             return 1;

@@ -1,16 +1,12 @@
 package com.team11.shareoffice.member.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.member.dto.LoginRequestDto;
 import com.team11.shareoffice.member.dto.SignoutRequestDto;
 import com.team11.shareoffice.member.dto.SignupRequestDto;
-import com.team11.shareoffice.member.service.KakaoService;
 import com.team11.shareoffice.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
