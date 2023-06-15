@@ -5,11 +5,16 @@ import com.team11.shareoffice.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDate;
 
 @Entity
 @Getter
+@Setter
+@DynamicInsert
 @RequiredArgsConstructor
 public class Reservation {
     @Id
@@ -31,6 +36,9 @@ public class Reservation {
     //대여 종료일
     @Column(nullable = false)
     private LocalDate endDate;
+
+    @ColumnDefault("false")
+    private boolean isFinished;
 
     public Reservation(Member member, Post post, LocalDate startDate, LocalDate endDate) {
         this.member = member;

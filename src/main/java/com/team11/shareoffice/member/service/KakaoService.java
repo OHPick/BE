@@ -3,7 +3,6 @@ package com.team11.shareoffice.member.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.jwt.JwtUtil;
 import com.team11.shareoffice.global.jwt.dto.TokenDto;
 import com.team11.shareoffice.global.service.RedisService;
@@ -24,8 +23,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.time.Duration;
 import java.util.UUID;
 
-import static com.team11.shareoffice.global.dto.ResponseDto.setSuccess;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -40,7 +37,7 @@ public class KakaoService {
     @Value("${kakao.client.secret}")
     private String clientSecret;
 
-    public ResponseDto<?> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public void kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getToken(code);
@@ -50,8 +47,6 @@ public class KakaoService {
         Member kakaoUser = registerKakaoUserIfNeeded(userInfo);
 
         issueTokens(response, kakaoUser.getEmail());
-
-        return setSuccess("로그인 성공");
     }
 
     public void issueTokens(HttpServletResponse response, String email){
