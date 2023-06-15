@@ -1,13 +1,15 @@
-package com.team11.shareoffice.post.dto;
-
+package com.team11.shareoffice.member.dto;
 
 import com.team11.shareoffice.post.entity.Post;
+import com.team11.shareoffice.reservation.entity.Reservation;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
-public class PostResponseDto {
+public class MyReservesResponseDto {
     private Long id;
     private String title;
     private String content;
@@ -21,9 +23,12 @@ public class PostResponseDto {
     private String amenities;
     private boolean likeStatus;
     private int userStatus;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private boolean isFinished;
 
 
-    public PostResponseDto(Post post, boolean likeStatus, int userStatus) {
+    public MyReservesResponseDto(Post post, boolean likeStatus, int userStatus, Reservation reservation, boolean isFinished) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
@@ -37,6 +42,8 @@ public class PostResponseDto {
         this.amenities = post.getAmenities();
         this.likeStatus = likeStatus;
         this.userStatus = userStatus;
+        this.startDate = reservation.getStartDate();
+        this.endDate = reservation.getEndDate();
+        this.isFinished = isFinished;
     }
-
 }

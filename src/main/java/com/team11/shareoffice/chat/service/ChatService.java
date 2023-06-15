@@ -10,7 +10,6 @@ import com.team11.shareoffice.chat.repository.ChatMessageRepository;
 import com.team11.shareoffice.chat.repository.ChatRoomRepository;
 import com.team11.shareoffice.chat.repository.ChatRoomRepositoryImpl;
 import com.team11.shareoffice.chat.validator.ChatValidator;
-import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.exception.CustomException;
 import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.member.entity.Member;

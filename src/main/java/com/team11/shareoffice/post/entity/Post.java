@@ -4,6 +4,7 @@ import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.dto.PostRequestDto;
 import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Post extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

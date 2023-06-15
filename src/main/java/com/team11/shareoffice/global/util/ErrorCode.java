@@ -1,7 +1,6 @@
 package com.team11.shareoffice.global.util;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
