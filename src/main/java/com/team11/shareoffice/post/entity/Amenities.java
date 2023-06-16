@@ -19,66 +19,66 @@ public class Amenities {
     @Column
     private Long id;
     @Column
-    private boolean isAircon;
+    private Boolean isAircon;
     @Column
-    private boolean isCopierPrinter;
+    private Boolean isCopierPrinter;
     @Column
-    private boolean isProjector;
+    private Boolean isProjector;
     @Column
-    private boolean isDoorLock;
+    private Boolean isDoorLock;
     @Column
-    private boolean isPowerOutlet;
+    private Boolean isPowerOutlet;
     @Column
-    private boolean isFax;
+    private Boolean isFax;
     @Column
-    private boolean isHeater;
+    private Boolean isHeater;
     @Column
-    private boolean isParking;
+    private Boolean isParking;
     @Column
-    private boolean isWaterPurifier;
+    private Boolean isWaterPurifier;
     @Column
-    private boolean isPersonalLocker;
+    private Boolean isPersonalLocker;
     @Column
-    private boolean isTV;
+    private Boolean isTV;
     @Column
-    private boolean isWhiteBoard;
+    private Boolean isWhiteBoard;
     @Column
-    private boolean isInternetWiFi;
+    private Boolean isInternetWiFi;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
     public Amenities (PostRequestDto.AmenitiesRequestDto amenitiesRequestDto){
-        this.isAircon = amenitiesRequestDto.isAircon();
-        this.isCopierPrinter = amenitiesRequestDto.isCopierPrinter();
-        this.isProjector = amenitiesRequestDto.isProjector();
-        this.isDoorLock = amenitiesRequestDto.isDoorLock();
-        this.isPowerOutlet = amenitiesRequestDto.isPowerOutlet();
-        this.isFax = amenitiesRequestDto.isFax();
-        this.isHeater = amenitiesRequestDto.isHeater();
-        this.isParking = amenitiesRequestDto.isParking();
-        this.isWaterPurifier = amenitiesRequestDto.isWaterPurifier();
-        this.isPersonalLocker = amenitiesRequestDto.isPersonalLocker();
-        this.isTV = amenitiesRequestDto.isTV();
-        this.isWhiteBoard = amenitiesRequestDto.isWhiteBoard();
-        this.isInternetWiFi = amenitiesRequestDto.isInternetWiFi();
+        this.isAircon = amenitiesRequestDto.getIsAircon();
+        this.isCopierPrinter = amenitiesRequestDto.getIsCopierPrinter();
+        this.isProjector = amenitiesRequestDto.getIsProjector();
+        this.isDoorLock = amenitiesRequestDto.getIsDoorLock();
+        this.isPowerOutlet = amenitiesRequestDto.getIsPowerOutlet();
+        this.isFax = amenitiesRequestDto.getIsFax();
+        this.isHeater = amenitiesRequestDto.getIsHeater();
+        this.isParking = amenitiesRequestDto.getIsParking();
+        this.isWaterPurifier = amenitiesRequestDto.getIsWaterPurifier();
+        this.isPersonalLocker = amenitiesRequestDto.getIsPersonalLocker();
+        this.isTV = amenitiesRequestDto.getIsTV();
+        this.isWhiteBoard = amenitiesRequestDto.getIsWhiteBoard();
+        this.isInternetWiFi = amenitiesRequestDto.getIsInternetWiFi();
     }
 
     public void updateAmenities (PostUpdateRequestDto.AmenitiesRequestDto amenitiesRequestDto){
-        this.isAircon = amenitiesRequestDto.isAircon();
-        this.isCopierPrinter = amenitiesRequestDto.isCopierPrinter();
-        this.isProjector = amenitiesRequestDto.isProjector();
-        this.isDoorLock = amenitiesRequestDto.isDoorLock();
-        this.isPowerOutlet = amenitiesRequestDto.isPowerOutlet();
-        this.isFax = amenitiesRequestDto.isFax();
-        this.isHeater = amenitiesRequestDto.isHeater();
-        this.isParking = amenitiesRequestDto.isParking();
-        this.isWaterPurifier = amenitiesRequestDto.isWaterPurifier();
-        this.isPersonalLocker = amenitiesRequestDto.isPersonalLocker();
-        this.isTV = amenitiesRequestDto.isTV();
-        this.isWhiteBoard = amenitiesRequestDto.isWhiteBoard();
-        this.isInternetWiFi = amenitiesRequestDto.isInternetWiFi();
+        this.isAircon = amenitiesRequestDto.getIsAircon();
+        this.isCopierPrinter = amenitiesRequestDto.getIsCopierPrinter();
+        this.isProjector = amenitiesRequestDto.getIsProjector();
+        this.isDoorLock = amenitiesRequestDto.getIsDoorLock();
+        this.isPowerOutlet = amenitiesRequestDto.getIsPowerOutlet();
+        this.isFax = amenitiesRequestDto.getIsFax();
+        this.isHeater = amenitiesRequestDto.getIsHeater();
+        this.isParking = amenitiesRequestDto.getIsParking();
+        this.isWaterPurifier = amenitiesRequestDto.getIsWaterPurifier();
+        this.isPersonalLocker = amenitiesRequestDto.getIsPersonalLocker();
+        this.isTV = amenitiesRequestDto.getIsTV();
+        this.isWhiteBoard = amenitiesRequestDto.getIsWhiteBoard();
+        this.isInternetWiFi = amenitiesRequestDto.getIsInternetWiFi();
     }
 
 }

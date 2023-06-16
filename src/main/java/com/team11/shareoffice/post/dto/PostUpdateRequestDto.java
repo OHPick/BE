@@ -33,18 +33,18 @@ public class PostUpdateRequestDto{
 
     @Getter
     public class AmenitiesRequestDto {
-        private boolean isAircon;
-        private boolean isCopierPrinter;
-        private boolean isProjector;
-        private boolean isDoorLock;
-        private boolean isPowerOutlet;
-        private boolean isFax;
-        private boolean isHeater;
-        private boolean isParking;
-        private boolean isWaterPurifier;
-        private boolean isPersonalLocker;
-        private boolean isTV;
-        private boolean isWhiteBoard;
-        private boolean isInternetWiFi;
+        private Boolean isAircon;
+        private Boolean isCopierPrinter;
+        private Boolean isProjector;
+        private Boolean isDoorLock;
+        private Boolean isPowerOutlet;
+        private Boolean isFax;
+        private Boolean isHeater;
+        private Boolean isParking;
+        private Boolean isWaterPurifier;
+        private Boolean isPersonalLocker;
+        private Boolean isTV;
+        private Boolean isWhiteBoard;
+        private Boolean isInternetWiFi;
     }
 }
