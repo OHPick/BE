@@ -5,8 +5,6 @@ import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.like.service.LikeService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;

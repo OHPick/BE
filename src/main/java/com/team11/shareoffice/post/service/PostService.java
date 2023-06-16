@@ -2,8 +2,6 @@ package com.team11.shareoffice.post.service;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
-import com.team11.shareoffice.image.entity.Image;
-import com.team11.shareoffice.image.repository.ImageRepository;
 import com.team11.shareoffice.image.service.ImageService;
 import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.like.repository.LikeRepository;
@@ -24,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
 
 
 @Service
@@ -73,7 +70,6 @@ public class PostService {
         post.setPostImages(imgs);
 
         postRepository.save(post);
-        System.out.println("!!!!!!!!!post.getPostImages() : " + post.getPostImages());  // [9b68bd75-af0f-4cb1-a119-4b700b607a6d_33.jpg, 802de3b3-e91a-4e1e-9ff3-5dfff9cb375d_우주1.jpg]
         return post.getId();
     }
 
@@ -130,17 +126,16 @@ public class PostService {
                 }
             }
         }
-      System.out.println("&&&&&&&&&&&&&&& NEW imageList: " + imageList);
-        post.updatePost(postRequestDto,imageList);
     }
-//
-//        return ResponseDto.setSuccess("게시글 수정 성공");
-//    }
 
     public ResponseDto<?> deletePost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
         postValidator.validatePostAuthor(post, member);
         likeRepository.deleteLikesByPost(post);
+        imageService.delete(post.getPostImage()); // 버켓의 이미지파일도 삭제
+//        postRepository.delete(post);
+        post.setDelete(true);
+        postRepository.save(post);
 
         // post 삭제시 s3에 저장된 이미지도 삭제
         List<Image> imageList = imageRepository.findAllByPost(post);
@@ -180,7 +175,7 @@ public class PostService {
             return 3;
         }
         else {
-            if(reservationRepository.findByMemberAndPost(member, post).isPresent()){
+            if(reservationRepository.findByMemberAndPostAndNotFinished(member, post).isPresent()){
                 return 2;
             }
             return 1;

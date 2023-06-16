@@ -40,14 +40,14 @@ public class ReservationValidator {
             throw new CustomException(ErrorCode.INVALID_DATE);
         }
 
-        List<Reservation> reservationList = reservationRepository.findAllByPostReserved(post, requestDto.getStartDate(), requestDto.getEndDate());
+        List<Reservation> reservationList = reservationRepository.findAllByPostReservedAndNotFinished(post, requestDto.getStartDate(), requestDto.getEndDate());
         if(!reservationList.isEmpty()){
             throw new CustomException(ErrorCode.EXIST_RESERVE_DATE);
         }
     }
 
     public Reservation validateReservation(Post post, Member member){
-        return reservationRepository.findByMemberAndPost(member, post).orElseThrow( () -> new CustomException(ErrorCode.NOT_RESERVED) );
+        return reservationRepository.findByMemberAndPostAndNotFinished(member, post).orElseThrow( () -> new CustomException(ErrorCode.NOT_RESERVED) );
     }
 
 }

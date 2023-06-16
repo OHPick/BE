@@ -1,8 +1,8 @@
 package com.team11.shareoffice.reservation.service;
 
 
-import com.team11.shareoffice.global.dto.ResponseDto;
-import com.team11.shareoffice.global.security.UserDetailsImpl;
+import com.team11.shareoffice.chat.entity.ChatRoom;
+import com.team11.shareoffice.chat.repository.ChatRoomRepository;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.reservation.dto.ReservationRequestDto;
@@ -11,10 +11,8 @@ import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import com.team11.shareoffice.reservation.validator.ReservationValidator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -25,6 +23,7 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ReservationValidator reservationValidator;
+    private final ChatRoomRepository chatRoomRepository;
 
     public ReservationResponseDto showReservedPost( Long postId, Member member) {
         Post post = reservationValidator.validateIsExistPost(postId);
@@ -38,6 +37,13 @@ public class ReservationService {
         reservationValidator.validateReserveDate(post,requestDto);
         Reservation newReserve = new Reservation(member, post, requestDto.getStartDate(), requestDto.getEndDate());
         reservationRepository.save(newReserve);
+
+        ChatRoom room = chatRoomRepository.findChatRoomByPostAndMember(post, member).orElse(null);
+        if (room == null) {
+            room = new ChatRoom(post, member, post.getMember());
+            chatRoomRepository.saveAndFlush(room);
+        }
+
     }
 
     public void cancelReservePost(Long postId, Member member) {

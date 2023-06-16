@@ -4,7 +4,6 @@ package com.team11.shareoffice.reservation.controller;
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.reservation.dto.ReservationRequestDto;
-import com.team11.shareoffice.reservation.dto.ReservationResponseDto;
 import com.team11.shareoffice.reservation.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

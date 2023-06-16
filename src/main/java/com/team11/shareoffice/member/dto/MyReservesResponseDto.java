@@ -1,19 +1,20 @@
-package com.team11.shareoffice.post.dto;
-
+package com.team11.shareoffice.member.dto;
 
 import com.team11.shareoffice.post.entity.Post;
+import com.team11.shareoffice.reservation.entity.Reservation;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.List;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
-public class PostResponseDto {
+public class MyReservesResponseDto {
     private Long id;
     private String title;
     private String content;
     private String location;
-    private List<String> imageUrl;
+    private String imageUrl;
     private int likeCount;
     private int price;
     private int capacity;
@@ -22,15 +23,17 @@ public class PostResponseDto {
     private String amenities;
     private boolean likeStatus;
     private int userStatus;
-    private String nickname;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private boolean isFinished;
 
 
-    public PostResponseDto(Post post, boolean likeStatus, int userStatus) {
+    public MyReservesResponseDto(Post post, boolean likeStatus, int userStatus, Reservation reservation, boolean isFinished) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.location = post.getLocation();
-        this.imageUrl = post.getPostImages();
+        this.imageUrl = post.getPostImage();
         this.likeCount = post.getLikeCount();
         this.price = post.getPrice();
         this.capacity = post.getCapacity();
@@ -39,6 +42,8 @@ public class PostResponseDto {
         this.amenities = post.getAmenities();
         this.likeStatus = likeStatus;
         this.userStatus = userStatus;
-        this.nickname = post.getMember().getNickname();
+        this.startDate = reservation.getStartDate();
+        this.endDate = reservation.getEndDate();
+        this.isFinished = isFinished;
     }
 }
