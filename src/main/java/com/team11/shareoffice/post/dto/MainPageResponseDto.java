@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,7 +19,7 @@ public class MainPageResponseDto {
     private String content;
     private String location;
     private int price;
-    private String postImage;
+    private List<String> postImages;
     private String memberNickname;
     private int likeCount;
     private boolean likeStatus;
@@ -30,7 +32,7 @@ public class MainPageResponseDto {
         this.location = post.getLocation();
         this.price = post.getPrice();
         this.likeCount = post.getLikeCount();
-        this.postImage = post.getPostImage();
+        this.postImages = post.getPostImages();
         this.memberNickname = post.getMember().getNickname();
     }
 
@@ -41,7 +43,7 @@ public class MainPageResponseDto {
         this.location = post.getLocation();
         this.price = post.getPrice();
         this.likeCount = post.getLikeCount();
-        this.postImage = post.getPostImage();
+        this.postImages = post.getPostImages();
         this.memberNickname = post.getMember().getNickname();
         this.capacity = post.getCapacity();
         if (likes != null) {

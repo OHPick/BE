@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.*;
+
 @Entity(name = "posts")
 @Getter
 @Setter
@@ -38,13 +40,10 @@ public class Post extends Timestamped {
     private int price;
 
     @Column(nullable = false)
-    private int capacity;  //
+    private int capacity;  //총 인원 수
+
     @Column(nullable = false)
-    private String operatingTime; //
-    @Column(nullable = false)
-    private String contentDetails; //
-    @Column(nullable = false)
-    private String amenities; //
+    private String contentDetails; //추가 내용
 
     //좋아요 개수
     @Column(nullable = false)
@@ -53,35 +52,52 @@ public class Post extends Timestamped {
 
     @Column(columnDefinition = "LONGTEXT")
     @Lob
-    private String postImage;
+    private List<String> postImages;
+
+    @OneToOne(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private Amenities amenities;
+
+    @OneToOne(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private OperatingTime operatingTime;
 
     @Column
     private boolean isDelete;
 
-    public Post (PostRequestDto requestDto, Member member){
+    public Post (PostRequestDto requestDto, Amenities amenities, OperatingTime operatingTime, Member member){
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent().replace("\\n", "\n");
         this.location = requestDto.getLocation();
         this.price = requestDto.getPrice();
         this.capacity = requestDto.getCapacity();
-        this.operatingTime = requestDto.getOperatingTime().replace("\\n", "\n");
+        this.operatingTime = operatingTime;
         this.contentDetails = requestDto.getContentDetails().replace("\\n", "\n");
-        this.amenities = requestDto.getAmenities().replace("\\n", "\n");
+        this.amenities = amenities;
         this.member = member;
     }
 
-    public void updatePost (PostUpdateRequestDto requestDto){
+    public void updatePost (PostUpdateRequestDto requestDto, Amenities amenities, OperatingTime operatingTime){
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent().replace("\\n", "\n");
         this.location = requestDto.getLocation();
         this.price = requestDto.getPrice();
         this.capacity = requestDto.getCapacity();
-        this.operatingTime = requestDto.getOperatingTime().replace("\\n", "\n");
+        this.operatingTime = operatingTime;
         this.contentDetails = requestDto.getContentDetails().replace("\\n", "\n");
-        this.amenities = requestDto.getAmenities().replace("\\n", "\n");
+        this.amenities = amenities;
     }
 
     public void updateLike(Boolean likeOrDislike) {
         this.likeCount = Boolean.TRUE.equals(likeOrDislike) ? this.likeCount + 1 : this.likeCount - 1;
+    }
+
+    public List<String> getPostImagesCustom(){
+        List<String> imageList = new ArrayList<>();
+        for (String images : this.getPostImages()) {
+            // Remove brackets and split by comma
+            String[] urls = images.substring(1, images.length() - 1).split(", ");
+            // Add all URLs to imageList
+            imageList.addAll(Arrays.asList(urls));
+        }
+        return imageList;
     }
 }

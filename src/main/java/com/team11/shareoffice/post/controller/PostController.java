@@ -2,10 +2,7 @@ package com.team11.shareoffice.post.controller;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
-import com.team11.shareoffice.post.dto.MainPageResponseDto;
-import com.team11.shareoffice.post.dto.PostRequestDto;
-import com.team11.shareoffice.post.dto.PostResponseDto;
-import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
+import com.team11.shareoffice.post.dto.*;
 import com.team11.shareoffice.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,9 +40,9 @@ public class PostController {
     @Operation(summary = "게시글작성 API", description = "게시글작성")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     public ResponseDto<?> createPost(@RequestPart PostRequestDto postRequestDto,
-                                        @RequestPart(value = "imageFile", required = false) MultipartFile image,
+                                        @RequestPart(value = "imageFile", required = false) List<MultipartFile> image,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return ResponseDto.setSuccess("게시글 작성 성공", postService.createPost(postRequestDto, image, userDetails.getMember()));
+        return ResponseDto.setSuccess("게시글 작성 성공", postService.createPost(postRequestDto,  image, userDetails.getMember()));
 
     }
 
@@ -52,10 +50,10 @@ public class PostController {
     @PutMapping("/{id}")
     public ResponseDto<?> updatePost(@PathVariable Long id,
                                         @RequestPart(value = "postRequestDto", required = false) PostUpdateRequestDto postRequestDto,
-                                        @RequestPart(value = "imageFile", required = false) MultipartFile image,
+                                        @RequestPart(value = "imageFile", required = false) List<MultipartFile> image,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
 
-        postService.updatePost(id, postRequestDto, image, userDetails.getMember());
+        postService.updatePost(id, postRequestDto,  image, userDetails.getMember());
         return ResponseDto.setSuccess("게시글 수정 성공");
     }
 

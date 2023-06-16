@@ -4,6 +4,7 @@ import com.team11.shareoffice.global.jwt.JwtUtil;
 import com.team11.shareoffice.global.jwt.dto.TokenDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.global.service.RedisService;
+import com.team11.shareoffice.image.service.ImageService;
 import com.team11.shareoffice.like.repository.LikeRepository;
 import com.team11.shareoffice.member.dto.LoginRequestDto;
 import com.team11.shareoffice.member.dto.SignoutRequestDto;
@@ -13,7 +14,7 @@ import com.team11.shareoffice.member.repository.MemberRepository;
 import com.team11.shareoffice.member.validator.MemberValidator;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
-import com.team11.shareoffice.post.service.ImageService;
+import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.util.List;
 
+import static com.team11.shareoffice.global.dto.ResponseDto.setSuccess;
+
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -35,7 +38,6 @@ public class MemberService {
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-//    private final EmailRepository emailRepository;
     private final PostRepository postRepository;
     private final MemberValidator memberValidator;
     private final ImageService imageService;
@@ -53,7 +55,7 @@ public class MemberService {
         // 비밀번호와 확인 비밀번호 일치 여부 판별
         memberValidator.validatePasswordCheck(requestDto);
         // 이메일 중복 검사
-        memberValidator.validateEmailOverlapped(email);
+//        memberValidator.validateEmailOverlapped(email);
         // 닉네임 패턴 및 중복 검사
         memberValidator.validateNickname(nickname);
 //        인증된 이메일인지 검사
@@ -70,7 +72,7 @@ public class MemberService {
         String basicImage = "https://shareoffice12.s3.ap-northeast-2.amazonaws.com/image.png";
 
         memberRepository.save(member);
-//        emailRepository.deleteById(email);
+        //emailRepository.deleteById(email);
     }
 
     // 로그인
@@ -111,6 +113,12 @@ public class MemberService {
         Member member = memberValidator.validateEmailExist(userDetails.getMember().getEmail());
         memberValidator.passwordCheck(password, member);
 
+        //내 게시물에 미완의 예약 있을경우
+        memberValidator.UnfinishedMyPostReservationCheck(member);
+
+        //나의 예약 내역중 미완의 예약이 있을 경우
+        memberValidator.UnfinishedMyReservationCheck(member);
+
         // 탈퇴시 이메일 닉네임 수정
         String signoutUser = "(탈퇴한 회원 No." + member.getId() +")";
         member.setEmail(member.getEmail() + signoutUser);
@@ -127,7 +135,5 @@ public class MemberService {
             }
         }
     }
-
-
 }
 

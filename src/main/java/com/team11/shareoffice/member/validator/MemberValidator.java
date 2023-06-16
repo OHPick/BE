@@ -6,10 +6,13 @@ import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.member.dto.SignupRequestDto;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
+import com.team11.shareoffice.reservation.entity.Reservation;
+import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -22,6 +25,7 @@ public class MemberValidator {
     private final MemberRepository memberRepository;
 //    private final EmailRepository emailRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ReservationRepository reservationRepository;
 
     //회원가입 - 비밀번호 확인 일치 여부
     public void validatePasswordCheck(SignupRequestDto requestDto) {
@@ -99,4 +103,21 @@ public class MemberValidator {
         }
     }
 
+    //회원탈퇴 - 내가 올린 게시물에 아직 완료되지 않은 예약이 있을 경우
+    public void UnfinishedMyPostReservationCheck(Member member){
+        List<Reservation> unfinishedPostReservations = reservationRepository.findByPost_MemberAndIsFinishedFalse(member);
+        if (!unfinishedPostReservations.isEmpty()) {
+            throw new CustomException(ErrorCode.NOT_FINISHED_MYPOST_RESERVATION);
+        }
+
+    }
+
+    //회원탈퇴 - 아직 완료되지 않은 예약이 있을 경우
+    public void UnfinishedMyReservationCheck(Member member){
+        List<Reservation> unfinishedMemberReservations = reservationRepository.findByMemberAndIsFinishedFalse(member);
+        if (!unfinishedMemberReservations.isEmpty()) {
+            throw new CustomException(ErrorCode.NOT_FINISHED_MYRESERVATION);
+        }
+
+    }
 }

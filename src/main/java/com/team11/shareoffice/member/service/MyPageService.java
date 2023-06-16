@@ -1,5 +1,6 @@
 package com.team11.shareoffice.member.service;
 
+import com.team11.shareoffice.image.service.ImageService;
 import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.like.repository.LikeRepository;
 import com.team11.shareoffice.member.dto.MyReservesResponseDto;
@@ -11,7 +12,6 @@ import com.team11.shareoffice.member.validator.MemberValidator;
 import com.team11.shareoffice.post.dto.PostResponseDto;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
-import com.team11.shareoffice.post.service.ImageService;
 import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ public class MyPageService {
         // 내가 쓴 게시글 리스트 찾기.
         List<Post> posts = postRepository.findAllByMemberOrderByCreatedAt(member);
         return posts.stream()
+                .filter(post -> !post.isDelete())
                 .map(post -> new PostResponseDto(post, isLikedByMember(post, member), 3))
                 .toList();
     }
@@ -48,6 +50,7 @@ public class MyPageService {
     public List<PostResponseDto> getMyLikes(Member member) {
         List<Post> postList = likeRepository.findAllByMemberAndLikeStatus(member, true).stream()
                 .map(like -> like.getPost()) // Like 엔티티에서 Post 엔티티로 변환
+                .filter(post -> !post.isDelete())
                 .toList();
         return postList.stream()
                 .map(post -> new PostResponseDto(post, isLikedByMember(post, member), getUserStatus(member, post)) )
@@ -59,7 +62,9 @@ public class MyPageService {
     @Transactional(readOnly = true)
     public List<MyReservesResponseDto> getMyReserves(Member member) {
         List<Reservation> reservationList = reservationRepository.findAllByMemberOrderByStartDateAsc(member);
-        return reservationList.stream().map(reservation -> new MyReservesResponseDto(reservation.getPost(), isLikedByMember(reservation.getPost(), member), 2, reservation, reservation.isFinished())).toList();
+        return reservationList.stream()
+                .filter(reservation -> !reservation.getPost().isDelete())
+                .map(reservation -> new MyReservesResponseDto(reservation.getPost(), isLikedByMember(reservation.getPost(), member), 2, reservation, reservation.isFinished())).toList();
 
     }
 
@@ -125,7 +130,9 @@ public class MyPageService {
         //기존에 있던 이미지 파일 s3에서 삭제
         imageService.delete(member.getImageUrl());
         //새로 등록한 사진 s3에 업로드
-        String uploadFilename = imageService.uploadFile(image);
+        List<MultipartFile> images = new ArrayList<>();
+
+        String uploadFilename = imageService.uploadOneFile(image);
         //업로드 된 사진으로 수정
         member.updateImageUrl(uploadFilename);
 

@@ -24,7 +24,7 @@ public class QPost extends EntityPathBase<Post> {
 
     public final QTimestamped _super = new QTimestamped(this);
 
-    public final StringPath amenities = createString("amenities");
+    public final QAmenities amenities;
 
     public final NumberPath<Integer> capacity = createNumber("capacity", Integer.class);
 
@@ -48,9 +48,9 @@ public class QPost extends EntityPathBase<Post> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifiedAt = _super.modifiedAt;
 
-    public final StringPath operatingTime = createString("operatingTime");
+    public final QOperatingTime operatingTime;
 
-    public final StringPath postImage = createString("postImage");
+    public final ListPath<String, StringPath> postImages = this.<String, StringPath>createList("postImages", String.class, StringPath.class, PathInits.DIRECT2);
 
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
 
@@ -74,7 +74,9 @@ public class QPost extends EntityPathBase<Post> {
 
     public QPost(Class<? extends Post> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.amenities = inits.isInitialized("amenities") ? new QAmenities(forProperty("amenities"), inits.get("amenities")) : null;
         this.member = inits.isInitialized("member") ? new com.team11.shareoffice.member.entity.QMember(forProperty("member")) : null;
+        this.operatingTime = inits.isInitialized("operatingTime") ? new QOperatingTime(forProperty("operatingTime"), inits.get("operatingTime")) : null;
     }
 
 }
