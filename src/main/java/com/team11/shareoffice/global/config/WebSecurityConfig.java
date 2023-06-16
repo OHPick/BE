@@ -47,8 +47,8 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         // h2-console 사용 및 resources 접근 허용 설정
         return web -> web.ignoring()
-                ////h2 콘솔
-//                .requestMatchers(PathRequest.toH2Console())
+                //h2 콘솔
+                //.requestMatchers(PathRequest.toH2Console())
                 //스웨거
                 .requestMatchers("/swagger*/**", "/v3/api-docs/**")
                 //static 파일들

@@ -42,12 +42,13 @@ public class ChatRoomRepositoryImpl extends QuerydslRepositorySupport implements
                     .from(chatMessageSubQuery)
                     .groupBy(chatMessageSubQuery.room.id)))
             .fetch();
+
         return jpaQueryFactory
             .select(Projections.fields(  // 채팅방목록에 보여줄  제목,이미지,마지막메시지
                 ChatRoomResponseDto.class,
                 chatRoom.id.as("roomId"),
                 post.title,
-                post.postImage,
+                post.postImages.get(0),
                 chatMessageSubQuery.message,
                 chatMessageSubQuery.createdAt
                              ))

@@ -4,6 +4,7 @@ package com.team11.shareoffice.post.dto;
 import com.team11.shareoffice.post.entity.Post;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,7 +13,7 @@ public class PostResponseDto {
     private String title;
     private String content;
     private String location;
-    private String imageUrl;
+    private List<String> imageUrl;
     private int likeCount;
     private int price;
     private int capacity;
@@ -29,7 +30,7 @@ public class PostResponseDto {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.location = post.getLocation();
-        this.imageUrl = post.getPostImage();
+        this.imageUrl = post.getPostImages();
         this.likeCount = post.getLikeCount();
         this.price = post.getPrice();
         this.capacity = post.getCapacity();
@@ -40,5 +41,4 @@ public class PostResponseDto {
         this.userStatus = userStatus;
         this.nickname = post.getMember().getNickname();
     }
-
 }
