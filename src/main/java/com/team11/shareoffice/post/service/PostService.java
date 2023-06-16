@@ -54,19 +54,12 @@ public class PostService {
         List<String> imgs = new ArrayList<>();
 
         List<Image> images = new ArrayList<>();
-        System.out.println("imageUrls.get(0) : "+ imageUrls.get(0));
-        System.out.println("imageUrls.get(1) : "+ imageUrls.get(1));
 
         for (String imageUrl : imageUrls) {
             Image image = new Image(post, imageUrl);
             images.add(image);
             imgs.add(image.getImageUrl());
         }
-        // imgaes는 image객체 리스트
-//        for (String imageUrl : imageUrls) {
-//            Image image = new Image(post, imageUrl);
-//            imgs.add(image.getImageUrl());
-//        }
 
         imageRepository.saveAll(images);
 
@@ -83,44 +76,23 @@ public class PostService {
         //게시글 작성자가 맞는지 확인.
         postValidator.validatePostAuthor(post, member);
 
-        List <String> imageList = new ArrayList<>(post.getPostImagesCustom());
-
-        System.out.println("$$$$$$$$$$$$"+imageList);
-
-//        List<String> imageList = new ArrayList<>();
-//        for (String images : post.getPostImages()) {
-//            // Remove brackets and split by comma
-//            String[] urls = images.substring(1, images.length() - 1).split(", ");
-//            // Add all URLs to imageList
-//            imageList.addAll(Arrays.asList(urls));
-//        }
-
-        System.out.println("&&&&&&&&&&&&&&& imageList: " + imageList); // &&&&&&&&&&&&&&& imageList: [d936f801-4d0a-4c0c-8090-10ded4481054_33.jpg, 360e7fba-bc54-4879-9ccd-8c44bc2438cb_우주1.jpg]
-        System.out.println("imageList.get(0) : "+imageList.get(0));  // imageList.get(0) : [90e09703-96b4-4c2b-a203-27e3d0d5e428_33.jpg, 16aca9ce-9aea-4c22-9f64-3d5ea51f539d_우주1.jpg]
-        System.out.println("post.getPostImages().get(0) : " +  post.getPostImagesCustom().get(0));  //post.getPostImages().get(0) : [90e09703-96b4-4c2b-a203-27e3d0d5e428_33.jpg, 16aca9ce-9aea-4c22-9f64-3d5ea51f539d_우주1.jpg]
+        List<String> imageList = new ArrayList<>(post.getPostImagesCustom());
 
         List<String> requestImageList = postRequestDto.getImageUrls(); // 선택한 이미지URL
-        System.out.println("requestImageList.get(0) : "+requestImageList.get(0));  // imageList.get(0) : [90e09703-96b4-4c2b-a203-27e3d0d5e428_33.jpg, 16aca9ce-9aea-4c22-9f64-3d5ea51f539d_우주1.jpg]
         List<String> removeImgList = new ArrayList<>();
 
 
         for (String img : imageList) {
             if (requestImageList.contains(img)) {
                 imageService.delete(img); // S3에서 해당 이미지 삭제
-                System.out.println("버켓에서 삭제 완료");
                 imageRepository.deleteByImageUrl(img);  // DB에서 해당 이미지 삭제
-                System.out.println("DB 에서 삭제 완료");
                 //수정할 이미지 담기
                 removeImgList.add(img);
-                System.out.println("****"+removeImgList);
             }
         }
 
 
         imageList.removeAll(removeImgList);
-//         removeImgList에 담긴 수정 이미지 원래 Imglist에서 제거
-
-        System.out.println("updateImages : " + updateImages);
 
         if (!updateImages.isEmpty()) {
             for (MultipartFile img : updateImages) {  // 새로운 이미지들
@@ -136,7 +108,6 @@ public class PostService {
         Post post = postValidator.validateIsExistPost(id);
         postValidator.validatePostAuthor(post, member);
         likeRepository.deleteLikesByPost(post);
-
         // post 삭제시 s3에 저장된 이미지도 삭제
         List<Image> imageList = imageRepository.findAllByPost(post);
         for (Image image : imageList) {
@@ -150,8 +121,7 @@ public class PostService {
     // 상세 게시글 조회
     public PostResponseDto getPost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
-        PostResponseDto postResponseDto = getPostByUserDetails(member,post);
-        return postResponseDto;
+        return getPostByUserDetails(member,post);
     }
 
     private PostResponseDto getPostByUserDetails(Member member, Post post) {
