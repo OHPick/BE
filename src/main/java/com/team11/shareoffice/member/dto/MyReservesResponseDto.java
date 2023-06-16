@@ -6,15 +6,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
 public class MyReservesResponseDto {
-    private Long id;
+    private Long postId;
+    private Long reservationId;
     private String title;
     private String content;
     private String location;
-    private String imageUrl;
+    private List<String> imageUrl;
     private int likeCount;
     private int price;
     private int capacity;
@@ -29,11 +31,12 @@ public class MyReservesResponseDto {
 
 
     public MyReservesResponseDto(Post post, boolean likeStatus, int userStatus, Reservation reservation, boolean isFinished) {
-        this.id = post.getId();
+        this.postId = post.getId();
+        this.reservationId = reservation.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.location = post.getLocation();
-        this.imageUrl = post.getPostImage();
+        this.imageUrl = post.getPostImages();
         this.likeCount = post.getLikeCount();
         this.price = post.getPrice();
         this.capacity = post.getCapacity();
