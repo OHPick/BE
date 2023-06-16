@@ -18,7 +18,7 @@ public class MyReservesResponseDto {
     private String title;
     private String content;
     private String location;
-    private List<String> imageUrl;
+    private String imageUrl;
     private int likeCount;
     private int price;
     private int capacity;
