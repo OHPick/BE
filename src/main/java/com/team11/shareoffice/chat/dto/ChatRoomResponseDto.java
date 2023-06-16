@@ -1,13 +1,12 @@
 package com.team11.shareoffice.chat.dto;
 
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChatRoomResponseDto {
 
     private Long roomId;
