@@ -8,11 +8,12 @@ import com.team11.shareoffice.image.service.ImageService;
 import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.like.repository.LikeRepository;
 import com.team11.shareoffice.member.entity.Member;
-import com.team11.shareoffice.post.dto.MainPageResponseDto;
-import com.team11.shareoffice.post.dto.PostRequestDto;
-import com.team11.shareoffice.post.dto.PostResponseDto;
-import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
+import com.team11.shareoffice.post.dto.*;
+import com.team11.shareoffice.post.entity.Amenities;
+import com.team11.shareoffice.post.entity.OperatingTime;
 import com.team11.shareoffice.post.entity.Post;
+import com.team11.shareoffice.post.repository.AmenitiesRepository;
+import com.team11.shareoffice.post.repository.OperatingTimeRepository;
 import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.post.validator.PostValidator;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
@@ -39,15 +40,22 @@ public class PostService {
     private final LikeRepository likeRepository;
     private final ReservationRepository reservationRepository;
     private final ImageRepository imageRepository;
+    private final OperatingTimeRepository operatingTimeRepository;
+    private final AmenitiesRepository amenitiesRepository;
 
     public Page<MainPageResponseDto> findPosts(UserDetailsImpl userDetails, String keyword, String district, String sorting, Pageable pageable) {
         return postRepository.FilteringAndPaging(userDetails, keyword, district, sorting, pageable);
     }
 
 
-    public Long createPost(PostRequestDto postRequestDto, List<MultipartFile> imageFileList, Member member) throws IOException {
+    public Long createPost(PostRequestDto postRequestDto,  List<MultipartFile> imageFileList, Member member) throws IOException {
 
-        Post post = postRepository.save(new Post(postRequestDto, member));
+        OperatingTime operatingTime = operatingTimeRepository.save(new OperatingTime(postRequestDto.getOperatingTime()));
+        Amenities amenities = amenitiesRepository.save(new Amenities(postRequestDto.getAmenities()));
+        Post post = postRepository.save(new Post(postRequestDto, amenities, operatingTime, member));
+
+        amenities.setPost(post);
+        operatingTime.setPost(post);
 
         List<String> imageUrls = imageService.uploadFile(imageFileList);
 
@@ -70,17 +78,19 @@ public class PostService {
         return post.getId();
     }
 
-    public void updatePost(Long id, PostUpdateRequestDto postRequestDto, List<MultipartFile> updateImages, Member member) throws IOException {
+    public void updatePost(Long id, PostUpdateRequestDto postRequestDto,  List<MultipartFile> updateImages, Member member) throws IOException {
         //게시글 존재 확인.
         Post post = postValidator.validateIsExistPost(id);
         //게시글 작성자가 맞는지 확인.
         postValidator.validatePostAuthor(post, member);
+        OperatingTime operatingTime =  post.getOperatingTime();
+        operatingTime.updateOperatingTime(postRequestDto.getOperatingTime());
+        Amenities amenities = post.getAmenities();
+        amenities.updateAmenities(postRequestDto.getAmenities());
 
         List<String> imageList = new ArrayList<>(post.getPostImagesCustom());
-
         List<String> requestImageList = postRequestDto.getImageUrls(); // 선택한 이미지URL
         List<String> removeImgList = new ArrayList<>();
-
 
         for (String img : imageList) {
             if (requestImageList.contains(img)) {
@@ -102,12 +112,17 @@ public class PostService {
                 }
             }
         }
+
+        post.updatePost(postRequestDto, amenities, operatingTime);
+
     }
 
     public void deletePost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
         postValidator.validatePostAuthor(post, member);
         likeRepository.deleteLikesByPost(post);
+        operatingTimeRepository.deleteByPost(post);
+        amenitiesRepository.deleteByPost(post);
         // post 삭제시 s3에 저장된 이미지도 삭제
         List<Image> imageList = imageRepository.findAllByPost(post);
         for (Image image : imageList) {
@@ -125,7 +140,7 @@ public class PostService {
     }
 
     private PostResponseDto getPostByUserDetails(Member member, Post post) {
-        PostResponseDto postResponseDto = new PostResponseDto(post, false, 0);
+        PostResponseDto postResponseDto = new PostResponseDto(post, false, 0, post.getOperatingTime(), post.getAmenities());
 
         if (member != null) {
             for (Likes likes : likeRepository.findAllByPost(post)) {  // 게시글에 달린 좋아요 객체 가져오기

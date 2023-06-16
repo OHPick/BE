@@ -1,6 +1,8 @@
 package com.team11.shareoffice.reservation.repository;
 
 import com.team11.shareoffice.member.entity.Member;
+import com.team11.shareoffice.post.entity.Amenities;
+import com.team11.shareoffice.post.entity.OperatingTime;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.reservation.entity.Reservation;
 import org.junit.jupiter.api.Test;
@@ -32,7 +34,9 @@ class ReservationRepositoryCustomTest {
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
         Member member = new Member();
-        Post post = new Post(1L,member,"title","content","location",100,10,"operatingTime","contentDetails","amenities",0,"postImage",false);
+        Amenities amenities = new Amenities();
+        OperatingTime operatingTime = new OperatingTime();
+        Post post = new Post(1L, member, "title", "content", "location", 100, 10, "contentDetails", 0, new ArrayList<>(), amenities, operatingTime, false);
         LocalDate startDate = LocalDate.of(2023, 6, 20);
         LocalDate endDate = LocalDate.of(2023, 6, 22);
         List<Reservation> reservationList = new ArrayList<>();

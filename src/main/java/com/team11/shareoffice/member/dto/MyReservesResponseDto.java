@@ -1,5 +1,7 @@
 package com.team11.shareoffice.member.dto;
 
+import com.team11.shareoffice.post.entity.Amenities;
+import com.team11.shareoffice.post.entity.OperatingTime;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.reservation.entity.Reservation;
 import lombok.Getter;
@@ -18,9 +20,9 @@ public class MyReservesResponseDto {
     private int likeCount;
     private int price;
     private int capacity;
-    private String operatingTime;
+    private OperatingTime operatingTime;
     private String contentDetails;
-    private String amenities;
+    private Amenities amenities;
     private boolean likeStatus;
     private int userStatus;
     private LocalDate startDate;
@@ -33,7 +35,7 @@ public class MyReservesResponseDto {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.location = post.getLocation();
-        this.imageUrl = post.getPostImage();
+        this.imageUrl = post.getPostImages().get(0);
         this.likeCount = post.getLikeCount();
         this.price = post.getPrice();
         this.capacity = post.getCapacity();
