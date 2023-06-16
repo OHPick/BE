@@ -22,10 +22,13 @@ public enum ErrorCode {
     INVALID_MEMBER("InvalidMember", "유효하지 않는 계정 입니다."),
     EXIST_KAKAO_EMAIL("AlreadyUsingEmail(Kakao)", "이미 카카오 계정으로 가입된 아이디입니다."),
     EMAIL_UNVERIFIED("UnverifiedEmail", "인증된 이메일이 아닙니다."),
-
+    NOT_FINISHED_MYPOST_RESERVATION("MyPostUnfinishedReservationExist", "나의 게시물에 완료되지 않은 예약이 있어 회원탈퇴가 불가합니다."),
+    NOT_FINISHED_MYRESERVATION("UnfinishedReservationExist", "완료되지 않은 예약이 존재하여 회원탈퇴가 불가합니다."),
 
     //게시글 관련
     NOT_EXIST_POST("NotExistPost", "존재하지 않는 게시글 입니다."),
+    NOT_FINISHED_RESERVATION_EXIST("UnfinishedReservationExist", "완료되지 않은 예약 내역이 존재하여 게시글 삭제가 불가합니다."),
+
 
     //예약관련
     INVALID_DATE ("InvalidDate", "예약할 수 없는 날짜입니다."),
