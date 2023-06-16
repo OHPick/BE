@@ -1,6 +1,5 @@
 package com.team11.shareoffice.post.entity;
 
-import com.team11.shareoffice.post.dto.AmenitiesRequestDto;
 import com.team11.shareoffice.post.dto.PostRequestDto;
 import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import jakarta.persistence.*;

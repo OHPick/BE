@@ -44,11 +44,11 @@ public class EmailServiceImpl implements EmailService {
         MimeMessage message = javaMailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO, to);//보내는 대상
-        message.setSubject("Share Office 회원가입 인증 코드");//제목
+        message.setSubject("Ohpick 회원가입 인증 코드");//제목
 
         String msg="";
         msg+= "<div style='margin:20px;'>";
-        msg+= "<h1> 안녕하세요 ShareOffice 입니다. </h1>";
+        msg+= "<h1> 안녕하세요 Ohpick 입니다. </h1>";
         msg+= "<br>";
         msg+= "<p>아래 인증코드를 복사해 회원가입 화면에 입력해주세요<p>";
         msg+= "<br>";
@@ -61,7 +61,7 @@ public class EmailServiceImpl implements EmailService {
         msg+= code+"</strong><div><br/> ";
         msg+= "</div>";
         message.setText(msg, "utf-8", "html");//내용
-        message.setFrom(new InternetAddress( id,"test"));//보내는 사람
+        message.setFrom(new InternetAddress( id,"Ohpick"));//보내는 사람
 
         return message;
     }
