@@ -2,6 +2,8 @@ package com.team11.shareoffice.post.service;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
+import com.team11.shareoffice.image.entity.Image;
+import com.team11.shareoffice.image.repository.ImageRepository;
 import com.team11.shareoffice.image.service.ImageService;
 import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.like.repository.LikeRepository;
@@ -22,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -79,7 +83,7 @@ public class PostService {
         //게시글 작성자가 맞는지 확인.
         postValidator.validatePostAuthor(post, member);
 
-        List<String> imageList = new ArrayList<>(post.getPostImagesCustom());
+        List <String> imageList = new ArrayList<>(post.getPostImagesCustom());
 
         System.out.println("$$$$$$$$$$$$"+imageList);
 
@@ -128,14 +132,10 @@ public class PostService {
         }
     }
 
-    public ResponseDto<?> deletePost(Long id,Member member) {
+    public void deletePost(Long id,Member member) {
         Post post = postValidator.validateIsExistPost(id);
         postValidator.validatePostAuthor(post, member);
         likeRepository.deleteLikesByPost(post);
-        imageService.delete(post.getPostImage()); // 버켓의 이미지파일도 삭제
-//        postRepository.delete(post);
-        post.setDelete(true);
-        postRepository.save(post);
 
         // post 삭제시 s3에 저장된 이미지도 삭제
         List<Image> imageList = imageRepository.findAllByPost(post);
@@ -143,9 +143,8 @@ public class PostService {
             imageRepository.delete(image);
             imageService.delete(image.getImageUrl());
         }
-
-        postRepository.delete(post);
-        return ResponseDto.setSuccess("게시글 삭제 성공");
+        post.setDelete(true);
+        postRepository.save(post);
     }
 
     // 상세 게시글 조회
