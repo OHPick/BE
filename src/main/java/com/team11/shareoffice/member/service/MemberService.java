@@ -55,7 +55,7 @@ public class MemberService {
         // 비밀번호와 확인 비밀번호 일치 여부 판별
         memberValidator.validatePasswordCheck(requestDto);
         // 이메일 중복 검사
-        memberValidator.validateEmailOverlapped(email);
+//        memberValidator.validateEmailOverlapped(email);
         // 닉네임 패턴 및 중복 검사
         memberValidator.validateNickname(nickname);
 //        인증된 이메일인지 검사
