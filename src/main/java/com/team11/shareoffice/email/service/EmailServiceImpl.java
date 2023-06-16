@@ -5,6 +5,7 @@ import com.team11.shareoffice.email.dto.EmailRequestDto;
 import com.team11.shareoffice.global.exception.CustomException;
 import com.team11.shareoffice.global.service.RedisService;
 import com.team11.shareoffice.global.util.ErrorCode;
+import com.team11.shareoffice.member.validator.MemberValidator;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -32,6 +33,7 @@ public class EmailServiceImpl implements EmailService {
     private final JavaMailSender javaMailSender;
 //    private final EmailValidator emailValidator;
     private final RedisService redisService;
+    private final MemberValidator memberValidator;
 
     @Value("${spring.mail.username}")
     private String id;
@@ -95,6 +97,8 @@ public class EmailServiceImpl implements EmailService {
 //        Email email = Email.saveEmail(requestDto);
 //        MimeMessage message = createMessage(email.getEmail(),code);
         MimeMessage message = createMessage(requestDto.getEmail(),code);
+
+        memberValidator.validateEmailOverlapped(requestDto.getEmail());
 
         try{//예외처리
             javaMailSender.send(message);
