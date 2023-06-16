@@ -40,6 +40,7 @@ public class MyPageService {
         // 내가 쓴 게시글 리스트 찾기.
         List<Post> posts = postRepository.findAllByMemberOrderByCreatedAt(member);
         return posts.stream()
+                .filter(post -> !post.isDelete())
                 .map(post -> new PostResponseDto(post, isLikedByMember(post, member), 3))
                 .toList();
     }
@@ -49,6 +50,7 @@ public class MyPageService {
     public List<PostResponseDto> getMyLikes(Member member) {
         List<Post> postList = likeRepository.findAllByMemberAndLikeStatus(member, true).stream()
                 .map(like -> like.getPost()) // Like 엔티티에서 Post 엔티티로 변환
+                .filter(post -> !post.isDelete())
                 .toList();
         return postList.stream()
                 .map(post -> new PostResponseDto(post, isLikedByMember(post, member), getUserStatus(member, post)) )
@@ -60,7 +62,9 @@ public class MyPageService {
     @Transactional(readOnly = true)
     public List<MyReservesResponseDto> getMyReserves(Member member) {
         List<Reservation> reservationList = reservationRepository.findAllByMemberOrderByStartDateAsc(member);
-        return reservationList.stream().map(reservation -> new MyReservesResponseDto(reservation.getPost(), isLikedByMember(reservation.getPost(), member), 2, reservation, reservation.isFinished())).toList();
+        return reservationList.stream()
+                .filter(reservation -> !reservation.getPost().isDelete())
+                .map(reservation -> new MyReservesResponseDto(reservation.getPost(), isLikedByMember(reservation.getPost(), member), 2, reservation, reservation.isFinished())).toList();
 
     }
 

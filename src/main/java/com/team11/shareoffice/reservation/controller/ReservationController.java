@@ -17,10 +17,10 @@ public class ReservationController {
 
     private final ReservationService reservationService;
     @Operation(summary = "예약된 게시물 정보 API")
-    @GetMapping("/{postId}/reserve")
-    public ResponseDto<?> showReservedPost(@PathVariable Long postId,
+    @GetMapping("/{postId}/reserve/{reservationId}")
+    public ResponseDto<?> showReservedPost(@PathVariable Long postId, @PathVariable Long reservationId,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseDto.setSuccess(reservationService.showReservedPost(postId, userDetails.getMember()));
+        return ResponseDto.setSuccess(reservationService.showReservedPost(postId, reservationId, userDetails.getMember()));
     }
 
     @Operation(summary = "예약하기 API")
@@ -28,16 +28,16 @@ public class ReservationController {
     public ResponseDto<?> reservePost(@PathVariable Long postId,
                                       @RequestBody ReservationRequestDto requestDto,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        reservationService.reservePost(postId, requestDto,
-                userDetails.getMember());
-        return ResponseDto.setSuccess(null);
+
+        return ResponseDto.setSuccess(null, reservationService.reservePost(postId, requestDto,
+                userDetails.getMember()));
     }
 
     @Operation(summary = "예약취소 API")
-    @DeleteMapping("/{postId}/reserve")
-    public ResponseDto<?> cancelReservePost(@PathVariable Long postId,
+    @DeleteMapping("/{postId}/reserve/{reservationId}")
+    public ResponseDto<?> cancelReservePost(@PathVariable Long postId,  @PathVariable Long reservationId,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        reservationService.cancelReservePost(postId, userDetails.getMember());
+        reservationService.cancelReservePost(postId, reservationId, userDetails.getMember());
         return ResponseDto.setSuccess(null);
     }
 
