@@ -45,16 +45,15 @@ public class ImageService {
         List<String> imageUrlList = new ArrayList<>();
 
         for (MultipartFile image : multipartFileList) {
-        String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
-        try {
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(image.getSize());
-            amazonS3.putObject(new PutObjectRequest(bucket, fileName, image.getInputStream(), metadata));
-        } catch (IOException e) {
-            throw new RuntimeException("이미지 업로드 실패: " + fileName, e);
-        }
-        imageUrlList.add(fileName);
-
+            String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
+            try {
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentLength(image.getSize());
+                amazonS3.putObject(new PutObjectRequest(bucket, fileName, image.getInputStream(), metadata));
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 업로드 실패: " + fileName, e);
+            }
+            imageUrlList.add(fileName);
         }
         return imageUrlList;
     }
