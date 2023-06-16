@@ -28,6 +28,10 @@ public class ReservationValidator {
         return postRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST));
     }
 
+    public Reservation validateIsExistReservation(Long id) {
+        return reservationRepository.findById(id).orElseThrow( () -> new CustomException(ErrorCode.NOT_EXIST_RESERVATION));
+    }
+
     public void validateReserveDate(Post post, ReservationRequestDto requestDto){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
@@ -46,8 +50,14 @@ public class ReservationValidator {
         }
     }
 
-    public Reservation validateReservation(Post post, Member member){
-        return reservationRepository.findByMemberAndPostAndNotFinished(member, post).orElseThrow( () -> new CustomException(ErrorCode.NOT_RESERVED) );
+    public void validateReservation(Post post, Reservation reservation, Member member){
+
+        if(!(reservation.getMember().getId().equals(member.getId()))){
+            throw new CustomException(ErrorCode.NOT_RESERVED_MEMBER);
+        }
+        else if(!(reservation.getPost().getId().equals(post.getId()))){
+            throw new CustomException(ErrorCode.NOT_EXIST_RESERVATION);
+        }
     }
 
 }
