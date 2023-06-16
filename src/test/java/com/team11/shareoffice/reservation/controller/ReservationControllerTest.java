@@ -52,20 +52,21 @@ class ReservationControllerTest {
     @Test
     @DisplayName("예약하기")
     void reservePostSuccessTest() throws Exception {
-        Long id = 1L;
+        Long postId = 1L;
+        Long reservationId = 1L;
         ReservationRequestDto requestDto = new ReservationRequestDto();
         requestDto.setStartDate(LocalDate.of(2023,6,12));
         requestDto.setEndDate(LocalDate.of(2023,6,17));
 
         Member member = new Member();
-        doNothing().when(reservationService).reservePost(id, requestDto, member);
+        doReturn(reservationId).when(reservationService).reservePost(postId, requestDto, member);
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String jsonRequestDto = objectMapper.writeValueAsString(requestDto);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/posts/{postId}/reserve", id)
+                MockMvcRequestBuilders.post("/api/posts/{postId}/reserve", postId)
                                 .content(jsonRequestDto)
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -74,25 +75,27 @@ class ReservationControllerTest {
     @Test
     @DisplayName("예약보기")
     void showReservedPostSuccessTest() throws Exception {
-        Long id = 1L;
+        Long postId = 1L;
+        Long reservationId = 1L;
         Member member = new Member();
         ReservationResponseDto response = new ReservationResponseDto(new Post(), new Reservation());
-        doReturn(response).when(reservationService).showReservedPost(id, member);
+        doReturn(response).when(reservationService).showReservedPost(postId, reservationId, member);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.get("/api/posts/{postId}/reserve", id))
+                        MockMvcRequestBuilders.get("/api/posts/{postId}/reserve/{reservationId}", postId, reservationId))
                                 .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("예약 취소하기")
     void cancelReservedPostSuccessTest() throws Exception {
-        Long id = 1L;
+        Long postId = 1L;
+        Long reservationId = 1L;
         Member member = new Member();
-        doNothing().when(reservationService).cancelReservePost(id, member);
+        doNothing().when(reservationService).cancelReservePost(postId, reservationId, member);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.delete("/api/posts/{postId}/reserve", id))
+                        MockMvcRequestBuilders.delete("/api/posts/{postId}/reserve/{reservationId}", postId, reservationId))
                 .andExpect(status().isOk());
     }
 
@@ -105,7 +108,7 @@ class ReservationControllerTest {
         doReturn(response).when(reservationService).showReservedDate(id, member);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.delete("/api/posts/{postId}/reserve", id))
+                        MockMvcRequestBuilders.get("/api/posts/{postId}/reserved", id))
                 .andExpect(status().isOk());
     }
 
