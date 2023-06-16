@@ -43,13 +43,13 @@ public class Post extends Timestamped {
     private int price;
 
     @Column(nullable = false)
-    private int capacity;  //
+    private int capacity;  //총 인원 수
     @Column(nullable = false)
-    private String operatingTime; //
+    private String operatingTime; //운영시간
     @Column(nullable = false)
-    private String contentDetails; //
+    private String contentDetails; //추가 내용
     @Column(nullable = false)
-    private String amenities; //
+    private String amenities; //편의시설
 
     //좋아요 개수
     @Column(nullable = false)
