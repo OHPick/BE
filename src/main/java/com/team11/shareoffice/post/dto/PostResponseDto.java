@@ -82,34 +82,34 @@ public class PostResponseDto {
     }
 
     public class AmenitiesResponseDto {
-        public boolean isAircon;
-        public boolean isCopierPrinter;
-        public boolean isProjector;
-        public boolean isDoorLock;
-        public boolean isPowerOutlet;
-        public boolean isFax;
-        public boolean isHeater;
-        public boolean isParking;
-        public boolean isWaterPurifier;
-        public boolean isPersonalLocker;
-        public boolean isTV;
-        public boolean isWhiteBoard;
-        public boolean isInternetWiFi;
+        public Boolean isAircon;
+        public Boolean isCopierPrinter;
+        public Boolean isProjector;
+        public Boolean isDoorLock;
+        public Boolean isPowerOutlet;
+        public Boolean isFax;
+        public Boolean isHeater;
+        public Boolean isParking;
+        public Boolean isWaterPurifier;
+        public Boolean isPersonalLocker;
+        public Boolean isTV;
+        public Boolean isWhiteBoard;
+        public Boolean isInternetWiFi;
 
         public AmenitiesResponseDto(Amenities amenities) {
-            this.isAircon = amenities.isAircon();
-            this.isCopierPrinter = amenities.isCopierPrinter();
-            this.isProjector = amenities.isProjector();
-            this.isDoorLock = amenities.isDoorLock();
-            this.isPowerOutlet = amenities.isPowerOutlet();
-            this.isFax = amenities.isFax();
-            this.isHeater = amenities.isHeater();
-            this.isParking = amenities.isParking();
-            this.isWaterPurifier = amenities.isWaterPurifier();
-            this.isPersonalLocker = amenities.isPersonalLocker();
-            this.isTV = amenities.isTV();
-            this.isWhiteBoard = amenities.isWhiteBoard();
-            this.isInternetWiFi = amenities.isInternetWiFi();
+            this.isAircon = amenities.getIsAircon();
+            this.isCopierPrinter = amenities.getIsCopierPrinter();
+            this.isProjector = amenities.getIsProjector();
+            this.isDoorLock = amenities.getIsDoorLock();
+            this.isPowerOutlet = amenities.getIsPowerOutlet();
+            this.isFax = amenities.getIsFax();
+            this.isHeater = amenities.getIsHeater();
+            this.isParking = amenities.getIsParking();
+            this.isWaterPurifier = amenities.getIsWaterPurifier();
+            this.isPersonalLocker = amenities.getIsPersonalLocker();
+            this.isTV = amenities.getIsTV();
+            this.isWhiteBoard = amenities.getIsWhiteBoard();
+            this.isInternetWiFi = amenities.getIsInternetWiFi();
         }
     }
 }
