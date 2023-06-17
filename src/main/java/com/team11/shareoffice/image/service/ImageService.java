@@ -55,49 +55,52 @@ public class ImageService {
 
         for (MultipartFile image : multipartFileList) {
 
-            String originalFilename = image.getOriginalFilename();
-            String contentType = image.getContentType();
-            String extension = getFileExtension(contentType);
-            String fileNameWithoutExtension = StringUtils.stripFilenameExtension(originalFilename);
-            String fileName = fileNameWithoutExtension + "_" + UUID.randomUUID().toString() + extension;
-          
-          
+            String base64String = Base64.getEncoder().encodeToString(image.getBytes());
+            String filename = image.getOriginalFilename();
+            byte[] decodedBytes = Base64.getDecoder().decode(base64String);
+
+
+
+
             try {
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(image.getSize());
+                InputStream inputStream = new ByteArrayInputStream(decodedBytes);
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentLength(image.getSize());
+                metadata.setContentType(image.getContentType());
 
-            amazonS3.putObject(new PutObjectRequest(bucket, fileName, image.getInputStream(), metadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
+                amazonS3.putObject(new PutObjectRequest(bucket, filename, inputStream, metadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
 
 
-            //파일접근URL
-            String imageUrl = amazonS3.getUrl(bucket, fileName).toString();
-            imageUrlList.add(imageUrl);
-        } catch (IOException e) {
-            throw new RuntimeException("이미지 업로드 실패: " + fileName, e);
-        }
+                //파일접근URL
+                String imageUrl = amazonS3.getUrl(bucket, filename).toString();
+                imageUrlList.add(imageUrl);
+                System.out.println(imageUrl);
+                } catch (Exception e) {
+                    throw new RuntimeException("이미지 업로드 실패: " + filename, e);
+                }
 
         }
         return imageUrlList;
     }
-    private String getFileExtension(String contentType) {
-        if (contentType == null) {
-            return ".jpg"; // 기본 확장자 설정
-        }
-
-        // MIME 타입으로부터 확장자 추론
-        switch (contentType) {
-            case "image/jpeg":
-                return ".jpg";
-            case "image/png":
-                return ".png";
-            case "image/gif":
-                return ".gif";
-            // 추가적인 MIME 타입 및 확장자 처리 가능
-            default:
-                return ".jpg"; // 기본 확장자 설정
-        }
-    }
+//    private String getFileExtension(String contentType) {
+//        if (contentType == null) {
+//            return ".jpg"; // 기본 확장자 설정
+//        }
+//
+//        // MIME 타입으로부터 확장자 추론
+//        switch (contentType) {
+//            case "image/jpeg":
+//                return ".jpg";
+//            case "image/png":
+//                return ".png";
+//            case "image/gif":
+//                return ".gif";
+//            // 추가적인 MIME 타입 및 확장자 처리 가능
+//            default:
+//                return ".jpg"; // 기본 확장자 설정
+//        }
+//    }
 
 
     //파일을 s3에 업로드
@@ -135,3 +138,4 @@ public class ImageService {
     }
 
 }
+
