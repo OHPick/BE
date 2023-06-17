@@ -75,6 +75,7 @@ public class ImageService {
                 //파일접근URL
                 String imageUrl = amazonS3.getUrl(bucket, filename).toString();
                 imageUrlList.add(imageUrl);
+                System.out.println(imageUrl);
                 } catch (Exception e) {
                     throw new RuntimeException("이미지 업로드 실패: " + filename, e);
                 }
