@@ -49,11 +49,16 @@ public class ImageService {
         try {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(image.getSize());
-            amazonS3.putObject(new PutObjectRequest(bucket, fileName, image.getInputStream(), metadata));
+
+            amazonS3.putObject(new PutObjectRequest(bucket, fileName, image.getInputStream(), metadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+
+            //파일접근URL
+            String imageUrl = amazonS3.getUrl(bucket, fileName).toString();
+            imageUrlList.add(imageUrl);
         } catch (IOException e) {
             throw new RuntimeException("이미지 업로드 실패: " + fileName, e);
         }
-        imageUrlList.add(fileName);
 
         }
         return imageUrlList;
@@ -71,7 +76,9 @@ public class ImageService {
 
         amazonS3.putObject(new PutObjectRequest(bucket, fileName, multipartFile.getInputStream(), objectMetadata).withCannedAcl(CannedAccessControlList.PublicRead));
 
-        return fileName;
+        String imageUrl = amazonS3.getUrl(bucket, fileName).toString();
+
+        return imageUrl;
     }
 
     public void saveImageList(Post post, List<String> imageUrlList) {

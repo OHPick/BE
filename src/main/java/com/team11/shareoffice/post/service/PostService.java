@@ -151,6 +151,12 @@ public class PostService {
             }
             postResponseDto.setUserStatus(getUserStatus(member,post));
         }
+        List<Image> images = imageRepository.findAllByPost(post);
+        List<String> imageUrls = new ArrayList<>();
+        for (Image image : images) {
+            imageUrls.add(image.getImageUrl());
+        }
+        postResponseDto.setImageUrl(imageUrls);
         return postResponseDto;
     }
 

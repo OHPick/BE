@@ -50,9 +50,9 @@ public class Post extends Timestamped {
     @ColumnDefault("0")
     private int likeCount;
 
-    @Column(columnDefinition = "LONGTEXT")
+    @Column
     @Lob
-    private List<String> postImages;
+    private List<String> postImages = new ArrayList<>();
 
     @OneToOne(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Amenities amenities;
