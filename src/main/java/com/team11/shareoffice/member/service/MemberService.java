@@ -59,7 +59,7 @@ public class MemberService {
         // 닉네임 패턴 및 중복 검사
         memberValidator.validateNickname(nickname);
 //        인증된 이메일인지 검사
-        //memberValidator.validateEmailAuth(email, redisService);
+        memberValidator.validateEmailAuth(email, redisService);
 
         // 유저 등록
         Member member = Member.builder()
