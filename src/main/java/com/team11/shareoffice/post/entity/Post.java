@@ -52,7 +52,7 @@ public class Post extends Timestamped {
 
     @Column
     @Lob
-    private List<String> postImages = new ArrayList<>();
+    private List<String> postImages;
 
     @OneToOne(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Amenities amenities;

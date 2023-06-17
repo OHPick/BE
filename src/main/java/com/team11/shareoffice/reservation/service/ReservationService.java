@@ -3,6 +3,8 @@ package com.team11.shareoffice.reservation.service;
 
 import com.team11.shareoffice.chat.entity.ChatRoom;
 import com.team11.shareoffice.chat.repository.ChatRoomRepository;
+import com.team11.shareoffice.global.exception.CustomException;
+import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.reservation.dto.ReservationRequestDto;
@@ -25,14 +27,15 @@ public class ReservationService {
     private final ReservationValidator reservationValidator;
     private final ChatRoomRepository chatRoomRepository;
 
-    public ReservationResponseDto showReservedPost( Long postId, Member member) {
+    public ReservationResponseDto showReservedPost( Long postId, Long reservationId, Member member) {
         Post post = reservationValidator.validateIsExistPost(postId);
-        Reservation reservation = reservationValidator.validateReservation(post, member);
+        Reservation reservation = reservationValidator.validateIsExistReservation(reservationId);
+        reservationValidator.validateReservation(post, reservation, member);
         return new ReservationResponseDto(post,reservation);
     }
 
 
-    public void reservePost(Long postId, ReservationRequestDto requestDto, Member member) {
+    public Long reservePost(Long postId, ReservationRequestDto requestDto, Member member) {
         Post post = reservationValidator.validateIsExistPost(postId);
         reservationValidator.validateReserveDate(post,requestDto);
         Reservation newReserve = new Reservation(member, post, requestDto.getStartDate(), requestDto.getEndDate());
@@ -43,12 +46,13 @@ public class ReservationService {
             room = new ChatRoom(post, member, post.getMember());
             chatRoomRepository.saveAndFlush(room);
         }
-
+        return newReserve.getId();
     }
 
-    public void cancelReservePost(Long postId, Member member) {
+    public void cancelReservePost(Long postId, Long reservationId, Member member) {
         Post post = reservationValidator.validateIsExistPost(postId);
-        Reservation reservation = reservationValidator.validateReservation(post,member);
+        Reservation reservation = reservationValidator.validateIsExistReservation(reservationId);
+        reservationValidator.validateReservation(post, reservation, member);
         reservationRepository.delete(reservation);
     }
 

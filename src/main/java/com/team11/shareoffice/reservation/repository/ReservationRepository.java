@@ -12,4 +12,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
 
     List<Reservation> findAllByMemberOrderByStartDateAsc(Member member);
     List<Reservation> findAllByPost(Post post);
+
+    List<Reservation> findByMemberAndIsFinishedFalse(Member member);
+    List<Reservation> findByPost_MemberAndIsFinishedFalse(Member member);
+
+    List<Reservation> findAllByPostAndIsFinishedFalse(Post post);
 }

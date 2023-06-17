@@ -16,6 +16,7 @@ import com.team11.shareoffice.post.repository.AmenitiesRepository;
 import com.team11.shareoffice.post.repository.OperatingTimeRepository;
 import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.post.validator.PostValidator;
+import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -123,6 +124,10 @@ public class PostService {
         likeRepository.deleteLikesByPost(post);
         operatingTimeRepository.deleteByPost(post);
         amenitiesRepository.deleteByPost(post);
+
+       //완료되지 않은 예약 있는지 확인
+        postValidator.unfinishedReservationCheck(post);
+
         // post 삭제시 s3에 저장된 이미지도 삭제
         List<Image> imageList = imageRepository.findAllByPost(post);
         for (Image image : imageList) {
