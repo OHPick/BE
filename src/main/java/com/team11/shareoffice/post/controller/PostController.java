@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Blob;
 import java.util.List;
 
 @RestController
@@ -42,6 +43,7 @@ public class PostController {
     public ResponseDto<?> createPost(@RequestPart PostRequestDto postRequestDto,
                                         @RequestPart(value = "imageFile", required = false) List<MultipartFile> image,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+
         return ResponseDto.setSuccess("게시글 작성 성공", postService.createPost(postRequestDto,  image, userDetails.getMember()));
 
     }
