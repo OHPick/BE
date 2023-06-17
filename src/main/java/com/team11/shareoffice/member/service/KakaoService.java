@@ -68,7 +68,7 @@ public class KakaoService {
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("client_id", "a2e918a8313b1ec2a828afcfa8e8991b")
                 //.queryParam("redirect_uri", "http://localhost:3000/oauth/kakao")
-                .queryParam("redirect_uri", "https://ohpick.app/oauth/kakao","http://localhost:3000/oauth/kakao")
+                .queryParam("redirect_uri", "https://ohpick.shop/oauth/kakao","http://localhost:3000/oauth/kakao")
                 .queryParam("Client_Secret", clientSecret)
                 .queryParam("code", code)
                 .toUriString();
