@@ -59,7 +59,7 @@ public class ImageService {
             String contentType = image.getContentType();
             String extension = getFileExtension(contentType);
             String fileNameWithoutExtension = StringUtils.stripFilenameExtension(originalFilename);
-            String fileName = fileNameWithoutExtension + "_" + UUID.randomUUID().toString() + "." + extension;
+            String fileName = fileNameWithoutExtension + "_" + UUID.randomUUID().toString() + extension;
           
           
             try {
