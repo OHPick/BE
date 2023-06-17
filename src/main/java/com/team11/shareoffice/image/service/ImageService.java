@@ -60,20 +60,22 @@ public class ImageService {
             String extension = getFileExtension(contentType);
             String fileNameWithoutExtension = StringUtils.stripFilenameExtension(originalFilename);
             String fileName = fileNameWithoutExtension + "_" + UUID.randomUUID().toString() + extension;
-          
+
+            byte[] imageData = image.getBytes();
+            InputStream inputStream = new ByteArrayInputStream(imageData);
           
             try {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(image.getSize());
 
-            amazonS3.putObject(new PutObjectRequest(bucket, fileName, image.getInputStream(), metadata)
+            amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
 
 
             //파일접근URL
             String imageUrl = amazonS3.getUrl(bucket, fileName).toString();
             imageUrlList.add(imageUrl);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("이미지 업로드 실패: " + fileName, e);
         }
 
