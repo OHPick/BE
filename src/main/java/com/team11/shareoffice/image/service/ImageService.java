@@ -44,7 +44,7 @@ public class ImageService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Transactional
+   @Transactional
     //파일을 s3에 업로드
     public List<String> uploadFile(List<MultipartFile> multipartFileList) throws IOException {
         if (multipartFileList == null || multipartFileList.isEmpty()) {
@@ -137,3 +137,4 @@ public class ImageService {
     }
 
 }
+
