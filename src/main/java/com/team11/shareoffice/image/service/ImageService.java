@@ -14,8 +14,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -47,21 +54,27 @@ public class ImageService {
         List<String> imageUrlList = new ArrayList<>();
 
         for (MultipartFile image : multipartFileList) {
-//        String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
-        String base64String = Base64.getEncoder().encodeToString(image.getBytes());
-        String filename = image.getOriginalFilename();
-        byte[] decodedBytes = Base64.getDecoder().decode(base64String);
-            InputStream inputStream = new ByteArrayInputStream(decodedBytes);
 
+            String originalFilename = image.getOriginalFilename();
+            String extension = StringUtils.getFilenameExtension(originalFilename);
+            String fileNameWithoutExtension = StringUtils.stripFilenameExtension(originalFilename);
+            String fileName = fileNameWithoutExtension + "_" + UUID.randomUUID().toString() + "." + extension;
+          
+          
+            try {
             ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(decodedBytes.length);
-            metadata.setContentType("image/jpeg");
-            amazonS3.putObject(new PutObjectRequest(bucket, filename, inputStream, metadata)
+            metadata.setContentLength(image.getSize());
+
+            amazonS3.putObject(new PutObjectRequest(bucket, fileName, image.getInputStream(), metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
 
+
             //파일접근URL
-            String imageUrl = amazonS3.getUrl(bucket, filename).toString();
+            String imageUrl = amazonS3.getUrl(bucket, fileName).toString();
             imageUrlList.add(imageUrl);
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 업로드 실패: " + fileName, e);
+        }
 
         }
         return imageUrlList;
@@ -102,4 +115,3 @@ public class ImageService {
     }
 
 }
-
