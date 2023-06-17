@@ -19,9 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,20 +47,21 @@ public class ImageService {
         List<String> imageUrlList = new ArrayList<>();
 
         for (MultipartFile image : multipartFileList) {
-        String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
-        try {
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(image.getSize());
+//        String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
+        String base64String = Base64.getEncoder().encodeToString(image.getBytes());
+        String filename = image.getOriginalFilename();
+        byte[] decodedBytes = Base64.getDecoder().decode(base64String);
+            InputStream inputStream = new ByteArrayInputStream(decodedBytes);
 
-            amazonS3.putObject(new PutObjectRequest(bucket, fileName, image.getInputStream(), metadata)
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(decodedBytes.length);
+            metadata.setContentType("image/jpeg");
+            amazonS3.putObject(new PutObjectRequest(bucket, filename, inputStream, metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
 
             //파일접근URL
-            String imageUrl = amazonS3.getUrl(bucket, fileName).toString();
+            String imageUrl = amazonS3.getUrl(bucket, filename).toString();
             imageUrlList.add(imageUrl);
-        } catch (IOException e) {
-            throw new RuntimeException("이미지 업로드 실패: " + fileName, e);
-        }
 
         }
         return imageUrlList;
