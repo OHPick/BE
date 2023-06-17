@@ -24,6 +24,7 @@ public class MainPageResponseDto {
     private int likeCount;
     private boolean likeStatus;
     private int capacity;
+    private int userStatus;
 
     public MainPageResponseDto(Post post) {
         this.id = post.getId();
@@ -36,7 +37,7 @@ public class MainPageResponseDto {
         this.memberNickname = post.getMember().getNickname();
     }
 
-    public MainPageResponseDto(Post post, Likes likes) {
+    public MainPageResponseDto(Post post, Likes likes, int userStatus) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
@@ -51,6 +52,7 @@ public class MainPageResponseDto {
         } else {
             this.likeStatus = false;
         }
+        this.userStatus = userStatus;
     }
 
 }
