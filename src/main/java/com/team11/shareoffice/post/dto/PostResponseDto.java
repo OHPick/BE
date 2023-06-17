@@ -17,7 +17,7 @@ import java.util.Map;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostResponseDto {
-    private Long id;
+    private Long postId;
     private String title;
     private String content;
     private String location;
@@ -36,7 +36,7 @@ public class PostResponseDto {
 
 
     public PostResponseDto(Post post, boolean likeStatus, int userStatus, OperatingTime operatingTime, Amenities amenities) {
-        this.id = post.getId();
+        this.postId = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.location = post.getLocation();
@@ -53,7 +53,7 @@ public class PostResponseDto {
     }
 
     public PostResponseDto(Post post, boolean likeStatus, int userStatus) {
-        this.id = post.getId();
+        this.postId = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.location = post.getLocation();
