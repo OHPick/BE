@@ -96,17 +96,19 @@ public class MyPageService {
         String imageUrl = member.getImageUrl();
 
         // 내가 쓴 게시글 리스트 찾기.
-        List<Post> myPosts = postRepository.findAllByMemberOrderByCreatedAt(member);
+        List<Post> myPosts = postRepository.findAllByMemberAndIsDeleteFalseOrderByCreatedAt(member);
         int postCount = myPosts.size();
 
         // 내가 좋아요한 게시글 리스트 찾기.
         List<Post> myLikes = likeRepository.findAllByMemberAndLikeStatus(member, true).stream()
                 .map(like -> like.getPost()) // Like 엔티티에서 Post 엔티티로 변환
+                .filter(post -> !post.isDelete())
                 .collect(Collectors.toList());
         int likeCount = myLikes.size();
 
         // 내가 예약한 게시글 리스트 찾기.
-        List<Post> myReservations = reservationRepository.findAllByMemberOrderByStartDateAsc(member).stream().map(Reservation::getPost).toList();
+        List<Post> myReservations = reservationRepository.findAllByMemberOrderByStartDateAsc(member).stream()
+                .map(Reservation::getPost).filter(post -> !post.isDelete()).toList();
         int reserveCount = myReservations.size();
 
         return new ProfileCountDto(email,nickName, imageUrl, postCount, likeCount, reserveCount);

@@ -11,4 +11,6 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     List<Post> findAllByMemberOrderByCreatedAt(Member member);
 
     List<Post> findAllByMemberId(Long memberId);
+
+    List<Post> findAllByMemberAndIsDeleteFalseOrderByCreatedAt(Member member);
 }
