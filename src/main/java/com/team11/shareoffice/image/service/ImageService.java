@@ -26,9 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,17 +54,20 @@ public class ImageService {
         List<String> imageUrlList = new ArrayList<>();
 
         for (MultipartFile image : multipartFileList) {
+
             String originalFilename = image.getOriginalFilename();
             String extension = StringUtils.getFilenameExtension(originalFilename);
             String fileNameWithoutExtension = StringUtils.stripFilenameExtension(originalFilename);
             String fileName = fileNameWithoutExtension + "_" + UUID.randomUUID().toString() + "." + extension;
-
+          
+          
             try {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(image.getSize());
 
             amazonS3.putObject(new PutObjectRequest(bucket, fileName, image.getInputStream(), metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
+
 
             //파일접근URL
             String imageUrl = amazonS3.getUrl(bucket, fileName).toString();
