@@ -56,7 +56,8 @@ public class ImageService {
         for (MultipartFile image : multipartFileList) {
 
             String originalFilename = image.getOriginalFilename();
-            String extension = StringUtils.getFilenameExtension(originalFilename);
+            String contentType = image.getContentType();
+            String extension = getFileExtension(contentType);
             String fileNameWithoutExtension = StringUtils.stripFilenameExtension(originalFilename);
             String fileName = fileNameWithoutExtension + "_" + UUID.randomUUID().toString() + "." + extension;
           
@@ -79,6 +80,25 @@ public class ImageService {
         }
         return imageUrlList;
     }
+    private String getFileExtension(String contentType) {
+        if (contentType == null) {
+            return ".jpg"; // 기본 확장자 설정
+        }
+
+        // MIME 타입으로부터 확장자 추론
+        switch (contentType) {
+            case "image/jpeg":
+                return ".jpg";
+            case "image/png":
+                return ".png";
+            case "image/gif":
+                return ".gif";
+            // 추가적인 MIME 타입 및 확장자 처리 가능
+            default:
+                return ".jpg"; // 기본 확장자 설정
+        }
+    }
+
 
     //파일을 s3에 업로드
     public String uploadOneFile(MultipartFile multipartFile) throws IOException {
