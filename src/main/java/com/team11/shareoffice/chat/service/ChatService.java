@@ -85,7 +85,7 @@ public class ChatService {
         chatValidator.validateChatRoomMember(room,member);
         List<ChatMessage> messages = chatMessageRepository.findAllByRoomOrderByCreatedAt(room);
         List<ChatResponseDto> chatResponseDtos = messages.stream()
-                .map(message -> new ChatResponseDto(roomId, message.getSender().getNickname(), message.getMessage(), changeDateFormatMessage(message.getCreatedAt()), member.getImageUrl()))
+                .map(message -> new ChatResponseDto(roomId, message.getSender().getNickname(), message.getMessage(), changeDateFormatMessage(message.getCreatedAt()), message.getSender().getImageUrl()))
                         .toList();
 
         return new ChatListResponseDto(member.getNickname(), room.getOwner().getNickname(), chatResponseDtos);
