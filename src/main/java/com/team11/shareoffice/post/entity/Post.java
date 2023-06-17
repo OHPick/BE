@@ -50,6 +50,7 @@ public class Post extends Timestamped {
     @ColumnDefault("0")
     private int likeCount;
 
+    @Column
     @Lob
     private List<String> postImages;
 
