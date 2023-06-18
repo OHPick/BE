@@ -1,5 +1,6 @@
 package com.team11.shareoffice.global.service;
 
+import com.team11.shareoffice.global.util.RedisKeyCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -28,13 +29,13 @@ public class RedisService {
 
     public void setBlackList(String accessTokenFromRequest) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        values.set(accessTokenFromRequest, "blacklisted", Duration.ofHours(1));
+        values.set(accessTokenFromRequest, RedisKeyCode.BLACKLISTED.getKeyName(), Duration.ofHours(1));
     }
 
     public boolean isBlackListed(String accessToken) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         String value = values.get(accessToken);
-        return value != null && value.equals("blacklisted");
+        return value != null && value.equals(RedisKeyCode.BLACKLISTED.getKeyName());
     }
 
     //이메일 레디스
@@ -42,27 +43,27 @@ public class RedisService {
     //인증된 상태로 설정
       public void setEmailVerified(String email){
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        values.set("email_verified:" + email, "true", Duration.ofMinutes(3)); // 3분 후 자동 삭제
+        values.set(RedisKeyCode.EMAIL_VERIFIED.getKeyName() + email, "true", Duration.ofMinutes(3)); // 3분 후 자동 삭제
     }
 
     //인증됐는지 확인
     public boolean isEmailVerified(String email){
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        return "true".equals(values.get("email_verified:" + email));
+        return "true".equals(values.get(RedisKeyCode.EMAIL_VERIFIED.getKeyName() + email));
     }
     //이메일 인증코드 설정
     public void setEmailAuthCode(String email, String code, Duration duration){
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        values.set("email_verif_code:" + email, code, duration);
+        values.set(RedisKeyCode.EMAIL_VERIF_CODE.getKeyName() + email, code, duration);
     }
     //주어진 이메일에 대해 인증코드 조회
     public String getEmailAuthCode(String email){
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        return values.get("email_verif_code:" + email);
+        return values.get(RedisKeyCode.EMAIL_VERIF_CODE.getKeyName() + email);
     }
 
     public void delEmailAuthCode(String email){
-        redisTemplate.delete("email_verif_code:" + email);
+        redisTemplate.delete(RedisKeyCode.EMAIL_VERIF_CODE.getKeyName() + email);
     }
 }
 
