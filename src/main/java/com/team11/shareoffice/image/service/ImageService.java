@@ -65,61 +65,8 @@ public class ImageService {
 
         }
         return imageUrlList;
-
-//        if (multipartFileList == null || multipartFileList.isEmpty()) {
-//            throw new CustomException(ErrorCode.INVALID_IMAGE);
-//        }
-//
-//        List<String> imageUrlList = new ArrayList<>();
-//
-//        for (MultipartFile image : multipartFileList) {
-//
-//            String originalFilename = image.getOriginalFilename();
-//            String contentType = image.getContentType();
-//            String extension = getFileExtension(contentType);
-//            String fileNameWithoutExtension = StringUtils.stripFilenameExtension(originalFilename);
-//            String fileName = fileNameWithoutExtension + "_" + UUID.randomUUID().toString() + extension;
-//
-//            byte[] imageData = image.getBytes();
-//            InputStream inputStream = new ByteArrayInputStream(imageData);
-//
-//            try {
-//            ObjectMetadata metadata = new ObjectMetadata();
-//            metadata.setContentLength(image.getSize());
-//
-//            amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, metadata)
-//                    .withCannedAcl(CannedAccessControlList.PublicRead));
-//
-//
-//            //파일접근URL
-//            String imageUrl = amazonS3.getUrl(bucket, fileName).toString();
-//            imageUrlList.add(imageUrl);
-//        } catch (Exception e) {
-//            throw new RuntimeException("이미지 업로드 실패: " + fileName, e);
-//        }
-//
-//        }
-//        return imageUrlList;
     }
 
-    private String getFileExtension(String contentType) {
-        if (contentType == null) {
-            return ".jpg"; // 기본 확장자 설정
-        }
-
-        // MIME 타입으로부터 확장자 추론
-        switch (contentType) {
-            case "image/jpeg":
-                return ".jpg";
-            case "image/png":
-                return ".png";
-            case "image/gif":
-                return ".gif";
-            // 추가적인 MIME 타입 및 확장자 처리 가능
-            default:
-                return ".jpg"; // 기본 확장자 설정
-        }
-    }
 
 
     //파일을 s3에 업로드
@@ -134,15 +81,7 @@ public class ImageService {
 
         amazonS3.putObject(new PutObjectRequest(bucket, fileName, multipartFile.getInputStream(), objectMetadata).withCannedAcl(CannedAccessControlList.PublicRead));
 
-        String imageUrl = amazonS3.getUrl(bucket, fileName).toString();
-
-        return imageUrl;
-    }
-
-    public void saveImageList(Post post, List<String> imageUrlList) {
-        for (String imageUrl : imageUrlList) {
-            imageRepository.saveAndFlush(new Image(post, imageUrl));
-        }
+        return amazonS3.getUrl(bucket, fileName).toString();
     }
 
     public void delete(String fileName) {

@@ -26,16 +26,6 @@ public class MainPageResponseDto {
     private int capacity;
     private int userStatus;
 
-    public MainPageResponseDto(Post post) {
-        this.id = post.getId();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.location = post.getLocation();
-        this.price = post.getPrice();
-        this.likeCount = post.getLikeCount();
-        this.postImages = post.getPostImages();
-        this.memberNickname = post.getMember().getNickname();
-    }
 
     public MainPageResponseDto(Post post, Likes likes, int userStatus) {
         this.id = post.getId();

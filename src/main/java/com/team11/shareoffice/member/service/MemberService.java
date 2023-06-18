@@ -54,8 +54,6 @@ public class MemberService {
 
         // 비밀번호와 확인 비밀번호 일치 여부 판별
         memberValidator.validatePasswordCheck(requestDto);
-        // 이메일 중복 검사
-//        memberValidator.validateEmailOverlapped(email);
         // 닉네임 패턴 및 중복 검사
         memberValidator.validateNickname(nickname);
 //        인증된 이메일인지 검사
@@ -68,11 +66,7 @@ public class MemberService {
                 .nickname(nickname)
                 .isDelete(false)
                 .build();
-
-        String basicImage = "https://shareoffice12.s3.ap-northeast-2.amazonaws.com/image.png";
-
         memberRepository.save(member);
-        //emailRepository.deleteById(email);
     }
 
     // 로그인
@@ -114,10 +108,10 @@ public class MemberService {
         memberValidator.passwordCheck(password, member);
 
         //내 게시물에 미완의 예약 있을경우
-        memberValidator.UnfinishedMyPostReservationCheck(member);
+        memberValidator.unfinishedMyPostReservationCheck(member);
 
         //나의 예약 내역중 미완의 예약이 있을 경우
-        memberValidator.UnfinishedMyReservationCheck(member);
+        memberValidator.unfinishedMyReservationCheck(member);
 
         // 탈퇴시 이메일 닉네임 수정
         String signoutUser = "(탈퇴한 회원 No." + member.getId() +")";

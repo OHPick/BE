@@ -29,9 +29,7 @@ import java.time.Duration;
 @PropertySource("classpath:application-secret.yml")
 public class EmailServiceImpl implements EmailService {
 
-//    private final EmailRepository emailRepository;
     private final JavaMailSender javaMailSender;
-//    private final EmailValidator emailValidator;
     private final RedisService redisService;
     private final MemberValidator memberValidator;
 
@@ -93,9 +91,6 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public String sendMessage(EmailRequestDto requestDto)throws Exception {
         String code = createKey();
-//        emailValidator.validateEmailPattern(requestDto.getEmail());
-//        Email email = Email.saveEmail(requestDto);
-//        MimeMessage message = createMessage(email.getEmail(),code);
         MimeMessage message = createMessage(requestDto.getEmail(),code);
 
         memberValidator.validateEmailOverlapped(requestDto.getEmail());
@@ -106,8 +101,6 @@ public class EmailServiceImpl implements EmailService {
             e.printStackTrace();
             throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
         }
-//        email.updateCode(code);
-//        emailRepository.save(email);
         redisService.setEmailAuthCode(requestDto.getEmail(), code, Duration.ofMinutes(3));  //3분내 인증하도록
         return code;
     }
@@ -119,9 +112,6 @@ public class EmailServiceImpl implements EmailService {
      */
     @Override
     public void codeCheck(CodeRequestDto requestDto)throws Exception {
-//        Email email = emailValidator.validateIsExistEmail(requestDto.getEmail());
-//        emailValidator.validateCode(email,requestDto.getCode());
-//        email.updateChecked(true);
         String emailCodeFromRedis = redisService.getEmailAuthCode(requestDto.getEmail());
         if (emailCodeFromRedis == null || !emailCodeFromRedis.equals(requestDto.getCode())) {
             throw new CustomException(ErrorCode.WRONG_EMAIL_CODE);

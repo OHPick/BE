@@ -33,12 +33,6 @@ public class Member{
     @Column
     private boolean isDelete;
 
-//    @OneToMany(mappedBy = "member", orphanRemoval = true)
-//    private List<Post> posts;
-//
-//    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
-//    private List<Likes> likes;
-
     @Column(columnDefinition = "varchar(255)")
     private String imageUrl;
 
