@@ -129,7 +129,7 @@ public class KakaoService {
             } else {
                 // 신규 회원가입
                 // password: random UUID
-                String password = UUID.randomUUID().toString();
+                String password = "kakao_" + kakaoEmail;
                 String encodedPassword = passwordEncoder.encode(password);
 
                 kakaomember = new Member(userInfo.getEmail(), userInfo.getKakaoId(), encodedPassword, userInfo.getNickname());
