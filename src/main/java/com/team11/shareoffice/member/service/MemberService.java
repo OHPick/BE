@@ -16,6 +16,7 @@ import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
@@ -89,7 +90,14 @@ public class MemberService {
         TokenDto tokenDto = jwtUtil.createAllToken(email);
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-
+//        Cookie cookieAccessToken = new Cookie(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
+//        cookieAccessToken.setHttpOnly(true);
+//        cookieAccessToken.setSecure(true); // Set the Secure attribute to true
+//        response.addCookie(cookieAccessToken);
+//        Cookie cookieRefreshToken = new Cookie(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+//        cookieRefreshToken.setHttpOnly(true);
+//        cookieRefreshToken.setSecure(true); // Set the Secure attribute to true
+//        response.addCookie(cookieRefreshToken);
         redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
     }
 

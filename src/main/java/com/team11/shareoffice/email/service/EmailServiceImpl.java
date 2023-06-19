@@ -89,7 +89,7 @@ public class EmailServiceImpl implements EmailService {
         return key.toString();
     }
     @Override
-    public String sendMessage(EmailRequestDto requestDto)throws Exception {
+    public void sendMessage(EmailRequestDto requestDto)throws Exception {
         String code = createKey();
         MimeMessage message = createMessage(requestDto.getEmail(),code);
 
@@ -102,7 +102,7 @@ public class EmailServiceImpl implements EmailService {
             throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
         }
         redisService.setEmailAuthCode(requestDto.getEmail(), code, Duration.ofMinutes(3));  //3분내 인증하도록
-        return code;
+
     }
 
 
