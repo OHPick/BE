@@ -15,4 +15,5 @@ public class ChatResponseDto {
     private String message; // 메시지
     private String createdAt; //생성시간
     private String imageUrl; //사진
+    private Boolean isSeen;
 }
