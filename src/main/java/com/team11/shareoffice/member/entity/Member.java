@@ -39,7 +39,7 @@ public class Member{
     @PrePersist //엔티티가 영속화되기 전에 실행되는 메서드를 정의
     public void prePersist() {
         if (imageUrl == null) {
-            imageUrl = "https://shareoffice12.s3.ap-northeast-2.amazonaws.com/profileDefault.png";
+            imageUrl = "https://shareoffice12.s3.ap-northeast-2.amazonaws.com/profileDefaultv2.png";
         }
     }
 
