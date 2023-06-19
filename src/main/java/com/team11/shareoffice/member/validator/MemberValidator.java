@@ -32,7 +32,7 @@ public class MemberValidator {
             throw new CustomException(ErrorCode.NOT_SAME_PASSWORD);
         }
         //"비밀번호는 8-15자리, 최소 하나의 영어 대소문자, 숫자, 특수문자(@$!%*?&()_)를 포함해야 합니다."
-        String passwordPattern = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[~!@#$%^&*()_+{}])[a-zA-Z0-9~!@#$%^&*()_+{}]{8,15}$";
+        String passwordPattern = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&()_])[A-Za-z\\d@$!%*?&()_]{8,15}$";
         Pattern pattern = Pattern.compile(passwordPattern);
         Matcher matcher = pattern.matcher(requestDto.getPassword());
 
