@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -13,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter
+@DynamicInsert
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessage {
@@ -32,6 +36,10 @@ public class ChatMessage {
     @Column(nullable = false)
     private String createdAt;
 
+    @Column(nullable = false)
+    @ColumnDefault("false")
+    private Boolean isSeen;
+
     @PrePersist
     private void setCreatedAt() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -42,5 +50,9 @@ public class ChatMessage {
         this.sender = sender;
         this.message = message;
         this.room = room;
+    }
+
+    public void updateIsSeen(){
+        this.isSeen = true;
     }
 }

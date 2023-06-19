@@ -1,14 +1,11 @@
 package com.team11.shareoffice.post.dto;
 
-import com.team11.shareoffice.post.entity.Amenities;
-import com.team11.shareoffice.post.entity.OperatingTime;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Getter
 @RequiredArgsConstructor

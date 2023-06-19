@@ -58,7 +58,7 @@ public class ChatService {
         chatValidator.validateChatRoomMember(room,member);
         ChatMessage chatMessage = new ChatMessage(member, message.getMessage(), room);
         chatMessageRepository.saveAndFlush(chatMessage);
-        ChatResponseDto responseDto = new ChatResponseDto(chatMessage.getRoom().getId(), chatMessage.getSender().getNickname(), chatMessage.getMessage(), changeDateFormatMessage(chatMessage.getCreatedAt()), member.getImageUrl());
+        ChatResponseDto responseDto = new ChatResponseDto(chatMessage.getRoom().getId(), chatMessage.getSender().getNickname(), chatMessage.getMessage(), changeDateFormatMessage(chatMessage.getCreatedAt()), member.getImageUrl(), chatMessage.getIsSeen());
         template.convertAndSend("/sub/chat/room/" + message.getRoomId(), responseDto);
     }
 
@@ -79,17 +79,21 @@ public class ChatService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ChatListResponseDto getChatRoom(Long roomId, Member member){
         ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow( () -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
         chatValidator.validateChatRoomMember(room,member);
-        List<ChatMessage> messages = chatMessageRepository.findAllByRoomOrderByCreatedAt(room);
+        List<ChatMessage> messages = chatMessageRepository.findAllByRoomOrderByCreatedAt(room).stream()
+                .peek( chatMessage -> {
+                            if(!(chatMessage.getSender().getId().equals(member.getId()))){chatMessage.updateIsSeen();}
+                }).toList();
         List<ChatResponseDto> chatResponseDtos = messages.stream()
-                .map(message -> new ChatResponseDto(roomId, message.getSender().getNickname(), message.getMessage(), changeDateFormatMessage(message.getCreatedAt()), message.getSender().getImageUrl()))
+                .map(message -> new ChatResponseDto(roomId, message.getSender().getNickname(), message.getMessage(), changeDateFormatMessage(message.getCreatedAt()), message.getSender().getImageUrl(), message.getIsSeen()))
                         .toList();
 
         return new ChatListResponseDto(member.getNickname(), room.getOwner().getNickname(), chatResponseDtos);
     }
+
 
 
     private String changeDateFormatMessage(String createdAt) {
