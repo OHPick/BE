@@ -69,10 +69,12 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
         List<MainPageResponseDto> dtos = new ArrayList<>();
         for (Post posts : resultsList) {
             Likes likes = null;
+            int userStatus = 0;
             if (userDetails != null) {
                 likes = likeRepository.findByMemberIdAndPostId(userDetails.getMember().getId(), posts.getId());
+                userStatus = userDetails.getMember().getId().equals(posts.getMember().getId()) ? 3 : 0;
             }
-            dtos.add(new MainPageResponseDto(posts, likes));
+            dtos.add(new MainPageResponseDto(posts, likes, userStatus));
         }
         return new PageImpl<>(dtos, pageable, results.getTotal());
     }

@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 public class MemberValidator {
 
     private final MemberRepository memberRepository;
-//    private final EmailRepository emailRepository;
     private final PasswordEncoder passwordEncoder;
     private final ReservationRepository reservationRepository;
 
@@ -50,7 +49,7 @@ public class MemberValidator {
                 throw new CustomException(ErrorCode.EXIST_KAKAO_EMAIL);
             }
 
-            if (foundByEmail.isPresent() && !foundByEmail.get().isDelete()) {
+            if (!foundByEmail.get().isDelete()) {
                 throw new CustomException(ErrorCode.EXIST_EMAIL);
             }
         }
@@ -70,11 +69,6 @@ public class MemberValidator {
 
     //회원가입 - 인증된 이메일인지 검사
     public void validateEmailAuth(String email, RedisService redisService) {
-//        Email validEmail = emailRepository.findById(email).orElseThrow(()
-//                -> new CustomException(ErrorCode.WRONG_EMAIL));
-//        if (!validEmail.isChecked()) {
-//            throw new CustomException(ErrorCode.WRONG_EMAIL);
-//        }
         if (!redisService.isEmailVerified(email)) {
             throw new CustomException(ErrorCode.EMAIL_UNVERIFIED);
         }
@@ -104,7 +98,7 @@ public class MemberValidator {
     }
 
     //회원탈퇴 - 내가 올린 게시물에 아직 완료되지 않은 예약이 있을 경우
-    public void UnfinishedMyPostReservationCheck(Member member){
+    public void unfinishedMyPostReservationCheck(Member member){
         List<Reservation> unfinishedPostReservations = reservationRepository.findByPost_MemberAndIsFinishedFalse(member);
         if (!unfinishedPostReservations.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FINISHED_MYPOST_RESERVATION);
@@ -113,7 +107,7 @@ public class MemberValidator {
     }
 
     //회원탈퇴 - 아직 완료되지 않은 예약이 있을 경우
-    public void UnfinishedMyReservationCheck(Member member){
+    public void unfinishedMyReservationCheck(Member member){
         List<Reservation> unfinishedMemberReservations = reservationRepository.findByMemberAndIsFinishedFalse(member);
         if (!unfinishedMemberReservations.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FINISHED_MYRESERVATION);

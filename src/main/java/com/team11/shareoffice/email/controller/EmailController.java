@@ -21,7 +21,8 @@ public class EmailController {
     @Operation(summary = "이메일 확인 API")
     @PostMapping("/auth")
     public ResponseDto<?> emailConfirm(@RequestBody EmailRequestDto requestDto) throws Exception {
-        return ResponseDto.setSuccess(emailService.sendMessage(requestDto));
+        emailService.sendMessage(requestDto);
+        return ResponseDto.setSuccess(null);
     }
 
     @Operation(summary = "이메일 인증 코드 확인 API")

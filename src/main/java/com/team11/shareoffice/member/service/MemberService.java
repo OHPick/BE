@@ -16,6 +16,7 @@ import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
@@ -54,8 +55,6 @@ public class MemberService {
 
         // 비밀번호와 확인 비밀번호 일치 여부 판별
         memberValidator.validatePasswordCheck(requestDto);
-        // 이메일 중복 검사
-//        memberValidator.validateEmailOverlapped(email);
         // 닉네임 패턴 및 중복 검사
         memberValidator.validateNickname(nickname);
 //        인증된 이메일인지 검사
@@ -68,11 +67,7 @@ public class MemberService {
                 .nickname(nickname)
                 .isDelete(false)
                 .build();
-
-        String basicImage = "https://shareoffice12.s3.ap-northeast-2.amazonaws.com/image.png";
-
         memberRepository.save(member);
-        //emailRepository.deleteById(email);
     }
 
     // 로그인
@@ -95,7 +90,14 @@ public class MemberService {
         TokenDto tokenDto = jwtUtil.createAllToken(email);
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-
+//        Cookie cookieAccessToken = new Cookie(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
+//        cookieAccessToken.setHttpOnly(true);
+//        cookieAccessToken.setSecure(true); // Set the Secure attribute to true
+//        response.addCookie(cookieAccessToken);
+//        Cookie cookieRefreshToken = new Cookie(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+//        cookieRefreshToken.setHttpOnly(true);
+//        cookieRefreshToken.setSecure(true); // Set the Secure attribute to true
+//        response.addCookie(cookieRefreshToken);
         redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
     }
 
@@ -114,10 +116,10 @@ public class MemberService {
         memberValidator.passwordCheck(password, member);
 
         //내 게시물에 미완의 예약 있을경우
-        memberValidator.UnfinishedMyPostReservationCheck(member);
+        memberValidator.unfinishedMyPostReservationCheck(member);
 
         //나의 예약 내역중 미완의 예약이 있을 경우
-        memberValidator.UnfinishedMyReservationCheck(member);
+        memberValidator.unfinishedMyReservationCheck(member);
 
         // 탈퇴시 이메일 닉네임 수정
         String signoutUser = "(탈퇴한 회원 No." + member.getId() +")";
