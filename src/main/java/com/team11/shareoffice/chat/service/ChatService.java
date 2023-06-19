@@ -95,13 +95,13 @@ public class ChatService {
     private String changeDateFormatMessage(String createdAt) {
         String[] date = createdAt.split(" ");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
+        String today = getDateTimeNow(formatter);
         return date[0].equals(today) ? date[1] : date[0];
     }
 
     private String changeDateFormatChatRoom(String createdAt) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy.MM.dd");
-        String today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
+        String today = getDateTimeNow(formatter);
         if(createdAt == null){
             return today;
         }
@@ -113,11 +113,15 @@ public class ChatService {
 
     private String changeNullDateFormatChatRoom(String createdAt) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        String now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
+        String now = getDateTimeNow(formatter);
         if(createdAt == null){
             return now;
         }
         return createdAt;
+    }
+
+    private String getDateTimeNow (DateTimeFormatter formatter){
+        return ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
     }
 
 
