@@ -55,7 +55,6 @@ public class ChatRoomRepositoryImpl extends QuerydslRepositorySupport implements
                     .groupBy(chatMessageSubQuery.room.id)))
             .fetch();
 
-
         QueryResults<Tuple> results  = jpaQueryFactory
                 .select(
                         chatRoom.id.as("roomId"),
@@ -81,6 +80,10 @@ public class ChatRoomRepositoryImpl extends QuerydslRepositorySupport implements
                     String lastMessage = latestMessage.map(ChatMessage::getMessage).orElse(null);
                     String createdAtMessage = latestMessage.map(ChatMessage::getCreatedAt).orElse(null);
 
+                    if (lastMessage == null) {
+                        return null; // Skip this result if lastMessage is null
+                    }
+
                     int notSeenMessageCount = Math.toIntExact(jpaQueryFactory  // latestMessages : 최신 메시지들 저장리스트
                             .selectFrom(notSeenMessageSubQuery)
                             .where(notSeenMessageSubQuery.room.id.eq(result.get(0, Long.class))
@@ -98,5 +101,4 @@ public class ChatRoomRepositoryImpl extends QuerydslRepositorySupport implements
                         }
                 ).toList();
     }
-
 }
