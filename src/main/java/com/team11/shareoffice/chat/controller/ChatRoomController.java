@@ -17,10 +17,10 @@ public class ChatRoomController {
 
     private final ChatService chatService;
 
-    @Operation(summary = "채팅방 들어가기 API")
+    @Operation(summary = "채팅방 생성하기 API")
     @PostMapping("/chat/room/{postId}")
-    public ResponseDto<Long> enterRoom(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseDto.setSuccess("방 입장",chatService.enterRoom(postId, userDetails.getMember()));
+    public ResponseDto<Long> createRoom(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseDto.setSuccess("방 입장",chatService.createRoom(postId, userDetails.getMember()));
     }
 
     @Operation(summary = "모든 채팅방 불러오기 API")
