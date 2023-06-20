@@ -2,7 +2,6 @@ package com.team11.shareoffice.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity(name = "members")
 @Getter

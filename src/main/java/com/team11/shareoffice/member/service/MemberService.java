@@ -14,9 +14,7 @@ import com.team11.shareoffice.member.repository.MemberRepository;
 import com.team11.shareoffice.member.validator.MemberValidator;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.repository.PostRepository;
-import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
@@ -27,8 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
-
-import static com.team11.shareoffice.global.dto.ResponseDto.setSuccess;
 
 @RequiredArgsConstructor
 @Service

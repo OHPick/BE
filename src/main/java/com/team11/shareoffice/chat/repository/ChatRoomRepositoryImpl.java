@@ -2,28 +2,19 @@ package com.team11.shareoffice.chat.repository;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.*;
-import com.querydsl.core.types.dsl.ListPath;
-import com.querydsl.core.types.dsl.StringExpression;
-import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.team11.shareoffice.chat.dto.ChatResponseDto;
 import com.team11.shareoffice.chat.dto.ChatRoomResponseDto;
 import com.team11.shareoffice.chat.entity.ChatMessage;
 import com.team11.shareoffice.chat.entity.ChatRoom;
 import com.team11.shareoffice.chat.entity.QChatMessage;
 import com.team11.shareoffice.chat.entity.QChatRoom;
-import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.member.entity.Member;
-import com.team11.shareoffice.post.dto.MainPageResponseDto;
-import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.post.entity.QPost;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
