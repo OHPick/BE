@@ -27,6 +27,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +40,7 @@ public class ChatService {
     private final ChatValidator chatValidator;
 
     @Transactional
-    public Long enterRoom(Long postId, Member member) {
+    public Long createRoom(Long postId, Member member) {
         Post post = chatValidator.validatePost(postId);
         Member owner = post.getMember();
         ChatRoom room = chatRoomRepository.findChatRoomByPostAndMember(post, member).orElse(null);
@@ -72,6 +73,7 @@ public class ChatService {
     public List<ChatRoomResponseDto> getAllChatRooms(Member member){
         return chatRoomRepositoryImpl.findAllChatRoom(member)
                 .stream()
+                .filter(Objects::nonNull)
                 .peek(chatRoomResponseDto -> chatRoomResponseDto.setCreatedAt(changeNullDateFormatChatRoom(chatRoomResponseDto.getCreatedAt())))
                 .sorted(Comparator.comparing(ChatRoomResponseDto::getCreatedAt).reversed())
                 .peek(chatRoomResponseDto -> chatRoomResponseDto.setCreatedAt(changeDateFormatChatRoom(chatRoomResponseDto.getCreatedAt())))
