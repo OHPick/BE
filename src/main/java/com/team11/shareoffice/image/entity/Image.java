@@ -4,8 +4,6 @@ import com.team11.shareoffice.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Setter

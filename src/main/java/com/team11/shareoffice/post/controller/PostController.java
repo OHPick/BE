@@ -2,7 +2,10 @@ package com.team11.shareoffice.post.controller;
 
 import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
-import com.team11.shareoffice.post.dto.*;
+import com.team11.shareoffice.post.dto.MainPageResponseDto;
+import com.team11.shareoffice.post.dto.PostRequestDto;
+import com.team11.shareoffice.post.dto.PostResponseDto;
+import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import com.team11.shareoffice.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.sql.Blob;
 import java.util.List;
 
 @RestController
