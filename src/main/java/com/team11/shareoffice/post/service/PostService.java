@@ -1,6 +1,5 @@
 package com.team11.shareoffice.post.service;
 
-import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.image.entity.Image;
 import com.team11.shareoffice.image.repository.ImageRepository;
@@ -8,7 +7,10 @@ import com.team11.shareoffice.image.service.ImageService;
 import com.team11.shareoffice.like.entity.Likes;
 import com.team11.shareoffice.like.repository.LikeRepository;
 import com.team11.shareoffice.member.entity.Member;
-import com.team11.shareoffice.post.dto.*;
+import com.team11.shareoffice.post.dto.MainPageResponseDto;
+import com.team11.shareoffice.post.dto.PostRequestDto;
+import com.team11.shareoffice.post.dto.PostResponseDto;
+import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import com.team11.shareoffice.post.entity.Amenities;
 import com.team11.shareoffice.post.entity.OperatingTime;
 import com.team11.shareoffice.post.entity.Post;
@@ -16,7 +18,6 @@ import com.team11.shareoffice.post.repository.AmenitiesRepository;
 import com.team11.shareoffice.post.repository.OperatingTimeRepository;
 import com.team11.shareoffice.post.repository.PostRepository;
 import com.team11.shareoffice.post.validator.PostValidator;
-import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,10 +1,10 @@
 package com.team11.shareoffice.reservation.service;
 
 
+import com.team11.shareoffice.chat.entity.ChatMessage;
 import com.team11.shareoffice.chat.entity.ChatRoom;
+import com.team11.shareoffice.chat.repository.ChatMessageRepository;
 import com.team11.shareoffice.chat.repository.ChatRoomRepository;
-import com.team11.shareoffice.global.exception.CustomException;
-import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.entity.Post;
 import com.team11.shareoffice.reservation.dto.ReservationRequestDto;
@@ -24,6 +24,7 @@ import java.util.List;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final ChatMessageRepository chatMessageRepository;
     private final ReservationValidator reservationValidator;
     private final ChatRoomRepository chatRoomRepository;
 
@@ -46,6 +47,10 @@ public class ReservationService {
             room = new ChatRoom(post, member, post.getMember());
             chatRoomRepository.saveAndFlush(room);
         }
+
+        ChatMessage chatMessage = new ChatMessage(post.getMember(), "안녕하세요. 예약해주셔서 감사합니다. 추후에 예약 확인 후 안내해드리겠습니다.", room);
+        chatMessageRepository.saveAndFlush(chatMessage);
+
         return newReserve.getId();
     }
 

@@ -21,7 +21,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Duration;
-import java.util.UUID;
 
 @Slf4j
 @Service
