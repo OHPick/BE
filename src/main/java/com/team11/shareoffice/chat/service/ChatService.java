@@ -83,7 +83,7 @@ public class ChatService {
     public ChatListResponseDto getChatRoom(Long roomId, Member member){
         ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow( () -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
         chatValidator.validateChatRoomMember(room,member);
-        List<ChatMessage> messages = chatMessageRepository.findAllByRoomOrderByCreatedAt(room).stream()
+        List<ChatMessage> messages = chatMessageRepository.findAllByRoomOrderByIdAsc(room).stream()
                 .peek( chatMessage -> {
                             if(!(chatMessage.getSender().getId().equals(member.getId()))){chatMessage.updateIsSeen();}
                 }).toList();
