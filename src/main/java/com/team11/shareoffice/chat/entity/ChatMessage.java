@@ -37,8 +37,8 @@ public class ChatMessage {
     private String createdAt;
 
     @Column(nullable = false)
-    @ColumnDefault("false")
-    private Boolean isSeen;
+    @ColumnDefault("true")
+    private Boolean isNotSeen;
 
     @PrePersist
     private void setCreatedAt() {
@@ -53,6 +53,6 @@ public class ChatMessage {
     }
 
     public void updateIsSeen(){
-        this.isSeen = true;
+        this.isNotSeen = false;
     }
 }

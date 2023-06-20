@@ -31,8 +31,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ChatService {
-    private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
+
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final SimpMessageSendingOperations template;
@@ -58,7 +57,7 @@ public class ChatService {
         chatValidator.validateChatRoomMember(room,member);
         ChatMessage chatMessage = new ChatMessage(member, message.getMessage(), room);
         chatMessageRepository.saveAndFlush(chatMessage);
-        ChatResponseDto responseDto = new ChatResponseDto(chatMessage.getRoom().getId(), chatMessage.getSender().getNickname(), chatMessage.getMessage(), changeDateFormatMessage(chatMessage.getCreatedAt()), member.getImageUrl(), chatMessage.getIsSeen());
+        ChatResponseDto responseDto = new ChatResponseDto(chatMessage.getRoom().getId(), chatMessage.getSender().getNickname(), chatMessage.getMessage(), changeDateFormatMessage(chatMessage.getCreatedAt()), member.getImageUrl());
         template.convertAndSend("/sub/chat/room/" + message.getRoomId(), responseDto);
     }
 
@@ -88,7 +87,9 @@ public class ChatService {
                             if(!(chatMessage.getSender().getId().equals(member.getId()))){chatMessage.updateIsSeen();}
                 }).toList();
         List<ChatResponseDto> chatResponseDtos = messages.stream()
-                .map(message -> new ChatResponseDto(roomId, message.getSender().getNickname(), message.getMessage(), changeDateFormatMessage(message.getCreatedAt()), message.getSender().getImageUrl(), message.getIsSeen()))
+                .map(message -> new ChatResponseDto(roomId, message.getSender().getNickname(),
+                        message.getMessage(), changeDateFormatMessage(message.getCreatedAt()),
+                        message.getSender().getImageUrl()))
                         .toList();
 
         return new ChatListResponseDto(member.getNickname(), room.getOwner().getNickname(), chatResponseDtos);
