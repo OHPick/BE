@@ -14,5 +14,6 @@ public class ChatRoomResponseDto {
     private String postImage;
     private String message;
     private String createdAt;
+    private int notSeenCount;
 
 }

@@ -44,7 +44,9 @@ public class ChatRoomRepositoryImpl extends QuerydslRepositorySupport implements
         QPost post = QPost.post;
         QChatMessage chatMessageSubQuery = QChatMessage.chatMessage;
         QChatMessage lastMessageSubQuery = QChatMessage.chatMessage;
+        QChatMessage notSeenMessageSubQuery = QChatMessage.chatMessage;
 
+        // 각 채팅 방 마다 마지막으로 보낸 메세지
         List<ChatMessage> latestMessages = jpaQueryFactory  // latestMessages : 최신 메시지들 저장리스트
             .selectFrom(lastMessageSubQuery)
             .where(lastMessageSubQuery.id.in(
@@ -58,18 +60,16 @@ public class ChatRoomRepositoryImpl extends QuerydslRepositorySupport implements
                 .select(
                         chatRoom.id.as("roomId"),
                         post.title,
-                        post.postImages.as("postImage"),
-                        chatMessageSubQuery.message,
-                        chatMessageSubQuery.createdAt
+                        post.postImages.as("postImage")
                 )
                 .from(chatRoom) // 채팅방으로부터
                 .leftJoin(post).on(chatRoom.post.id.eq(post.id))  // 이미지를 위해 조인
-                .leftJoin(chatMessageSubQuery).on(chatRoom.id.eq(chatMessageSubQuery.room.id))  // 마지막메시지를위해 조인
-                .where(chatRoom.member.id.eq(member.getId()).or(chatRoom.owner.id.eq(member.getId())))   // 로그인한 사람이 사용중인 채팅방인  ( 채팅방멤버와 로그인한사람이 일치하는 )
+                .where(chatRoom.member.id.eq(member.getId()).or(chatRoom.owner.id.eq(member.getId())))   // 로그인한 사람이 사용중인 채팅방인  ( 채팅방 멤버/주인 과 로그인한사람이 일치하는 )
                 .groupBy(chatRoom.id)  // 채팅방id 별로
                 .fetchResults();
 
         List<Tuple> resultList = results.getResults();
+
         return resultList.stream()
                 .map(result -> {
                     List<String> postImages = result.get(2, List.class);
@@ -81,12 +81,22 @@ public class ChatRoomRepositoryImpl extends QuerydslRepositorySupport implements
                     String lastMessage = latestMessage.map(ChatMessage::getMessage).orElse(null);
                     String createdAtMessage = latestMessage.map(ChatMessage::getCreatedAt).orElse(null);
 
+                    int notSeenMessageCount = Math.toIntExact(jpaQueryFactory  // latestMessages : 최신 메시지들 저장리스트
+                            .selectFrom(notSeenMessageSubQuery)
+                            .where(notSeenMessageSubQuery.room.id.eq(result.get(0, Long.class))
+                                    .and(notSeenMessageSubQuery.sender.id.ne(member.getId()))
+                                    .and(notSeenMessageSubQuery.isNotSeen.eq(true)))
+                            .groupBy(notSeenMessageSubQuery.room.id)
+                            .fetchCount());
+
                     return new ChatRoomResponseDto(
                             result.get(0, Long.class),
                             result.get(1, String.class),
                             firstImage,
                             lastMessage,
-                            createdAtMessage);
+                            createdAtMessage,
+                            notSeenMessageCount
+                            );
                         }
                 ).toList();
     }
