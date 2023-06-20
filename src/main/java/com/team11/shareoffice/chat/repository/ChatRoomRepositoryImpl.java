@@ -86,9 +86,7 @@ public class ChatRoomRepositoryImpl extends QuerydslRepositorySupport implements
                             .where(notSeenMessageSubQuery.room.id.eq(result.get(0, Long.class))
                                     .and(notSeenMessageSubQuery.sender.id.ne(member.getId()))
                                     .and(notSeenMessageSubQuery.isNotSeen.eq(true)))
-                            .groupBy(notSeenMessageSubQuery.room.id)
                             .fetchCount());
-
                     return new ChatRoomResponseDto(
                             result.get(0, Long.class),
                             result.get(1, String.class),
