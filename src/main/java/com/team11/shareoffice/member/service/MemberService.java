@@ -103,8 +103,6 @@ public class MemberService {
         redisService.delValues(member.getEmail());
     }
 
-
-
     //회원탈퇴
     public void signout(UserDetailsImpl userDetails, SignoutRequestDto request) {
         String password = request.getPassword();

@@ -29,6 +29,7 @@ public class PostResponseDto {
     private boolean likeStatus;
     private int userStatus;
     private String nickname;
+    private String userImg;
     @JsonFormat
     private AmenitiesResponseDto amenities;
     @JsonFormat
@@ -48,6 +49,7 @@ public class PostResponseDto {
         this.likeStatus = likeStatus;
         this.userStatus = userStatus;
         this.nickname = post.getMember().getNickname();
+        this.userImg = post.getMember().getImageUrl();
         this.operatingTime = new OperatingTimeResponseDto(operatingTime);
         this.amenities = new AmenitiesResponseDto(amenities);
     }
