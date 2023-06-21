@@ -11,8 +11,8 @@ import java.util.List;
 public interface ReservationRepository extends JpaRepository<Reservation, Long>, ReservationRepositoryCustom {
 
     List<Reservation> findAllByMemberOrderByStartDateAsc(Member member);
-    List<Reservation> findAllByPost(Post post);
-
+//    List<Reservation> findAllByPost(Post post);
+    List<Reservation> findAllByPostOrderByStartDateAsc(Post post);
     List<Reservation> findByMemberAndIsFinishedFalse(Member member);
     List<Reservation> findByPost_MemberAndIsFinishedFalse(Member member);
 
