@@ -54,6 +54,7 @@ public class KakaoService {
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
 //        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
         Cookie cookieRefreshToken = new Cookie(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+        cookieRefreshToken.setPath("/");
         cookieRefreshToken.setHttpOnly(true);
         cookieRefreshToken.setSecure(true); // Set the Secure attribute to true
         response.addCookie(cookieRefreshToken);
