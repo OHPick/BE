@@ -9,6 +9,7 @@ import com.team11.shareoffice.global.service.RedisService;
 import com.team11.shareoffice.member.dto.UserInfoDto;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,9 +51,16 @@ public class KakaoService {
 
     public void issueTokens(HttpServletResponse response, String email){
         TokenDto tokenDto = jwtUtil.createAllToken(email);
-        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
-        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-
+//        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
+//        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+        Cookie cookieAccessToken = new Cookie(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
+        cookieAccessToken.setHttpOnly(true);
+        cookieAccessToken.setSecure(true); // Set the Secure attribute to true
+        response.addCookie(cookieAccessToken);
+        Cookie cookieRefreshToken = new Cookie(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+        cookieRefreshToken.setHttpOnly(true);
+        cookieRefreshToken.setSecure(true); // Set the Secure attribute to true
+        response.addCookie(cookieRefreshToken);
         redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
     }
 

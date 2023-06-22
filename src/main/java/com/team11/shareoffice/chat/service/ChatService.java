@@ -14,6 +14,7 @@ import com.team11.shareoffice.global.exception.CustomException;
 import com.team11.shareoffice.global.util.ErrorCode;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.entity.Post;
+import com.team11.shareoffice.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class ChatService {
     private final SimpMessageSendingOperations template;
     private final ChatRoomRepositoryImpl chatRoomRepositoryImpl;
     private final ChatValidator chatValidator;
+    private final PostRepository postRepository;
 
     @Transactional
     public Long createRoom(Long postId, Member member) {
@@ -73,7 +75,6 @@ public class ChatService {
         return chatRoomRepositoryImpl.findAllChatRoom(member)
                 .stream()
                 .filter(Objects::nonNull)
-                .peek(chatRoomResponseDto -> chatRoomResponseDto.setCreatedAt(changeNullDateFormatChatRoom(chatRoomResponseDto.getCreatedAt())))
                 .sorted(Comparator.comparing(ChatRoomResponseDto::getCreatedAt).reversed())
                 .peek(chatRoomResponseDto -> chatRoomResponseDto.setCreatedAt(changeDateFormatChatRoom(chatRoomResponseDto.getCreatedAt())))
                 .toList();
@@ -115,15 +116,6 @@ public class ChatService {
         LocalDate dateFormat = LocalDate.parse(date[0]);
         String convertedDate = dateFormat.format(formatter);
         return convertedDate.equals(today) ? date[1] : convertedDate;
-    }
-
-    private String changeNullDateFormatChatRoom(String createdAt) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        String now = getDateTimeNow(formatter);
-        if(createdAt == null){
-            return now;
-        }
-        return createdAt;
     }
 
     private String getDateTimeNow (DateTimeFormatter formatter){
