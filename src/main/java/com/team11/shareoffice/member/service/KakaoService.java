@@ -53,11 +53,13 @@ public class KakaoService {
         TokenDto tokenDto = jwtUtil.createAllToken(email);
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
 //        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-        Cookie cookieRefreshToken = new Cookie(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-        cookieRefreshToken.setPath("/");
-        cookieRefreshToken.setHttpOnly(true);
-        cookieRefreshToken.setSecure(true); // Set the Secure attribute to true
-        response.addCookie(cookieRefreshToken);
+        ResponseCookie cookieRefreshToken = ResponseCookie.from(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None") // SameSite 설정
+                .path("/")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieRefreshToken.toString());
         redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
     }
 
