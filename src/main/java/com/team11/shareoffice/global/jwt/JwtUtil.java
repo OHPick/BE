@@ -120,7 +120,8 @@ public class JwtUtil {
                 if (cookieNameValue.length == 2) {
                     String cookieName = cookieNameValue[0];
                     String cookieValue = cookieNameValue[1];
-
+                    System.out.println(cookieName);
+                    System.out.println(cookieValue);
                     // Do something with the cookie name and value
                     if (cookieName.equals(JwtUtil.REFRESH_TOKEN)) {
                         return cookieValue;
