@@ -61,7 +61,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         //엑세스토큰 무효, 리프레쉬토큰이 있는데 무효하면
         boolean isValidRefreshToken = jwtUtil.validateToken(refreshToken);
         if (isValidRefreshToken) {
-            String refreshTokenFromRedis = redisService.getValues(userEmail).substring(7);
+            String refreshTokenFromRedis = redisService.getValues(userEmail).substring(6);
 
             if (!refreshToken.equals(refreshTokenFromRedis)) {
                 jwtExceptionHandler(response, "리프레쉬토큰을 확인해주세요. 엑세스토큰을 갱신할 수 없습니다.", HttpStatus.UNAUTHORIZED.value());
@@ -70,7 +70,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             //리프레쉬 토큰은 유효하면
             String newAccessToken = jwtUtil.createToken(userEmail, JwtUtil.ACCESS_TOKEN);
 //            response.setHeader(JwtUtil.ACCESS_TOKEN, newAccessToken);
-            setAuthentication(jwtUtil.getUserInfoFromToken(newAccessToken.substring(7)));
+            setAuthentication(jwtUtil.getUserInfoFromToken(newAccessToken.substring(6)));
             Cookie cookieNewAccessToken = new Cookie(JwtUtil.ACCESS_TOKEN, newAccessToken);
             cookieNewAccessToken.setHttpOnly(true);
             cookieNewAccessToken.setSecure(true); // Set the Secure attribute to true
