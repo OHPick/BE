@@ -64,17 +64,17 @@ public class JwtUtil {
             }
         }
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(REFRESH_TOKEN)) {
-                String token = cookie.getValue();
-                if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
-                    return token.substring(6);
+        if(cookies!=null){
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(REFRESH_TOKEN)) {
+                    String token = cookie.getValue();
+                    if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
+                        return token.substring(6);
+                    }
                 }
             }
         }
-
         // add this code to read cookie
-
 
         return null;
     }
