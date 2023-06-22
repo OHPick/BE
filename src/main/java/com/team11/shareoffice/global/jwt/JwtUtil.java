@@ -37,8 +37,8 @@ public class JwtUtil {
     public static final String ACCESS_TOKEN = "Access_Token";
     public static final String REFRESH_TOKEN = "Refresh_Token";
     private static final String BEARER_PREFIX = "Bearer";
-    private static final long ACCESS_TOKEN_TIME = 30 * 1000L;   //AccessToken Time 1 hr = 60 * 60 * 1000L;
-    private static final long REFRESH_TOKEN_TIME = 3 * 60 * 1000L; //RefreshToken Time 1 day = 24 * 60 * 60 * 1000L;
+    private static final long ACCESS_TOKEN_TIME = 60 * 60 * 1000L;   //AccessToken Time 1 hr = 60 * 60 * 1000L;
+    private static final long REFRESH_TOKEN_TIME = 24 * 60 * 60 * 1000L; //RefreshToken Time 1 day = 24 * 60 * 60 * 1000L;
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -112,49 +112,6 @@ public class JwtUtil {
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
-    // 쿠키 찾기
-    public String getCookie(HttpServletRequest request, String name) {
-        String cookieHeader = request.getHeader("Cookie");
-
-        if (cookieHeader != null) {
-            String[] cookieParts = cookieHeader.split(";");
-            for (String cookiePart : cookieParts) {
-                String[] cookieNameValue = cookiePart.trim().split("=");
-                if (cookieNameValue.length == 2) {
-                    String cookieName = cookieNameValue[0];
-                    String cookieValue = cookieNameValue[1];
-                    // Do something with the cookie name and value
-                    if (cookieName.equals(name)) {
-                        return cookieValue.substring(6);
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public void deleteCookie(HttpServletRequest request, HttpServletResponse response,  String name) {
-        String cookieHeader = request.getHeader("Cookie");
-        if (cookieHeader != null) {
-            String[] cookieParts = cookieHeader.split(";");
-            for (String cookiePart : cookieParts) {
-                String[] cookieNameValue = cookiePart.trim().split("=");
-                if (cookieNameValue.length == 2) {
-                    String cookieName = cookieNameValue[0];
-                    if (cookieName.equals(name)) {
-                        ResponseCookie cookieLogoutRefreshToken = ResponseCookie.from(name, "")
-                                .httpOnly(true)
-                                .secure(true)
-                                .sameSite("None") // SameSite 설정
-                                .maxAge(0)
-                                .path("/")
-                                .build();
-                        response.addHeader(HttpHeaders.SET_COOKIE, cookieLogoutRefreshToken.toString());
-                    }
-                }
-            }
-        }
-    }
 }
 
 
