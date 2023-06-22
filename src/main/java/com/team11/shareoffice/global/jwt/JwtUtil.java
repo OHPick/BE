@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -57,22 +58,9 @@ public class JwtUtil {
 //    }
 
     public String resolveToken(HttpServletRequest request, String type) {
-        if(type.equals(ACCESS_TOKEN)){
-            String bearerToken = request.getHeader(type);
-            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-                return bearerToken.substring(6);
-            }
-        }
-        Cookie[] cookies = request.getCookies();
-        if(cookies!=null){
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(REFRESH_TOKEN)) {
-                    String token = cookie.getValue();
-                    if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
-                        return token.substring(6);
-                    }
-                }
-            }
+        String bearerToken = request.getHeader(type);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(6);
         }
         // add this code to read cookie
         return null;
@@ -128,6 +116,20 @@ public class JwtUtil {
     public Authentication createAuthentication(String email) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+
+    // 쿠키 찾기
+    public Optional<Cookie> getCookie(HttpServletRequest request, String name) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie cookie : cookies) {
+                if (name.equals(cookie.getName())) {
+                    return Optional.of(cookie);
+                }
+            }
+        }
+        return Optional.empty();
     }
 }
 
