@@ -7,6 +7,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,11 +48,33 @@ public class JwtUtil {
     }
 
     // header 토큰을 가져오기
+//    public String resolveToken(HttpServletRequest request, String type) {
+//        String bearerToken = request.getHeader(type);
+//        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+//            return bearerToken.substring(6);
+//        }
+//        return null;
+//    }
+
     public String resolveToken(HttpServletRequest request, String type) {
         String bearerToken = request.getHeader(type);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(6);
         }
+
+        // add this code to read cookie
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(type)) {
+                    String token = cookie.getValue();
+                    if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
+                        return token.substring(6);
+                    }
+                }
+            }
+        }
+
         return null;
     }
 
