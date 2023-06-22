@@ -66,7 +66,6 @@ public class JwtUtil {
         Cookie[] cookies = request.getCookies();
         if(cookies!=null){
             for (Cookie cookie : cookies) {
-                System.out.println(cookie.getName());
                 if (cookie.getName().equals(REFRESH_TOKEN)) {
                     String token = cookie.getValue();
                     if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
@@ -75,7 +74,6 @@ public class JwtUtil {
                 }
             }
         }
-        System.out.println("쿠키가 없어요 ");
         // add this code to read cookie
         return null;
     }
