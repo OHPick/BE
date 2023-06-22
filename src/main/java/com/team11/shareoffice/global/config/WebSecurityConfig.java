@@ -99,7 +99,7 @@ public class WebSecurityConfig {
 
         config.addAllowedOriginPattern("*");
         config.addExposedHeader(JwtUtil.ACCESS_TOKEN);
-        config.addExposedHeader(JwtUtil.REFRESH_TOKEN);
+        config.addExposedHeader("Set-Cookie");
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
         config.setAllowCredentials(true);
