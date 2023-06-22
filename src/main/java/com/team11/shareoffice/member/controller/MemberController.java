@@ -39,15 +39,16 @@ public class MemberController {
 
     @Operation(summary = "로그아웃API")
     @PostMapping("/logout")
-    public ResponseDto<?> logout(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
-        memberService.logout(userDetails.getMember(), request);
+    public ResponseDto<?> logout(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request, HttpServletResponse response) {
+        memberService.logout(userDetails.getMember(), request, response);
         return ResponseDto.setSuccess("로그아웃 성공");
     }
 
     @Operation(summary = "회원탈퇴API")
     @DeleteMapping("/signout")
-    public ResponseDto<?> signout(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody SignoutRequestDto request){
-        memberService.signout(userDetails, request);
+    public ResponseDto<?> signout(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody SignoutRequestDto request,
+                                    HttpServletRequest httpRequest, HttpServletResponse httpResponse){
+        memberService.signout(userDetails, request, httpRequest, httpResponse);
         return ResponseDto.setSuccess("회원탈퇴 성공");
     }
 

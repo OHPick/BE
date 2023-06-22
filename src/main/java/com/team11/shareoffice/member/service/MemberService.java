@@ -88,11 +88,6 @@ public class MemberService {
     public void issueTokens(HttpServletResponse response, String email){
         TokenDto tokenDto = jwtUtil.createAllToken(email);
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
-//        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-//        Cookie cookieRefreshToken = new Cookie(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-//        cookieRefreshToken.setPath("/");
-//        cookieRefreshToken.setHttpOnly(true);
-//        cookieRefreshToken.setSecure(true); // Set the Secure attribute to true
         ResponseCookie cookieRefreshToken = ResponseCookie.from(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken())
                         .httpOnly(true)
                         .secure(true)
@@ -103,14 +98,15 @@ public class MemberService {
         redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
     }
 
-    public void logout(Member member, HttpServletRequest request){
+    public void logout(Member member, HttpServletRequest request, HttpServletResponse response){
         String accessToken = jwtUtil.resolveToken(request,JwtUtil.ACCESS_TOKEN);
+        jwtUtil.deleteCookie(request, response, JwtUtil.REFRESH_TOKEN);
         redisService.setBlackList(accessToken);
         redisService.delValues(member.getEmail());
     }
 
     //회원탈퇴
-    public void signout(UserDetailsImpl userDetails, SignoutRequestDto request) {
+    public void signout(UserDetailsImpl userDetails, SignoutRequestDto request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         String password = request.getPassword();
         Member member = memberValidator.validateEmailExist(userDetails.getMember().getEmail());
         memberValidator.passwordCheck(password, member);
@@ -136,6 +132,7 @@ public class MemberService {
                 postRepository.save(p);
             }
         }
+        jwtUtil.deleteCookie(httpRequest, httpResponse, JwtUtil.REFRESH_TOKEN);
     }
 }
 

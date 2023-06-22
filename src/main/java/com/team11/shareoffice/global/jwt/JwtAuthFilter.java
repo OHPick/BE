@@ -55,6 +55,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String userEmail = jwtUtil.getUserInfoFromToken(refreshToken);
         if (userEmail == null) {
             jwtExceptionHandler(response, "리프레쉬 토큰이 만료되어 로그인이 필요합니다.", HttpStatus.UNAUTHORIZED.value());
+            jwtUtil.deleteCookie(request,response,JwtUtil.REFRESH_TOKEN);
             return;
         }
 
