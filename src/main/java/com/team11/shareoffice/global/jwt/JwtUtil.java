@@ -124,7 +124,7 @@ public class JwtUtil {
                     System.out.println(cookieValue);
                     // Do something with the cookie name and value
                     if (cookieName.equals(JwtUtil.REFRESH_TOKEN)) {
-                        return cookieValue;
+                        return cookieValue.substring(6);
                     }
                 }
             }
