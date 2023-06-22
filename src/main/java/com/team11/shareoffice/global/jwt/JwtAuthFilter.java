@@ -72,10 +72,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String newAccessToken = jwtUtil.createToken(userEmail, JwtUtil.ACCESS_TOKEN);
             response.setHeader(JwtUtil.ACCESS_TOKEN, newAccessToken);
             setAuthentication(jwtUtil.getUserInfoFromToken(newAccessToken.substring(6)));
-//            Cookie cookieNewAccessToken = new Cookie(JwtUtil.ACCESS_TOKEN, newAccessToken);
-//            cookieNewAccessToken.setHttpOnly(true);
-//            cookieNewAccessToken.setSecure(true); // Set the Secure attribute to true
-//            response.addCookie(cookieNewAccessToken);
             log.info("새로운 토큰 생성 완료");
         }
 

@@ -48,15 +48,6 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // header 토큰을 가져오기
-//    public String resolveToken(HttpServletRequest request, String type) {
-//        String bearerToken = request.getHeader(type);
-//        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-//            return bearerToken.substring(6);
-//        }
-//        return null;
-//    }
-
     public String resolveToken(HttpServletRequest request, String type) {
         String bearerToken = request.getHeader(type);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
