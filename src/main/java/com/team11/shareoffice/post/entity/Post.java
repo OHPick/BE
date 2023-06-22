@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,9 +59,11 @@ public class Post extends Timestamped {
     private List<String> postImages;
 
     @OneToOne(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
     private Amenities amenities;
 
     @OneToOne(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
     private OperatingTime operatingTime;
 
     @Column
