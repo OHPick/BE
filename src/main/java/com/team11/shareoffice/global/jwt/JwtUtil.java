@@ -110,17 +110,25 @@ public class JwtUtil {
     }
 
     // 쿠키 찾기
-    public Optional<Cookie> getCookie(HttpServletRequest request, String name) {
-        Cookie[] cookies = request.getCookies();
+    public String getCookie(HttpServletRequest request, String name) {
+        String cookieHeader = request.getHeader("Cookie");
 
-        if (cookies != null && cookies.length > 0) {
-            for (Cookie cookie : cookies) {
-                if (name.equals(cookie.getName())) {
-                    return Optional.of(cookie);
+        if (cookieHeader != null) {
+            String[] cookieParts = cookieHeader.split(";");
+            for (String cookiePart : cookieParts) {
+                String[] cookieNameValue = cookiePart.trim().split("=");
+                if (cookieNameValue.length == 2) {
+                    String cookieName = cookieNameValue[0];
+                    String cookieValue = cookieNameValue[1];
+
+                    // Do something with the cookie name and value
+                    if (cookieName.equals(JwtUtil.REFRESH_TOKEN)) {
+                        return cookieValue;
+                    }
                 }
             }
         }
-        return Optional.empty();
+        return null;
     }
 }
 
