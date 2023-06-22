@@ -58,22 +58,9 @@ public class JwtUtil {
 //    }
 
     public String resolveToken(HttpServletRequest request, String type) {
-        if(type.equals(ACCESS_TOKEN)){
-            String bearerToken = request.getHeader(type);
-            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-                return bearerToken.substring(6);
-            }
-        }
-        Cookie[] cookies = request.getCookies();
-        if(cookies!=null){
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(REFRESH_TOKEN)) {
-                    String token = cookie.getValue();
-                    if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
-                        return token.substring(6);
-                    }
-                }
-            }
+        String bearerToken = request.getHeader(type);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(6);
         }
         // add this code to read cookie
         return null;
