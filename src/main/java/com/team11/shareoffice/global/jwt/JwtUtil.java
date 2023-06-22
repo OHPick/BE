@@ -9,9 +9,12 @@ import io.jsonwebtoken.security.SecurityException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -120,16 +123,37 @@ public class JwtUtil {
                 if (cookieNameValue.length == 2) {
                     String cookieName = cookieNameValue[0];
                     String cookieValue = cookieNameValue[1];
-                    System.out.println(cookieName);
-                    System.out.println(cookieValue);
                     // Do something with the cookie name and value
-                    if (cookieName.equals(JwtUtil.REFRESH_TOKEN)) {
+                    if (cookieName.equals(name)) {
                         return cookieValue.substring(6);
                     }
                 }
             }
         }
         return null;
+    }
+
+    public void deleteCookie(HttpServletRequest request, HttpServletResponse response,  String name) {
+        String cookieHeader = request.getHeader("Cookie");
+        if (cookieHeader != null) {
+            String[] cookieParts = cookieHeader.split(";");
+            for (String cookiePart : cookieParts) {
+                String[] cookieNameValue = cookiePart.trim().split("=");
+                if (cookieNameValue.length == 2) {
+                    String cookieName = cookieNameValue[0];
+                    if (cookieName.equals(name)) {
+                        ResponseCookie cookieLogoutRefreshToken = ResponseCookie.from(name, "")
+                                .httpOnly(true)
+                                .secure(true)
+                                .sameSite("None") // SameSite 설정
+                                .maxAge(0)
+                                .path("/")
+                                .build();
+                        response.addHeader(HttpHeaders.SET_COOKIE, cookieLogoutRefreshToken.toString());
+                    }
+                }
+            }
+        }
     }
 }
 
