@@ -3,6 +3,7 @@ package com.team11.shareoffice.member.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.team11.shareoffice.global.jwt.CookieUtil;
 import com.team11.shareoffice.global.jwt.JwtUtil;
 import com.team11.shareoffice.global.jwt.dto.TokenDto;
 import com.team11.shareoffice.global.service.RedisService;
@@ -32,6 +33,7 @@ public class KakaoService {
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
     private final RedisService redisService;
+    private final CookieUtil cookieUtil;
 
 
     @Value("${kakao.client.secret}")
@@ -52,13 +54,7 @@ public class KakaoService {
     public void issueTokens(HttpServletResponse response, String email){
         TokenDto tokenDto = jwtUtil.createAllToken(email);
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
-        ResponseCookie cookieRefreshToken = ResponseCookie.from(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken())
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("None") // SameSite 설정
-                .path("/")
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookieRefreshToken.toString());
+        cookieUtil.createCookie(response, tokenDto.getRefreshToken());
         redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
     }
 
