@@ -21,13 +21,14 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final RedisService redisService;
+    private final CookieUtil cookieUtil;
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String accessToken = jwtUtil.resolveToken(request, JwtUtil.ACCESS_TOKEN);
-        String refreshToken = jwtUtil.getCookie(request,JwtUtil.REFRESH_TOKEN);
+        String refreshToken = cookieUtil.getCookie(request,JwtUtil.REFRESH_TOKEN);
 
         if (accessToken == null) {
             filterChain.doFilter(request, response);
@@ -55,7 +56,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String userEmail = jwtUtil.getUserInfoFromToken(refreshToken);
         if (userEmail == null) {
             jwtExceptionHandler(response, "리프레쉬 토큰이 만료되어 로그인이 필요합니다.", HttpStatus.UNAUTHORIZED.value());
-            jwtUtil.deleteCookie(request,response,JwtUtil.REFRESH_TOKEN);
+            cookieUtil.deleteCookie(request,response,JwtUtil.REFRESH_TOKEN);
             return;
         }
 

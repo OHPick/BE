@@ -1,5 +1,6 @@
 package com.team11.shareoffice.member.service;
 
+import com.team11.shareoffice.global.jwt.CookieUtil;
 import com.team11.shareoffice.global.jwt.JwtUtil;
 import com.team11.shareoffice.global.jwt.dto.TokenDto;
 import com.team11.shareoffice.global.security.UserDetailsImpl;
@@ -44,6 +45,7 @@ public class MemberService {
     private final RedisService redisService;
     private final LikeRepository likeRepository;
     private final ReservationRepository reservationRepository;
+    private final CookieUtil cookieUtil;
 
 
     // 회원가입
@@ -88,19 +90,13 @@ public class MemberService {
     public void issueTokens(HttpServletResponse response, String email){
         TokenDto tokenDto = jwtUtil.createAllToken(email);
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
-        ResponseCookie cookieRefreshToken = ResponseCookie.from(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken())
-                        .httpOnly(true)
-                        .secure(true)
-                        .sameSite("None") // SameSite 설정
-                        .path("/")
-                        .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookieRefreshToken.toString());
+        cookieUtil.createCookie(response, tokenDto.getRefreshToken());
         redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
     }
 
     public void logout(Member member, HttpServletRequest request, HttpServletResponse response){
         String accessToken = jwtUtil.resolveToken(request,JwtUtil.ACCESS_TOKEN);
-        jwtUtil.deleteCookie(request, response, JwtUtil.REFRESH_TOKEN);
+        cookieUtil.deleteCookie(request, response, JwtUtil.REFRESH_TOKEN);
         redisService.setBlackList(accessToken);
         redisService.delValues(member.getEmail());
     }
@@ -132,7 +128,7 @@ public class MemberService {
                 postRepository.save(p);
             }
         }
-        jwtUtil.deleteCookie(httpRequest, httpResponse, JwtUtil.REFRESH_TOKEN);
+        cookieUtil.deleteCookie(httpRequest, httpResponse, JwtUtil.REFRESH_TOKEN);
     }
 }
 
