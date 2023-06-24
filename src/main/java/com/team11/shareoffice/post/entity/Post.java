@@ -95,15 +95,4 @@ public class Post extends Timestamped {
     public void updateLike(Boolean likeOrDislike) {
         this.likeCount = Boolean.TRUE.equals(likeOrDislike) ? this.likeCount + 1 : this.likeCount - 1;
     }
-
-    public List<String> getPostImagesCustom(){
-        List<String> imageList = new ArrayList<>();
-        for (String images : this.getPostImages()) {
-            // Remove brackets and split by comma
-            String[] urls = images.substring(1, images.length() - 1).split(", ");
-            // Add all URLs to imageList
-            imageList.addAll(Arrays.asList(urls));
-        }
-        return imageList;
-    }
 }
