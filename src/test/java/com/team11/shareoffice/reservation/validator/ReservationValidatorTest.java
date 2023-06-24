@@ -44,8 +44,8 @@ class ReservationValidatorTest {
         Post post = new Post();
         LocalDate startDate1 = LocalDate.of(2023, 6, 13);
         LocalDate endDate1 = LocalDate.of(2023, 6, 22);
-        LocalDate startDate2 = LocalDate.of(2023, 6, 24);
-        LocalDate endDate2 = LocalDate.of(2023, 6, 26);
+        LocalDate startDate2 = LocalDate.of(2024, 6, 24);
+        LocalDate endDate2 = LocalDate.of(2024, 6, 26);
         ReservationRequestDto requestDto = new ReservationRequestDto(startDate2, endDate2);
         List<Reservation> reservationList = new ArrayList<>();
         Reservation reservation = new Reservation();
