@@ -141,7 +141,7 @@ public class KakaoService {
             memberRepository.save(kakaomember);
 
         }
-
+        kakaomember = kakaomember.kakaoImageUpdate(userInfo.getImageUrl());
         return kakaomember;
     }
 

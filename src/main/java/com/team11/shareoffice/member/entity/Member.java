@@ -64,6 +64,11 @@ public class Member{
         return this;
     }
 
+    public Member kakaoImageUpdate(String imageUrl) {
+        this.imageUrl = imageUrl;
+        return this;
+    }
+
 
     public void updateNickName(String nickName) {
         this.nickname = nickName;
