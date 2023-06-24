@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -90,9 +91,10 @@ public class PostService {
         Amenities amenities = post.getAmenities();
         amenities.updateAmenities(postRequestDto.getAmenities());
 
-        List<String> imageList = new ArrayList<>(post.getPostImagesCustom());
+        List<String> imageList = new ArrayList<>(post.getPostImages());
         List<String> requestImageList = postRequestDto.getImageUrls(); // 선택한 이미지URL
         List<String> removeImgList = new ArrayList<>();
+        List<Image> imageEntityList = new ArrayList<>();
 
         for (String img : imageList) {
             if (requestImageList.contains(img)) {
@@ -111,10 +113,14 @@ public class PostService {
                 if(!img.isEmpty()) {
                     String newUrl = imageService.uploadOneFile(img); // 수정할이미지 S3에 저장
                     imageList.add(newUrl);
+                    Image image = new Image(post, newUrl);
+                    imageEntityList.add(image);
                 }
             }
         }
 
+        imageRepository.saveAll(imageEntityList);
+        post.setPostImages(imageList);
         post.updatePost(postRequestDto, amenities, operatingTime);
 
     }
