@@ -66,7 +66,8 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests()
                 //회원가입, 로그인페이지, 메인 페이지.
-                .requestMatchers("/api/members/**").permitAll()
+                .requestMatchers("/api/members/signup").permitAll()
+                .requestMatchers("/api/members/login").permitAll()
                 .requestMatchers("/oauth/kakao").permitAll()
                 .requestMatchers("/api/email/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/posts/**").permitAll()
@@ -99,7 +100,9 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.addAllowedOriginPattern("*");
+        config.addAllowedOrigin("https://ohpick.shop");
+        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("https://ohpick.vercel.app");
         config.addExposedHeader(JwtUtil.ACCESS_TOKEN);
         config.addExposedHeader("Set-Cookie");
         config.addAllowedMethod("*");
