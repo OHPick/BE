@@ -42,11 +42,12 @@ public class Member{
         }
     }
 
-    public Member(String email, Long kakaoId, String password, String nickname){
+    public Member(String email, Long kakaoId, String password, String nickname, String imageUrl){
         this.email = email;
         this.kakaoId = kakaoId;
         this.password = password;
         this.nickname = nickname;
+        this.imageUrl = imageUrl;
     }
 
     @Builder
@@ -57,8 +58,9 @@ public class Member{
         this.imageUrl = imageUrl;
     }
 
-    public Member kakaoIdUpdate(Long kakaoId) {
+    public Member kakaoIdAndImageUpdate(Long kakaoId,String imageUrl) {
         this.kakaoId = kakaoId;
+        this.imageUrl = imageUrl;
         return this;
     }
 
