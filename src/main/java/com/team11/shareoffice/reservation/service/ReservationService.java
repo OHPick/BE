@@ -64,7 +64,7 @@ public class ReservationService {
     public List<ReservationResponseDto> showReservedDate( Long postId, Member member) {
         Post post = reservationValidator.validateIsExistPost(postId);
 
-        return reservationRepository.findAllByPostOrderByStartDateAsc(post).stream().map(ReservationResponseDto::new).toList();
+        return reservationRepository.findAllByPostAndIsFinishedFalseOrderByStartDateAsc(post).stream().map(ReservationResponseDto::new).toList();
     }
 
 }
