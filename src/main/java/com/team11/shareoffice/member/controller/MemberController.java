@@ -33,8 +33,7 @@ public class MemberController {
     @Operation(summary = "로그인 API", description = "로그인 성공시 jwt 토큰을 헤더에 넣어 반환합니다.")
     @PostMapping("/login")
     public ResponseDto<?> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response){
-        memberService.login(requestDto, response);
-        return ResponseDto.setSuccess("로그인 성공");
+        return ResponseDto.setSuccess("로그인 성공", memberService.login(requestDto, response));
     }
 
     @Operation(summary = "로그아웃API")
