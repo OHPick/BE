@@ -72,7 +72,7 @@ public class MemberService {
     }
 
     // 로그인
-    public void login(LoginRequestDto requestDto, HttpServletResponse response){
+    public TokenDto login(LoginRequestDto requestDto, HttpServletResponse response){
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
 
@@ -84,14 +84,15 @@ public class MemberService {
         memberValidator.passwordCheck(password, member);
 
         //엑세스, 리프레쉬 다 발급 + 리프레쉬 레디스 저장
-        issueTokens(response, email);
+        return new TokenDto(issueTokens(response, email),null);
     }
 
-    public void issueTokens(HttpServletResponse response, String email){
+    public String issueTokens(HttpServletResponse response, String email){
         TokenDto tokenDto = jwtUtil.createAllToken(email);
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         cookieUtil.createCookie(response, tokenDto.getRefreshToken());
         redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
+        return tokenDto.getAccessToken();
     }
 
     public void logout(Member member, HttpServletRequest request, HttpServletResponse response){

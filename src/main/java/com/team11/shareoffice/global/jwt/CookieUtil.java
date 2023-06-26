@@ -21,6 +21,18 @@ public class CookieUtil {
         response.addHeader(HttpHeaders.SET_COOKIE, cookieRefreshToken.toString());
     }
 
+    // 쿠키 삭제
+    public void createNullCookie(HttpServletRequest request, HttpServletResponse response) {
+        ResponseCookie cookieLogoutRefreshToken = ResponseCookie.from("null", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None") // SameSite 설정
+                .maxAge(0)
+                .path("/")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieLogoutRefreshToken.toString());
+    }
+
     // 쿠키 찾기
     public String getCookie(HttpServletRequest request, String name) {
         String cookieHeader = request.getHeader("Cookie");
