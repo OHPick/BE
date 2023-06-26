@@ -70,6 +70,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/members/login").permitAll()
                 .requestMatchers("/oauth/kakao").permitAll()
                 .requestMatchers("/api/email/**").permitAll()
+                .requestMatchers("/api/reissue").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/posts/**").permitAll()
                 // 채팅관련
                 .requestMatchers("/ws/**").permitAll()
