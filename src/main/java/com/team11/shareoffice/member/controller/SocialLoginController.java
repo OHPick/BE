@@ -24,8 +24,8 @@ public class SocialLoginController {
     @Operation(summary = "카카오로그인 API", description = "카카오로그인")
     @GetMapping("/oauth/kakao")
     public ResponseDto<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        kakaoService.kakaoLogin(code, response);
-        return setSuccess("로그인 성공");
+
+        return setSuccess("로그인 성공",  kakaoService.kakaoLogin(code, response));
     }
 
 }

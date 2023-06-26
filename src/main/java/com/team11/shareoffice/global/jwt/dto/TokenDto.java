@@ -1,10 +1,12 @@
 package com.team11.shareoffice.global.jwt.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TokenDto {
 
     private String accessToken;

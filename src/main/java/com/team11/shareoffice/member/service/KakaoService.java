@@ -39,7 +39,7 @@ public class KakaoService {
     @Value("${kakao.client.secret}")
     private String clientSecret;
 
-    public void kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public TokenDto kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getToken(code);
@@ -48,14 +48,15 @@ public class KakaoService {
         // 3. 필요 시에 회원 가입
         Member kakaoUser = registerKakaoUserIfNeeded(userInfo);
 
-        issueTokens(response, kakaoUser.getEmail());
+        return new TokenDto(issueTokens(response, kakaoUser.getEmail()),null);
     }
 
-    public void issueTokens(HttpServletResponse response, String email){
+    public String issueTokens(HttpServletResponse response, String email){
         TokenDto tokenDto = jwtUtil.createAllToken(email);
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         cookieUtil.createCookie(response, tokenDto.getRefreshToken());
         redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
+        return tokenDto.getAccessToken();
     }
 
     private String getToken(String code) throws JsonProcessingException {
