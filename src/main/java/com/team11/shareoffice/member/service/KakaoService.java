@@ -53,7 +53,7 @@ public class KakaoService {
 
     public String issueTokens(HttpServletResponse response, String email){
         TokenDto tokenDto = jwtUtil.createAllToken(email);
-        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
+//        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         cookieUtil.createCookie(response, tokenDto.getRefreshToken());
         redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
         return tokenDto.getAccessToken();
