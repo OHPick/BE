@@ -1,8 +1,6 @@
 package com.team11.shareoffice.global.inspector;
-import org.hibernate.cfg.AvailableSettings;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
