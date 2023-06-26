@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team11.shareoffice.global.service.RedisService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -85,11 +84,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
             //리프레쉬 토큰은 유효하면
-//            String newAccessToken = jwtUtil.createToken(userEmail, JwtUtil.ACCESS_TOKEN);
-//            response.setHeader(JwtUtil.ACCESS_TOKEN, newAccessToken);
-//            setAuthentication(jwtUtil.getUserInfoFromToken(newAccessToken.substring(6)));
-//            log.info("새로운 토큰 생성 완료");
-            // reissue api로 연결
+            // TOKEN_ERROR 메세지를 반환하여 클라이언트에서 reissue api로 연결
             jwtExceptionHandler(response, "TOKEN_ERROR", HttpStatus.UNAUTHORIZED.value());
             return;
         }
