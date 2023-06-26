@@ -50,7 +50,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         //엑세스토큰이 무효한데, 리프레쉬 토큰이 없다면
         if (refreshToken == null) {
             jwtExceptionHandler(response, "엑세스토큰은 무효하고, 리프레쉬토큰이 없습니다.", HttpStatus.UNAUTHORIZED.value());
-            cookieUtil.deleteCookie(request,response,JwtUtil.REFRESH_TOKEN);
+            cookieUtil.createNullCookie(request,response);
             return;
         }
 
