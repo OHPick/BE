@@ -16,7 +16,7 @@ public class CookieUtil {
                 .secure(true)
                 .sameSite("None") // SameSite 설정
                 .path("/")
-                .maxAge(3 * 60)
+                .maxAge(2 * 60)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookieRefreshToken.toString());
     }
