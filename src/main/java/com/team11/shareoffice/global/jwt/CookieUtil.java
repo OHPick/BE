@@ -22,7 +22,7 @@ public class CookieUtil {
     }
 
     // 쿠키 삭제
-    public void createNullCookie(HttpServletRequest request, HttpServletResponse response) {
+    public void createNullCookie(HttpServletResponse response) {
         ResponseCookie cookieLogoutRefreshToken = ResponseCookie.from("null", "")
                 .httpOnly(true)
                 .secure(true)
