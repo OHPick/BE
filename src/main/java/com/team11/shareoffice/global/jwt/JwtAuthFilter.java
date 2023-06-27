@@ -49,35 +49,33 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
 
-            //엑세스 토큰 유효하면 킵고잉
+            //엑세스 토큰 유효하wl 않으면 킵고잉
             boolean isValidAccessToken = jwtUtil.validateToken(accessToken);
-            if (isValidAccessToken) {
-                setAuthentication(jwtUtil.getUserInfoFromToken(accessToken));
-                filterChain.doFilter(request, response);
-                return;
-            }
-            //엑세스토큰이 무효한데, 리프레쉬 토큰이 없다면
-            if (refreshToken == null) {
-                jwtExceptionHandler(response, "엑세스토큰은 무효하고, 리프레쉬토큰이 없습니다.", HttpStatus.UNAUTHORIZED.value());
-                cookieUtil.createNullCookie(response);
-                return;
-            }
-            //엑세스만료 리프레쉬 유효하다면 레디스에서 확인후 갱신. 레디스와 다르면 로그아웃 처리.
-            boolean isValidRefreshToken = jwtUtil.validateToken(refreshToken);
-            if (isValidRefreshToken) {
-                String userEmail = jwtUtil.getUserInfoFromToken(refreshToken);
-                String refreshTokenFromRedis = redisService.getValues(userEmail).substring(6);
-
-                if (!refreshToken.equals(refreshTokenFromRedis)) {
-                    jwtExceptionHandler(response, "리프레쉬토큰을 확인해주세요. 엑세스토큰을 갱신할 수 없습니다.", HttpStatus.UNAUTHORIZED.value());
-                    cookieUtil.deleteCookie(request, response, JwtUtil.REFRESH_TOKEN);
+            if (!isValidAccessToken) {
+                //엑세스토큰이 무효한데, 리프레쉬 토큰이 없다면
+                if (refreshToken == null) {
+                    jwtExceptionHandler(response, "엑세스토큰은 무효하고, 리프레쉬토큰이 없습니다.", HttpStatus.UNAUTHORIZED.value());
+                    cookieUtil.createNullCookie(response);
                     return;
                 }
-                //리프레쉬 토큰은 유효하면
-                // TOKEN_ERROR 메세지를 반환하여 클라이언트에서 reissue api로 연결
-                jwtExceptionHandler(response, "TOKEN_ERROR", HttpStatus.UNAUTHORIZED.value());
-                return;
+                //엑세스만료 리프레쉬 유효하다면 레디스에서 확인후 갱신. 레디스와 다르면 로그아웃 처리.
+                boolean isValidRefreshToken = jwtUtil.validateToken(refreshToken);
+                if (isValidRefreshToken) {
+                    String userEmail = jwtUtil.getUserInfoFromToken(refreshToken);
+                    String refreshTokenFromRedis = redisService.getValues(userEmail).substring(6);
+
+                    if (!refreshToken.equals(refreshTokenFromRedis)) {
+                        jwtExceptionHandler(response, "리프레쉬토큰을 확인해주세요. 엑세스토큰을 갱신할 수 없습니다.", HttpStatus.UNAUTHORIZED.value());
+                        cookieUtil.deleteCookie(request, response, JwtUtil.REFRESH_TOKEN);
+                        return;
+                    }
+                    //리프레쉬 토큰은 유효하면
+                    // TOKEN_ERROR 메세지를 반환하여 클라이언트에서 reissue api로 연결
+                    jwtExceptionHandler(response, "TOKEN_ERROR", HttpStatus.UNAUTHORIZED.value());
+                    return;
+                }
             }
+            setAuthentication(jwtUtil.getUserInfoFromToken(accessToken));
         }
         filterChain.doFilter(request, response);
     }
