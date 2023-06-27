@@ -4,6 +4,7 @@ import com.team11.shareoffice.global.dto.ResponseDto;
 import com.team11.shareoffice.global.exception.CustomException;
 import com.team11.shareoffice.global.jwt.CookieUtil;
 import com.team11.shareoffice.global.jwt.JwtUtil;
+import com.team11.shareoffice.global.util.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,8 +28,10 @@ public class TokenController {
         String refreshToken = cookieUtil.getCookie(request,JwtUtil.REFRESH_TOKEN);
         if(refreshToken == null){
             cookieUtil.createNullCookie(response);
-            return ResponseDto.setBadRequest("리프레쉬 토큰이 만료되어 로그인이 필요합니다.", HttpStatus.UNAUTHORIZED.toString());
+//            return ResponseDto.setBadRequest("리프레쉬 토큰이 만료되어 로그인이 필요합니다.", HttpStatus.UNAUTHORIZED.toString());
+            throw new CustomException(ErrorCode.NEED_LOGIN);
         }
+
         return ResponseDto.setSuccess("토큰 재 생성!",jwtUtil.reissueToken(refreshToken));
     }
 }
