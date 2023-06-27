@@ -24,6 +24,8 @@ public enum ErrorCode {
     EMAIL_UNVERIFIED("UnverifiedEmail", "인증된 이메일이 아닙니다."),
     NOT_FINISHED_MYPOST_RESERVATION("MyPostUnfinishedReservationExist", "나의 게시물에 완료되지 않은 예약이 있어 회원탈퇴가 불가합니다."),
     NOT_FINISHED_MYRESERVATION("UnfinishedReservationExist", "완료되지 않은 예약이 존재하여 회원탈퇴가 불가합니다."),
+    NEED_LOGIN("expiredRefreshtoken","리프레쉬 토큰이 만료되어 로그인이 필요합니다." ),
+
 
     //게시글 관련
     NOT_EXIST_POST("NotExistPost", "존재하지 않는 게시글 입니다."),
@@ -31,7 +33,6 @@ public enum ErrorCode {
 
 
     //예약관련
-
     INVALID_DATE ("InvalidDate", "예약할 수 없는 날짜입니다."),
     EXIST_RESERVE_DATE ("ExistReserveDate", "이미 예약이 된 날짜입니다."),
     NOT_RESERVED_MEMBER ("NotReserved", "해당 예약의 예약자가 아닙니다."),
