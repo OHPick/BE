@@ -5,7 +5,6 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.team11.shareoffice.chat.dto.ChatRoomResponseDto;
-import com.team11.shareoffice.chat.entity.ChatMessage;
 import com.team11.shareoffice.chat.entity.ChatRoom;
 import com.team11.shareoffice.chat.entity.QChatMessage;
 import com.team11.shareoffice.chat.entity.QChatRoom;
@@ -16,8 +15,6 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Repository
 @Slf4j

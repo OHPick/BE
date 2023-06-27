@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team11.shareoffice.global.service.RedisService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +28,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String accessToken = jwtUtil.resolveToken(request, JwtUtil.ACCESS_TOKEN);
         String refreshToken = cookieUtil.getCookie(request,JwtUtil.REFRESH_TOKEN);
+        String servletPath = request.getServletPath();
+        String servletMethod = request.getMethod();
+
+        // 토큰이 만료되어도 메인 페이지는 보여준다.
+        if(servletPath.equals("/api/posts") && servletMethod.equals("GET")){
+            filterChain.doFilter(request, response);
+            return;
+        }
+        //토큰 재성성 api
+        if(servletPath.equals("/api/reissue")){
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (accessToken == null) {
             filterChain.doFilter(request, response);
@@ -72,10 +84,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
             //리프레쉬 토큰은 유효하면
-            String newAccessToken = jwtUtil.createToken(userEmail, JwtUtil.ACCESS_TOKEN);
-            response.setHeader(JwtUtil.ACCESS_TOKEN, newAccessToken);
-            setAuthentication(jwtUtil.getUserInfoFromToken(newAccessToken.substring(6)));
-            log.info("새로운 토큰 생성 완료");
+            // TOKEN_ERROR 메세지를 반환하여 클라이언트에서 reissue api로 연결
+            jwtExceptionHandler(response, "TOKEN_ERROR", HttpStatus.UNAUTHORIZED.value());
+            return;
         }
 
         filterChain.doFilter(request, response);

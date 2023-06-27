@@ -2,19 +2,16 @@ package com.team11.shareoffice.global.jwt;
 
 import com.team11.shareoffice.global.jwt.dto.TokenDto;
 import com.team11.shareoffice.global.security.UserDetailsServiceImpl;
+import com.team11.shareoffice.global.service.RedisService;
 import com.team11.shareoffice.member.repository.MemberRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +22,6 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -34,6 +30,7 @@ public class JwtUtil {
 
     private final MemberRepository memberRepository;
     private final UserDetailsServiceImpl userDetailsService;
+    private final RedisService redisService;
     public static final String ACCESS_TOKEN = "Access_Token";
     public static final String REFRESH_TOKEN = "Refresh_Token";
     private static final String BEARER_PREFIX = "Bearer";
@@ -97,19 +94,27 @@ public class JwtUtil {
 
     // 토큰에서 사용자 정보 가져오기
     public String getUserInfoFromToken(String token) {
-    try {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
-    } catch (ExpiredJwtException e) {
-        log.info("Expired JWT token, 만료된 JWT token 입니다.");
-        return null;
+        try {
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT token, 만료된 JWT token 입니다.");
+            return null;
+        }
     }
-}
 
     // 인증 객체 생성
     @Transactional(readOnly = true)
     public Authentication createAuthentication(String email) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+
+    //토큰 재발급
+    public String reissueToken(String refreshToken){
+        String userEmail = getUserInfoFromToken(refreshToken);
+        String newAccessToken = createToken(userEmail, JwtUtil.ACCESS_TOKEN);
+        log.info("새로운 토큰 생성 완료");
+        return newAccessToken;
     }
 
 }

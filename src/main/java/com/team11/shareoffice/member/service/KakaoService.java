@@ -10,7 +10,6 @@ import com.team11.shareoffice.global.service.RedisService;
 import com.team11.shareoffice.member.dto.UserInfoDto;
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.member.repository.MemberRepository;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +52,7 @@ public class KakaoService {
 
     public String issueTokens(HttpServletResponse response, String email){
         TokenDto tokenDto = jwtUtil.createAllToken(email);
-        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
+//        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         cookieUtil.createCookie(response, tokenDto.getRefreshToken());
         redisService.setValues(email, tokenDto.getRefreshToken(), Duration.ofDays(1));
         return tokenDto.getAccessToken();
