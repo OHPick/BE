@@ -28,9 +28,9 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtUtil {
 
-    private final MemberRepository memberRepository;
+
     private final UserDetailsServiceImpl userDetailsService;
-    private final RedisService redisService;
+
     public static final String ACCESS_TOKEN = "Access_Token";
     public static final String REFRESH_TOKEN = "Refresh_Token";
     private static final String BEARER_PREFIX = "Bearer";
@@ -116,7 +116,6 @@ public class JwtUtil {
         log.info("새로운 토큰 생성 완료");
         return newAccessToken;
     }
-
 }
 
 

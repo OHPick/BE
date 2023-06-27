@@ -24,7 +24,7 @@ public class TokenController {
 
     @Operation(summary = "토큰 재발급 API", description = "토큰 재발급")
     @PostMapping("/reissue")
-    public ResponseDto<?> signup(HttpServletRequest request, HttpServletResponse response){
+    public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response){
         String refreshToken = cookieUtil.getCookie(request,JwtUtil.REFRESH_TOKEN);
         if(refreshToken == null){
             cookieUtil.createNullCookie(response);
