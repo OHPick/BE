@@ -42,7 +42,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 jwtExceptionHandler(response, "로그아웃된 아이디 입니다.(블랙리스트)", HttpStatus.UNAUTHORIZED.value());
                 return;
             }
-
             //엑세스 토큰 유효하지 않으면..
             boolean isValidAccessToken = jwtUtil.validateToken(accessToken);
             if (!isValidAccessToken) {
@@ -71,6 +70,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
             setAuthentication(jwtUtil.getUserInfoFromToken(accessToken));
         }
+        else {
+            if(refreshToken != null){
+                boolean isValidRefreshToken = jwtUtil.validateToken(refreshToken);
+                if (isValidRefreshToken) {
+                    String userEmail = jwtUtil.getUserInfoFromToken(refreshToken);
+                    String refreshTokenFromRedis = redisService.getValues(userEmail).substring(6);
+
+                    if (!refreshToken.equals(refreshTokenFromRedis)) {
+                        jwtExceptionHandler(response, "리프레쉬토큰을 확인해주세요. 엑세스토큰을 갱신할 수 없습니다.", HttpStatus.UNAUTHORIZED.value());
+                        cookieUtil.deleteCookie(request, response, JwtUtil.REFRESH_TOKEN);
+                        return;
+                    }
+                    setAuthentication(userEmail);
+                }
+            }
+        }
+
+
         filterChain.doFilter(request, response);
     }
     public void setAuthentication(String email) {
