@@ -5,7 +5,6 @@ import com.team11.shareoffice.global.security.UserDetailsImpl;
 import com.team11.shareoffice.post.dto.MainPageResponseDto;
 import com.team11.shareoffice.post.dto.PostRequestDto;
 import com.team11.shareoffice.post.dto.PostResponseDto;
-import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import com.team11.shareoffice.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +52,7 @@ public class PostController {
     @Operation(summary = "게시글수정 API", description = "게시글수정")
     @PutMapping("/{id}")
     public ResponseDto<?> updatePost(@PathVariable Long id,
-                                        @RequestPart(value = "postRequestDto", required = false) PostUpdateRequestDto postRequestDto,
+                                        @RequestPart(value = "postRequestDto", required = false) PostRequestDto postRequestDto,
                                         @RequestPart(value = "imageFile", required = false) List<MultipartFile> image,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
 
