@@ -29,13 +29,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String accessToken = jwtUtil.resolveToken(request, JwtUtil.ACCESS_TOKEN);
         String refreshToken = cookieUtil.getCookie(request,JwtUtil.REFRESH_TOKEN);
         String servletPath = request.getServletPath();
-        String servletMethod = request.getMethod();
 
-        // 토큰이 만료되어도 메인 페이지는 보여준다.
-        if(servletPath.equals("/api/posts") && servletMethod.equals("GET")){
-            filterChain.doFilter(request, response);
-            return;
-        }
         //토큰 재성성 api
         if(servletPath.equals("/api/reissue")){
             filterChain.doFilter(request, response);
@@ -49,7 +43,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
 
-            //엑세스 토큰 유효하wl 않으면 킵고잉
+            //엑세스 토큰 유효하지 않으면..
             boolean isValidAccessToken = jwtUtil.validateToken(accessToken);
             if (!isValidAccessToken) {
                 //엑세스토큰이 무효한데, 리프레쉬 토큰이 없다면
