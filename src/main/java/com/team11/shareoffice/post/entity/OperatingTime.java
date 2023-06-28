@@ -1,7 +1,6 @@
 package com.team11.shareoffice.post.entity;
 
 import com.team11.shareoffice.post.dto.PostRequestDto;
-import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,7 +47,7 @@ public class OperatingTime {
         this.holidays = operatingTimeRequestDto.getHolidays();
     }
 
-    public void updateOperatingTime(PostUpdateRequestDto.OperatingTimeRequestDto operatingTimeRequestDto) {
+    public void updateOperatingTime(PostRequestDto.OperatingTimeRequestDto operatingTimeRequestDto) {
         this.openTime = operatingTimeRequestDto.getOpenTime();
         this.closeTime = operatingTimeRequestDto.getCloseTime();
         this.holidayTypes = operatingTimeRequestDto.getHolidayTypes();

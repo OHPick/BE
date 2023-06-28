@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +27,6 @@ public class TokenController {
         String refreshToken = cookieUtil.getCookie(request,JwtUtil.REFRESH_TOKEN);
         if(refreshToken == null){
             cookieUtil.createNullCookie(response);
-//            return ResponseDto.setBadRequest("리프레쉬 토큰이 만료되어 로그인이 필요합니다.", HttpStatus.UNAUTHORIZED.toString());
             throw new CustomException(ErrorCode.NEED_LOGIN);
         }
 
