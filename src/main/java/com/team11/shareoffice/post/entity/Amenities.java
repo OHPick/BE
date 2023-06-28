@@ -1,7 +1,6 @@
 package com.team11.shareoffice.post.entity;
 
 import com.team11.shareoffice.post.dto.PostRequestDto;
-import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -65,7 +64,7 @@ public class Amenities {
         this.isInternetWiFi = amenitiesRequestDto.getIsInternetWiFi();
     }
 
-    public void updateAmenities (PostUpdateRequestDto.AmenitiesRequestDto amenitiesRequestDto){
+    public void updateAmenities (PostRequestDto.AmenitiesRequestDto amenitiesRequestDto){
         this.isAircon = amenitiesRequestDto.getIsAircon();
         this.isCopierPrinter = amenitiesRequestDto.getIsCopierPrinter();
         this.isProjector = amenitiesRequestDto.getIsProjector();

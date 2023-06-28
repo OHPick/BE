@@ -2,7 +2,6 @@ package com.team11.shareoffice.post.entity;
 
 import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.dto.PostRequestDto;
-import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -79,7 +78,7 @@ public class Post extends Timestamped {
         this.member = member;
     }
 
-    public void updatePost (PostUpdateRequestDto requestDto, Amenities amenities, OperatingTime operatingTime){
+    public void updatePost (PostRequestDto requestDto, Amenities amenities, OperatingTime operatingTime){
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent().replace("\\n", "\n");
         this.location = requestDto.getLocation();

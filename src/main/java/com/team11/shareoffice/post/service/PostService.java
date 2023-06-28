@@ -10,7 +10,6 @@ import com.team11.shareoffice.member.entity.Member;
 import com.team11.shareoffice.post.dto.MainPageResponseDto;
 import com.team11.shareoffice.post.dto.PostRequestDto;
 import com.team11.shareoffice.post.dto.PostResponseDto;
-import com.team11.shareoffice.post.dto.PostUpdateRequestDto;
 import com.team11.shareoffice.post.entity.Amenities;
 import com.team11.shareoffice.post.entity.OperatingTime;
 import com.team11.shareoffice.post.entity.Post;
@@ -80,7 +79,7 @@ public class PostService {
         return post.getId();
     }
 
-    public void updatePost(Long id, PostUpdateRequestDto postRequestDto,  List<MultipartFile> updateImages, Member member) throws IOException {
+    public void updatePost(Long id, PostRequestDto postRequestDto,  List<MultipartFile> updateImages, Member member) throws IOException {
         //게시글 존재 확인.
         Post post = postValidator.validateIsExistPost(id);
         //게시글 작성자가 맞는지 확인.
@@ -90,28 +89,20 @@ public class PostService {
         Amenities amenities = post.getAmenities();
         amenities.updateAmenities(postRequestDto.getAmenities());
 
+
         List<String> imageList = new ArrayList<>(post.getPostImages());
-        List<String> requestImageList = postRequestDto.getImageUrls(); // 선택한 이미지URL
-        List<String> removeImgList = new ArrayList<>();
+        List<String> newImgList = new ArrayList<>();
         List<Image> imageEntityList = new ArrayList<>();
-
         for (String img : imageList) {
-            if (requestImageList.contains(img)) {
-                imageService.delete(img); // S3에서 해당 이미지 삭제
-                imageRepository.deleteByImageUrl(img);  // DB에서 해당 이미지 삭제
-                //수정할 이미지 담기
-                removeImgList.add(img);
-            }
+            imageService.delete(img); // S3에서 해당 이미지 삭제
+            imageRepository.deleteByImageUrl(img);  // DB에서 해당 이미지 삭제
         }
-
-
-        imageList.removeAll(removeImgList);
 
         if (!updateImages.isEmpty()) {
             for (MultipartFile img : updateImages) {  // 새로운 이미지들
                 if(!img.isEmpty()) {
                     String newUrl = imageService.uploadOneFile(img); // 수정할이미지 S3에 저장
-                    imageList.add(newUrl);
+                    newImgList.add(newUrl);
                     Image image = new Image(post, newUrl);
                     imageEntityList.add(image);
                 }
@@ -119,8 +110,41 @@ public class PostService {
         }
 
         imageRepository.saveAll(imageEntityList);
-        post.setPostImages(imageList);
+        post.setPostImages(newImgList);
         post.updatePost(postRequestDto, amenities, operatingTime);
+
+
+
+//        List<String> imageList = new ArrayList<>(post.getPostImages());
+//        List<String> requestImageList = postRequestDto.getImageUrls(); // 선택한 이미지URL
+//
+//
+//        for (String img : imageList) {
+//            if (requestImageList.contains(img)) {
+//                imageService.delete(img); // S3에서 해당 이미지 삭제
+//                imageRepository.deleteByImageUrl(img);  // DB에서 해당 이미지 삭제
+//                //수정할 이미지 담기
+//                removeImgList.add(img);
+//            }
+//        }
+//
+//
+//        imageList.removeAll(removeImgList);
+//
+//        if (!updateImages.isEmpty()) {
+//            for (MultipartFile img : updateImages) {  // 새로운 이미지들
+//                if(!img.isEmpty()) {
+//                    String newUrl = imageService.uploadOneFile(img); // 수정할이미지 S3에 저장
+//                    imageList.add(newUrl);
+//                    Image image = new Image(post, newUrl);
+//                    imageEntityList.add(image);
+//                }
+//            }
+//        }
+//
+//        imageRepository.saveAll(imageEntityList);
+//        post.setPostImages(imageList);
+//        post.updatePost(postRequestDto, amenities, operatingTime);
 
     }
 
