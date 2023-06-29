@@ -10,6 +10,8 @@ import com.team11.shareoffice.reservation.entity.Reservation;
 import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -32,7 +34,8 @@ public class ReservationValidator {
         return reservationRepository.findById(id).orElseThrow( () -> new CustomException(ErrorCode.NOT_EXIST_RESERVATION));
     }
 
-    public void validateReserveDate(Post post, ReservationRequestDto requestDto){
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public Reservation validateReserveDate(Post post, Member member, ReservationRequestDto requestDto){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(formatter);
         LocalDate todayDate = LocalDate.parse(today, formatter);
@@ -48,6 +51,9 @@ public class ReservationValidator {
         if(!reservationList.isEmpty()){
             throw new CustomException(ErrorCode.EXIST_RESERVE_DATE);
         }
+        Reservation newReserve = new Reservation(member, post, requestDto.getStartDate(), requestDto.getEndDate());
+        reservationRepository.save(newReserve);
+        return newReserve;
     }
 
     public void validateReservation(Post post, Reservation reservation, Member member){

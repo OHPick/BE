@@ -68,8 +68,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     return;
                 }
             }
+            //엑세스 토큰이 유효 하면
             setAuthentication(jwtUtil.getUserInfoFromToken(accessToken));
         }
+        //엑세스 토큰이 없지만, 리프레시 토큰이 있을 때
         else {
             if(refreshToken != null){
                 boolean isValidRefreshToken = jwtUtil.validateToken(refreshToken);

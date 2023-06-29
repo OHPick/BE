@@ -14,6 +14,7 @@ import com.team11.shareoffice.reservation.repository.ReservationRepository;
 import com.team11.shareoffice.reservation.validator.ReservationValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -38,9 +39,7 @@ public class ReservationService {
 
     public Long reservePost(Long postId, ReservationRequestDto requestDto, Member member) {
         Post post = reservationValidator.validateIsExistPost(postId);
-        reservationValidator.validateReserveDate(post,requestDto);
-        Reservation newReserve = new Reservation(member, post, requestDto.getStartDate(), requestDto.getEndDate());
-        reservationRepository.save(newReserve);
+        Reservation newReserve =  reservationValidator.validateReserveDate(post,member,requestDto);
 
         ChatRoom room = chatRoomRepository.findChatRoomByPostAndMember(post, member).orElse(null);
         if (room == null) {
