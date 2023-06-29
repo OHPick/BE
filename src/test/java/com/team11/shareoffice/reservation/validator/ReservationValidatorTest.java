@@ -64,7 +64,7 @@ class ReservationValidatorTest {
         //then
         assertDoesNotThrow(() -> {
             // Call the method under test
-            reservationValidator.validateReserveDate(post, requestDto);
+            reservationValidator.validateReserveDate(post, member, requestDto);
         });
     }
 
@@ -73,13 +73,14 @@ class ReservationValidatorTest {
     void validateReserveDate_InvalidDateExceptionTest() {
         //given
         Post post = new Post();
+        Member member = new Member();
         LocalDate startDate = LocalDate.of(2023, 6, 13);
         LocalDate endDate = LocalDate.of(2023, 6, 22);
         ReservationRequestDto requestDto = new ReservationRequestDto(startDate, endDate);
 
         //when
         CustomException exception = assertThrows(CustomException.class, () -> {
-            reservationValidator.validateReserveDate(post, requestDto);
+            reservationValidator.validateReserveDate(post, member, requestDto);
         });
 
         //then
@@ -114,7 +115,7 @@ class ReservationValidatorTest {
                 .thenReturn(reservationList);
 
         CustomException exception = assertThrows(CustomException.class, () -> {
-            reservationValidator.validateReserveDate(post, requestDto);
+            reservationValidator.validateReserveDate(post, member, requestDto);
         });
 
         //then
