@@ -101,9 +101,7 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.addAllowedOrigin("https://ohpick.shop");
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("https://ohpick.vercel.app");
+        config.addAllowedOrigin("*");
         config.addExposedHeader(JwtUtil.ACCESS_TOKEN);
         config.addExposedHeader("Set-Cookie");
         config.addAllowedMethod("*");
